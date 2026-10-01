@@ -3,3 +3,4 @@ __pycache__/
 venv/
 app/
 /test_*.py
+.ali_license_private_key

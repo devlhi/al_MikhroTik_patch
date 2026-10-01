@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Ali Patch Code · Lisensi lab</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#license-form">Langsung ke formulir</a>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">APC</span>
+        <div>
+          <p class="brand-name">Ali Patch Code</p>
+          <p class="brand-subtitle">Local lab license console</p>
+        </div>
+      </div>
+      <span class="scope-tag">Lokal · Custom lab</span>
+    </div>
+  </header>
+
+  <main class="console">
+    <div class="page-heading">
+      <div>
+        <h1>Buat lisensi lab</h1>
+        <p class="page-description">Tempel ID perangkat, lalu buat lisensi untuk firmware lab Anda.</p>
+      </div>
+      <div class="target-version">
+        <span class="meta-label">Target RouterOS</span>
+        <strong>7.23.3</strong>
+        <span class="muted">Belum diuji boot</span>
+      </div>
+    </div>
+
+    <section class="session-strip" aria-label="Sesi lokal">
+      <div class="session-info">
+        <p id="session-status" class="session-status" role="status" aria-live="polite" aria-atomic="true">Menghubungkan sesi lokal…</p>
+        <p class="fingerprint">Fingerprint kunci <code id="key-fingerprint">Belum tersedia</code></p>
+      </div>
+      <button id="session-retry" class="button button-secondary" type="button" hidden>Coba koneksi lagi</button>
+    </section>
+
+    <noscript>
+      <p class="noscript-notice">JavaScript perlu diaktifkan untuk menghubungkan sesi lokal dan membuat lisensi. Tidak ada lisensi yang dibuat tanpa server lokal.</p>
+    </noscript>
+
+    <div class="workspace">
+      <section class="panel input-panel" aria-labelledby="input-heading">
+        <div class="panel-heading">
+          <h2 id="input-heading">Identitas perangkat</h2>
+          <p>Pilih jenis ID sesuai perangkat lab.</p>
+        </div>
+        <form id="license-form" novalidate>
+          <fieldset class="mode-fieldset">
+            <legend>Jenis ID</legend>
+            <div class="mode-options">
+              <label class="mode-option" for="kind-chr">
+                <input id="kind-chr" type="radio" name="kind" value="chr" checked>
+                <span><span class="mode-title">CHR System ID</span><span class="mode-description">Mesin virtual CHR</span></span>
+              </label>
+              <label class="mode-option" for="kind-ros">
+                <input id="kind-ros" type="radio" name="kind" value="ros">
+                <span><span class="mode-title">RouterOS Software ID</span><span class="mode-description">Format XXXX-XXXX</span></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="identifier-field">
+            <label id="identifier-label" class="field-label" for="identifier">CHR System ID</label>
+            <input id="identifier" class="text-input" type="text" name="identifier" required maxlength="128" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-describedby="identifier-hint identifier-error" aria-invalid="false" placeholder="Tempel System ID CHR">
+            <p id="identifier-hint" class="field-help">11 karakter base64 (A–Z, a–z, 0–9, +, /). Huruf besar dan kecil berbeda.</p>
+            <p id="identifier-error" class="field-error" role="alert" hidden></p>
+          </div>
+
+          <div class="form-actions">
+            <button id="generate-button" class="button button-primary" type="submit" disabled>Buat lisensi</button>
+            <button id="reset-button" class="button button-secondary" type="button">Bersihkan</button>
+          </div>
+          <p id="operation-status" class="operation-status" role="status" aria-live="polite" aria-atomic="true">Masukkan ID untuk mulai.</p>
+        </form>
+
+        <details class="help-details">
+          <summary>System ID atau Software ID?</summary>
+          <div class="help-content">
+            <p><strong>CHR System ID</strong> digunakan untuk Cloud Hosted Router (mesin virtual). Salin 11 karakter System ID persis seperti yang ditampilkan; kapitalisasi tidak diubah.</p>
+            <p><strong>RouterOS Software ID</strong> digunakan untuk ID instalasi RouterOS. Salin ID dengan format XXXX-XXXX; setiap X adalah angka 0–9 atau huruf besar A–Z, tanpa huruf O. Input tidak diubah otomatis.</p>
+            <p>Lihat menu <strong>System → License</strong> atau perintah <code>/system license print</code> di perangkat. Gunakan ID dari perangkat lab yang akan memakai lisensi.</p>
+            <p>Spasi di awal dan akhir dibuang. Spasi di dalam ID tidak diubah. Mengganti ID atau jenisnya menghapus hasil sebelumnya.</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="result-panel" class="panel output-panel" aria-labelledby="output-heading" aria-busy="false" data-state="empty">
+        <div class="panel-heading result-heading">
+          <div>
+            <h2 id="output-heading">Hasil lisensi</h2>
+            <p id="result-summary">Hasil akan muncul setelah server memverifikasi lisensi.</p>
+          </div>
+          <span id="result-state" class="result-state">Belum ada hasil</span>
+        </div>
+        <dl class="result-meta">
+          <div><dt>Jenis</dt><dd id="result-kind">—</dd></div>
+          <div><dt>ID perangkat</dt><dd id="result-identifier">—</dd></div>
+        </dl>
+        <label class="field-label" for="license-output">Teks lisensi</label>
+        <textarea id="license-output" class="license-output" rows="9" readonly spellcheck="false" aria-describedby="result-summary export-status" placeholder="Belum ada lisensi. Lengkapi formulir di sebelah kiri untuk mulai."></textarea>
+        <div class="output-actions">
+          <button id="copy-button" class="button button-secondary" type="button" disabled>Salin lisensi</button>
+          <button id="download-button" class="button button-secondary" type="button" disabled>Unduh .txt</button>
+        </div>
+        <p id="export-status" class="export-status" role="status" aria-live="polite" aria-atomic="true">Salin dan unduh tersedia hanya untuk hasil yang terverifikasi.</p>
+      </section>
+    </div>
+
+    <section class="lab-notice" aria-labelledby="scope-heading">
+      <h2 id="scope-heading">Batas penggunaan</h2>
+      <p>Lisensi custom untuk firmware lab dengan public key yang cocok; bukan lisensi resmi MikroTik. Kompatibilitas RouterOS 7.23.3 belum diuji boot.</p>
+      <p class="muted">Verifikasi hasil oleh server tidak membuktikan kompatibilitas firmware. Panel ini hanya untuk lab lokal; tidak menyimpan ID atau hasil di browser.</p>
+    </section>
+  </main>
+
+  <footer class="app-footer"><span>Ali Patch Code</span><span>Custom lab only · Tanpa layanan eksternal</span></footer>
+</body>
+</html>

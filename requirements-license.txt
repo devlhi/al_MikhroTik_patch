@@ -1,0 +1,2 @@
+# Needed only when loading the existing lab key from patch7.yml.
+PyYAML==6.0.3

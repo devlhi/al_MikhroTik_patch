@@ -25,8 +25,9 @@ jobs:
   patch:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        arch: [x86]
+        arch: [x86, arm, arm64, mipsbe, mmips, smips, ppc]
 
     steps:
     - name: Checkout
@@ -40,7 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y mkisofs xorriso qemu-utils extlinux --no-install-recommends
+        sudo apt-get install -y mkisofs xorriso qemu-utils extlinux squashfs-tools --no-install-recommends
         sudo pip install -r requirements.txt
 
     - name: Select pinned RouterOS version
@@ -332,18 +333,19 @@ jobs:
       id: stage_release
       if: steps.get_latest.outputs.has_new_version == 'true'
       run: |
-        python3 scripts/release_assets.py \
+        python3 scripts/release_assets.py stage \
           --source . \
-          --output dist \
+          --output dist/${{ matrix.arch }} \
           --version "$LATEST_VERSION" \
+          --arch "${{ matrix.arch }}" \
           --changelog CHANGELOG
 
     - name: Upload branded artifacts
       if: steps.get_latest.outputs.has_new_version == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: ali-patch-code-x86-${{ env.LATEST_VERSION }}
-        path: dist/
+        name: ali-patch-code-${{ matrix.arch }}-${{ env.LATEST_VERSION }}
+        path: dist/${{ matrix.arch }}
         if-no-files-found: error
         retention-days: 14
 
@@ -360,15 +362,37 @@ jobs:
     - name: Download branded artifacts
       uses: actions/download-artifact@v4
       with:
-        name: ali-patch-code-x86-${{ env.PINNED_VERSION }}
-        path: dist
+        pattern: ali-patch-code-*-${{ env.PINNED_VERSION }}
+        path: dist-download
+        merge-multiple: false
+
+    - name: Combine architectures into one release
+      id: combine_release
+      run: |
+        mkdir release-input
+        for dir in dist-download/ali-patch-code-*-"$PINNED_VERSION"/; do
+          [ -d "$dir" ] || continue
+          name=$(basename "$dir")
+          arch=${name#ali-patch-code-}
+          arch=${arch%-"$PINNED_VERSION"}
+          mv "$dir" "release-input/$arch"
+        done
+        curl --fail --show-error --location --retry 3 \
+          --output CHANGELOG \
+          "https://upgrade.mikrotik.com/routeros/$PINNED_VERSION/CHANGELOG"
+        python3 scripts/release_assets.py combine \
+          --dist release-input \
+          --output dist \
+          --version "$PINNED_VERSION" \
+          --changelog CHANGELOG
 
     - name: Create draft release
       uses: softprops/action-gh-release@v2
       with:
-        name: "Ali Patch Code — RouterOS ${{ env.PINNED_VERSION }} (x86, untested)"
+        name: "Ali Patch Code — RouterOS ${{ env.PINNED_VERSION }} (semua arsitektur, untested)"
         body_path: dist/RELEASE_NOTES.md
-        tag_name: ali-patch-code-${{ env.PINNED_VERSION }}-run${{ github.run_id }}
+        tag_name: ali-patch-code-${{ env.PINNED_VERSION }}-run${{ github.run_id }}-attempt${{ github.run_attempt }}
+        target_commitish: ${{ github.sha }}
         draft: true
         prerelease: true
         make_latest: "false"
