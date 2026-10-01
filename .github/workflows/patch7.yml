@@ -49,7 +49,7 @@ jobs:
       run: |
         LATEST_VERSION=$PINNED_VERSION
         # Manual rebuilds must not be skipped because latest7.txt matches.
-        curl --fail --show-error --location --retry 3 \
+        curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 \
           --output CHANGELOG \
           "https://upgrade.mikrotik.com/routeros/$LATEST_VERSION/CHANGELOG"
         test -s CHANGELOG
@@ -83,7 +83,7 @@ jobs:
     - name: Get mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}.iso
       if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_mikrotik.outputs.cache-hit != 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
       run: |
-        sudo curl -s -o mikrotik.iso https://download.mikrotik.com/routeros/$LATEST_VERSION/mikrotik-$LATEST_VERSION$ARCH.iso
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output mikrotik.iso https://download.mikrotik.com/routeros/$LATEST_VERSION/mikrotik-$LATEST_VERSION$ARCH.iso
 
     - name: Patch mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}.iso
       if: steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
@@ -153,7 +153,7 @@ jobs:
     - name: Get refind
       if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_refind.outputs.cache-hit != 'true' && matrix.arch == 'x86'
       run: |
-        sudo curl -s -o refind-bin-0.14.2.zip https://nchc.dl.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output refind-bin-0.14.2.zip https://downloads.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip
 
     - name: Cache install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.zip
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
@@ -166,7 +166,7 @@ jobs:
     - name: Get install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.zip
       if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_install_image.outputs.cache-hit != 'true' && matrix.arch == 'x86'
       run: |
-        sudo curl -s -o install-image.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/install-image-$LATEST_VERSION.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output install-image.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/install-image-$LATEST_VERSION.zip
 
     - name: Patch install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
@@ -220,7 +220,7 @@ jobs:
     - name: Get chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.zip
       if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_chr_img.outputs.cache-hit != 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
       run: |
-        sudo curl -s -o chr.img.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/chr-$LATEST_VERSION$ARCH.img.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output chr.img.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/chr-$LATEST_VERSION$ARCH.img.zip
 
     - name: Patch chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img
       if: steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
@@ -280,9 +280,9 @@ jobs:
     - name: Get netinstall ${{ env.LATEST_VERSION }}
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86' && steps.cache_netinstall.outputs.cache-hit != 'true'
       run: |
-        sudo curl -s -o netinstall.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.zip
-        sudo curl -s -o netinstall64.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall64-$LATEST_VERSION.zip
-        sudo curl -s -o netinstall.tar.gz https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.tar.gz
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall64.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall64-$LATEST_VERSION.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall.tar.gz https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.tar.gz
 
     - name: Patch netinstall ${{ env.LATEST_VERSION }}
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
@@ -310,8 +310,8 @@ jobs:
     - name: Get routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}.npk & all_packages${{ env.ARCH }}-${{ env.LATEST_VERSION }}.zip
       if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_routeros_npk.outputs.cache-hit != 'true' && matrix.arch != 'x86'
       run: |
-        sudo curl -s -o routeros-$LATEST_VERSION$ARCH.npk https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION$ARCH.npk
-        sudo curl -s -o all_packages$ARCH-$LATEST_VERSION.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/all_packages$ARCH-$LATEST_VERSION.zip
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output routeros-$LATEST_VERSION$ARCH.npk https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION$ARCH.npk
+        sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output all_packages$ARCH-$LATEST_VERSION.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/all_packages$ARCH-$LATEST_VERSION.zip
 
     - name: Patch routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}.npk & all_packages${{ env.ARCH }}-${{ env.LATEST_VERSION }}.zip
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch != 'x86'
@@ -377,7 +377,7 @@ jobs:
           arch=${arch%-"$PINNED_VERSION"}
           mv "$dir" "release-input/$arch"
         done
-        curl --fail --show-error --location --retry 3 \
+        curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 \
           --output CHANGELOG \
           "https://upgrade.mikrotik.com/routeros/$PINNED_VERSION/CHANGELOG"
         python3 scripts/release_assets.py combine \

@@ -117,6 +117,43 @@ class WorkflowTests(unittest.TestCase):
                        if s.get("uses", "").startswith("softprops/action-gh-release@"))
         self.assertEqual(publish["with"].get("target_commitish"), "${{ github.sha }}")
 
+    def test_refind_download_uses_canonical_sourceforge_mirror_with_retries(self):
+        step = next(s for s in workflow()["jobs"]["patch"]["steps"]
+                    if s.get("name", "").startswith("Get refind"))
+        run = step["run"]
+        self.assertIn("https://downloads.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip", run)
+        self.assertNotIn("nchc.dl.sourceforge.net", run)
+
+    def test_all_remote_downloads_fail_closed_and_retry_transient_errors(self):
+        import shlex
+
+        commands = []
+        for job_name, job in workflow()["jobs"].items():
+            for step in job["steps"]:
+                # Join shell continuations before checking individual commands.
+                run = step.get("run", "").replace("\\\n", " ")
+                for line in run.splitlines():
+                    tokens = shlex.split(line, comments=True)
+                    if tokens and tokens[0] == "sudo":
+                        tokens = tokens[1:]
+                    if tokens and tokens[0] == "curl":
+                        commands.append((job_name, step.get("name"), tokens))
+
+        self.assertEqual(len(commands), 11)
+        self.assertEqual({job for job, _, _ in commands}, {"patch", "release"})
+        for job, step, tokens in commands:
+            with self.subTest(job=job, step=step, output=tokens[-2:]):
+                for flag in ("--fail", "--show-error", "--location", "--retry-all-errors"):
+                    self.assertEqual(tokens.count(flag), 1)
+                for flag, value in (("--retry", "5"), ("--retry-delay", "5"),
+                                    ("--connect-timeout", "20"), ("--max-time", "600")):
+                    self.assertEqual(tokens.count(flag), 1)
+                    self.assertEqual(tokens[tokens.index(flag) + 1], value)
+                self.assertEqual(tokens.count("--output"), 1)
+                output = tokens[tokens.index("--output") + 1]
+                self.assertTrue(output and not output.startswith("-"))
+                self.assertNotIn("-o", tokens)
+
 
 if __name__ == "__main__":
     unittest.main()
