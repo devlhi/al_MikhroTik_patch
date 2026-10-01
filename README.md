@@ -11,7 +11,26 @@
 
 # Download
 
-You can download the automatically generated RouterOS image from [here](https://github.com/loskiq/MikroTikPatch/releases).
+Releases for this fork belong on [devlhi/al_MikhroTik_patch](https://github.com/devlhi/al_MikhroTik_patch/releases). A release is available only after a successful build and manual publication; this change does not provide a prebuilt image.
+
+# Ali Patch Code build configuration (pinned x86)
+
+This branch configures a pinned, manually triggered build branded **Ali Patch Code**. **RouterOS 7.23.3 compatibility and bootability are not yet verified.** The existing patcher has not been updated or replaced with the newer upstream patcher; branding tests do not establish firmware compatibility:
+
+- The RouterOS version is pinned via `PINNED_VERSION` in `.github/workflows/patch7.yml` (currently `7.23.3`) instead of following the upstream "latest" feed.
+- Only the **x86** architecture is built.
+- `scripts/release_assets.py` stages every artifact into `dist/` as `ali-patch-code-x86-<artifact>` together with `SHA256SUMS`, `manifest.json` and `RELEASE_NOTES.md`; the directory is uploaded as a workflow artifact.
+- A **draft** GitHub Release (never auto-published, never marked latest) is created only when the `create_draft_release` workflow input is checked.
+- The workflow no longer commits to `latest7.txt`.
+
+The "What's new" panel in Winbox still comes from MikroTik update servers; the branding here applies to filenames, artifact names and the release page.
+
+Regression tests (no firmware required; needs PyYAML):
+
+```
+python3 -m pip install PyYAML
+python3 -m unittest discover -s tests -v
+```
 
 # How to generate license key
 

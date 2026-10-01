@@ -2,11 +2,18 @@ name: Patch v7
 
 on:
   workflow_dispatch:
+    inputs:
+      create_draft_release:
+        description: 'Create a draft (never published) GitHub Release with the branded assets'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
-  contents: write
+  contents: read
 
 env:
+  PINNED_VERSION: '7.23.3'
   MIKRO_NPK_SIGN_PUBLIC_KEY: C293CED638A2A33C681FC8DE98EE26C54EADC5390C2DFCE197D35C83C416CF59
   MIKRO_LICENSE_PUBLIC_KEY: 8E1067E4305FCDC0CFBF95C10F96E5DFE8C49AEF486BD1A4E2E96C27F01E3E32
   CUSTOM_NPK_SIGN_PRIVATE_KEY: 7D008D9B80B036FB0205601FEE79D550927EBCA937B7008CC877281F2F8AC640
@@ -19,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86, arm, arm64, mipsbe, mmips, smips, ppc]
+        arch: [x86]
 
     steps:
     - name: Checkout
@@ -36,26 +43,17 @@ jobs:
         sudo apt-get install -y mkisofs xorriso qemu-utils extlinux --no-install-recommends
         sudo pip install -r requirements.txt
 
-    - name: Check latest version
+    - name: Select pinned RouterOS version
       id: get_latest
       run: |
-        echo $(uname -a)
-        NEWEST=$(curl -s https://upgrade.mikrotik.com/routeros/NEWESTa7.stable)
-        LATEST_VERSION=$(echo "$NEWEST" | cut -d' ' -f1)
-        BUILD_TIME=$(echo "$NEWEST" | cut -d' ' -f2)
-        echo Latest Version: $LATEST_VERSION
-        echo Build Time: $BUILD_TIME
-        _LATEST_VERSION=$(cat latest7.txt | cut -d ' ' -f1)
-        if [ "$_LATEST_VERSION" == "$LATEST_VERSION" ]; then
-          echo "No new version found"
-          echo "has_new_version=false" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-        echo "has_new_version=true" >> $GITHUB_OUTPUT
-        curl -s -o CHANGELOG https://upgrade.mikrotik.com/routeros/$LATEST_VERSION/CHANGELOG
-        cat CHANGELOG
-        echo "NEWEST=${NEWEST}" >> $GITHUB_ENV
-        echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_ENV
+        LATEST_VERSION=$PINNED_VERSION
+        # Manual rebuilds must not be skipped because latest7.txt matches.
+        curl --fail --show-error --location --retry 3 \
+          --output CHANGELOG \
+          "https://upgrade.mikrotik.com/routeros/$LATEST_VERSION/CHANGELOG"
+        test -s CHANGELOG
+        echo "has_new_version=true" >> "$GITHUB_OUTPUT"
+        echo "LATEST_VERSION=$LATEST_VERSION" >> "$GITHUB_ENV"
         if [ "${{ matrix.arch }}" == "x86" ]; then
           ARCH=''
         elif [ "${{ matrix.arch }}" == "arm" ]; then
@@ -330,30 +328,48 @@ jobs:
         cd ..
         sudo rm -rf all_packages$ARCH-$LATEST_VERSION/
 
-    - name: Update latest version
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
-      run: |
-        echo $NEWEST > latest7.txt
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add latest7.txt
-        git commit -m "Update latest version"
-        git push
-
-    - name: Create Release tag ${{ env.LATEST_VERSION }}
+    - name: Stage branded release assets
+      id: stage_release
       if: steps.get_latest.outputs.has_new_version == 'true'
+      run: |
+        python3 scripts/release_assets.py \
+          --source . \
+          --output dist \
+          --version "$LATEST_VERSION" \
+          --changelog CHANGELOG
+
+    - name: Upload branded artifacts
+      if: steps.get_latest.outputs.has_new_version == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ali-patch-code-x86-${{ env.LATEST_VERSION }}
+        path: dist/
+        if-no-files-found: error
+        retention-days: 14
+
+  release:
+    needs: patch
+    if: inputs.create_draft_release == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download branded artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ali-patch-code-x86-${{ env.PINNED_VERSION }}
+        path: dist
+
+    - name: Create draft release
       uses: softprops/action-gh-release@v2
       with:
-        name: "RouterOS ${{ env.LATEST_VERSION }}"
-        body_path: "CHANGELOG"
-        tag_name: ${{ env.LATEST_VERSION }}
-        make_latest: true
-        files: |
-          mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}-patched.iso
-          netinstall-${{ env.LATEST_VERSION }}-patched.zip
-          netinstall64-${{ env.LATEST_VERSION }}-patched.zip
-          netinstall-${{ env.LATEST_VERSION }}-patched.tar.gz
-          install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}-patched.*.zip
-          chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}-patched.*.zip
-          routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}-patched.npk
-          all_packages*-${{ env.LATEST_VERSION }}-patched.zip
+        name: "Ali Patch Code — RouterOS ${{ env.PINNED_VERSION }} (x86, untested)"
+        body_path: dist/RELEASE_NOTES.md
+        tag_name: ali-patch-code-${{ env.PINNED_VERSION }}-run${{ github.run_id }}
+        draft: true
+        prerelease: true
+        make_latest: "false"
+        files: dist/*

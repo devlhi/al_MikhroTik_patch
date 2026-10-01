@@ -2,4 +2,4 @@ __pycache__/
 .vscode/
 venv/
 app/
-test_*.py
+/test_*.py
