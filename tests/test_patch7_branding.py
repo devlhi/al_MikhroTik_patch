@@ -13,8 +13,8 @@ def workflow():
 
 
 class WorkflowTests(unittest.TestCase):
-    def test_routeros_target_is_pinned_to_7_23_3(self):
-        self.assertEqual(workflow()["env"].get("PINNED_VERSION"), "7.23.3")
+    def test_routeros_target_is_pinned_to_7_24_4(self):
+        self.assertEqual(workflow()["env"].get("PINNED_VERSION"), "7.24.4")
 
     def test_version_resolution_uses_pin_not_upstream_latest(self):
         run = workflow()["jobs"]["patch"]["steps"][3]["run"]
@@ -108,14 +108,49 @@ class WorkflowTests(unittest.TestCase):
         ]
         self.assertNotEqual(tags[0], tags[1], "Reruns must not reuse an existing release tag")
         self.assertEqual(tags, [
-            f"ali-patch-code-7.23.3-run{run_id}-attempt1",
-            f"ali-patch-code-7.23.3-run{run_id}-attempt2",
+            f"ali-patch-code-7.24.4-run{run_id}-attempt1",
+            f"ali-patch-code-7.24.4-run{run_id}-attempt2",
         ])
 
     def test_release_tag_targets_exact_built_commit(self):
         publish = next(s for s in workflow()["jobs"]["release"]["steps"]
                        if s.get("uses", "").startswith("softprops/action-gh-release@"))
         self.assertEqual(publish["with"].get("target_commitish"), "${{ github.sha }}")
+
+    def test_non_x86_package_urls_match_architecture(self):
+        import shlex
+
+        step = next(s for s in workflow()["jobs"]["patch"]["steps"]
+                    if s.get("name", "").startswith("Get routeros-"))
+        self.assertIn("matrix.arch != 'x86'", step["if"])
+        for arch in ALL_ARCHS[1:]:
+            with self.subTest(arch=arch):
+                suffix = "-" + arch
+                run = (step["run"].replace("$LATEST_VERSION", "7.24.4")
+                       .replace("$ARCH", suffix))
+                commands = [shlex.split(line) for line in run.splitlines() if line.strip()]
+                self.assertEqual(len(commands), 2)
+                downloads = {}
+                for tokens in commands:
+                    self.assertEqual(tokens[:2], ["sudo", "curl"])
+                    self.assertEqual(tokens.count("--output"), 1)
+                    output = tokens[tokens.index("--output") + 1]
+                    self.assertNotIn(output, downloads)
+                    downloads[output] = tokens[-1]
+                base = "https://download.mikrotik.com/routeros/7.24.4/"
+                self.assertEqual(downloads, {
+                    f"routeros-7.24.4{suffix}.npk": base + f"routeros-7.24.4{suffix}.npk",
+                    f"all_packages{suffix}-7.24.4.zip": base + f"all_packages-{arch}-7.24.4.zip",
+                })
+
+    def test_x86_package_outputs_are_derived_from_iso(self):
+        steps = workflow()["jobs"]["patch"]["steps"]
+        step = next(s for s in steps if s.get("name", "").startswith("Patch mikrotik-"))
+        self.assertIn("matrix.arch == 'x86'", step["if"])
+        self.assertIn("sudo cp new_iso/routeros-$LATEST_VERSION*.npk routeros-$LATEST_VERSION$ARCH-patched.npk", step["run"])
+        self.assertIn("sudo cp new_iso/*.npk all_packages_iso$ARCH-$LATEST_VERSION/", step["run"])
+        self.assertIn("cd all_packages_iso$ARCH-$LATEST_VERSION/", step["run"])
+        self.assertIn("sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk", step["run"])
 
     def test_refind_download_uses_canonical_sourceforge_mirror_with_retries(self):
         step = next(s for s in workflow()["jobs"]["patch"]["steps"]

@@ -6,7 +6,7 @@
 |---|---|---|
 | Apakah format teks dapat diparsing tanpa membuat angka power saat data kosong? | CLI offline dan fixture sintetis, validasi unit/duplikat/batas input | Tervalidasi pada fixture yang diuji |
 | Apakah Linux dapat mengakses DDM pada kandidat NIC tertentu? | Riset driver dan kemudian `ethtool -m` pada hardware yang sama | Pengujian hardware belum dilakukan |
-| Apakah RouterOS x86 7.23.3 mengekspos power NIC itu? | Monitor langsung pada perangkat lab | Belum diuji |
+| Apakah RouterOS x86 7.24.4 mengekspos power NIC itu? | Monitor langsung pada perangkat lab | Belum diuji |
 | Apakah daemon tambahan dapat hidup di RouterOS dan diekspor ke UI? | Runtime/ABI/driver/lifecycle paket/boot/rollback | Belum dibuktikan; tidak membuat NPK sebelum gerbang ini |
 
 ## Artefak yang dapat dijalankan

@@ -1,6 +1,6 @@
 # Notice
 
-## The patch is currently tested and working for:
+## Historical reports (not verified for the current target):
 - **X86 (ROS & CHR working)**
 - **ARM64 (CHR working)**
 - ARM (bootloop)
@@ -15,15 +15,15 @@ Releases for this fork belong on [devlhi/al_MikhroTik_patch](https://github.com/
 
 # Ali Patch Code build configuration (pinned, semua arsitektur)
 
-This branch configures a pinned, manually triggered build branded **Ali Patch Code** for **x86, arm, arm64, mipsbe, mmips, smips, ppc**. **RouterOS 7.23.3 compatibility and bootability are not yet verified.** The existing patcher has not been updated or replaced with the newer upstream patcher; branding tests do not establish firmware compatibility:
+This branch configures a pinned, manually triggered build branded **Ali Patch Code** for **x86, arm, arm64, mipsbe, mmips, smips, ppc**. **RouterOS 7.24.4 compatibility and bootability are not yet verified.** The existing patcher has not been updated or replaced with the newer upstream patcher; branding tests do not establish firmware compatibility:
 
-- The RouterOS version is pinned via `PINNED_VERSION` in `.github/workflows/patch7.yml` (currently `7.23.3`) instead of following the upstream "latest" feed.
+- The RouterOS version is pinned via `PINNED_VERSION` in `.github/workflows/patch7.yml` (currently `7.24.4`) instead of following the upstream "latest" feed.
 - The build matrix covers the seven repo architectures (`x86, arm, arm64, mipsbe, mmips, smips, ppc`) with `fail-fast: false`, so one failing architecture does not cancel the rest.
-- `scripts/release_assets.py stage` stages that architecture's artifacts into `dist/<arch>/` as `ali-patch-code-<arch>-<artifact>` together with `SHA256SUMS`, `manifest.json` and `RELEASE_NOTES.md`; each architecture is uploaded as its own workflow artifact `ali-patch-code-<arch>-7.23.3`.
+- `scripts/release_assets.py stage` stages that architecture's artifacts into `dist/<arch>/` as `ali-patch-code-<arch>-<artifact>` together with `SHA256SUMS`, `manifest.json` and `RELEASE_NOTES.md`; each architecture is uploaded as its own workflow artifact `ali-patch-code-<arch>-7.24.4`.
 - When `create_draft_release` is checked, the release job downloads all architecture artifacts, moves them unchanged into a dedicated `release-input/` root, and combines them into a separate fresh `dist/` output (`release_assets.py combine --dist release-input --output dist`). Combine pre-validates every manifest, checksum list and asset for all seven architectures first, refuses symlinked or unexpected paths, and never modifies, moves or deletes the downloaded inputs; on any failure no `dist/` is created. It then creates a **draft** GitHub Release (never auto-published, never marked latest) containing all architectures with regenerated merged checksums and per-architecture status notes.
 - The workflow no longer commits to `latest7.txt`.
 
-Arsip lama repo ini mencatat **ARM, MMIPS, SMIPS: bootloop; MIPSBE: bootloop pada sebagian perangkat; PPC: belum diuji; ARM64: hanya CHR** — status lama, bukan jaminan untuk 7.23.3. Rilis draft memuat peringatan per arsitektur; jangan pakai di perangkat produksi.
+Arsip lama repo ini mencatat **ARM, MMIPS, SMIPS: bootloop; MIPSBE: bootloop pada sebagian perangkat; PPC: belum diuji; ARM64: hanya CHR** — status lama, bukan jaminan untuk 7.24.4. Rilis draft memuat peringatan per arsitektur; jangan pakai di perangkat produksi.
 
 The "What's new" panel in Winbox still comes from MikroTik update servers; the branding here applies to filenames, artifact names and the release page.
 
@@ -40,7 +40,7 @@ Untuk alur **tempel System ID / Software ID → buat → salin / unduh**, lihat
 [panduan panel lokal](web/license/README.md). Server hanya mendengarkan di
 `127.0.0.1:12760`; kunci tetap di backend. Ini bukan layanan publik dan bukan
 lisensi resmi MikroTik. Verifikasi signature tidak membuktikan kompatibilitas
-atau boot RouterOS 7.23.3.
+atau boot RouterOS 7.24.4.
 
 # Diagnostik power SFP (read-only, belum fitur NPK)
 
@@ -51,7 +51,7 @@ menambahkan driver, sensor, field Winbox, atau dukungan SFP universal.
 Input RouterOS wajib satu port dengan `name`; `--interface` opsional mencatat
 asal port (mismatch pada RouterOS ditolak). Telah direview independen dan
 lima saran batas parser dari review tersebut sudah diterapkan.
-**Belum ada hasil hardware RouterOS x86/CHR 7.23.3 atau add-on NPK SFP.**
+**Belum ada hasil hardware RouterOS x86/CHR 7.24.4 atau add-on NPK SFP.**
 
 # How to generate license key
 

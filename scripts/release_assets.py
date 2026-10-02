@@ -20,7 +20,7 @@ ARCHITECTURES = ("x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc")
 VALID_VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 IMAGE_FORMATS = ("img", "qcow2", "vmdk", "vhd", "vhdx", "vdi")
 HISTORICAL_STATUS = {
-    "x86": "README lama melaporkan ROS/CHR bekerja; bukan bukti untuk 7.23.3.",
+    "x86": "README lama melaporkan ROS/CHR bekerja; bukan bukti untuk 7.24.4.",
     "arm": "README lama melaporkan bootloop. Eksperimental, bukan untuk produksi.",
     "arm64": "README lama melaporkan CHR bekerja; hardware ARM64 belum terverifikasi.",
     "mipsbe": "README lama melaporkan bootloop pada sebagian perangkat.",

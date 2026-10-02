@@ -2,7 +2,7 @@
 
 Panel bahasa Indonesia untuk memilih **CHR System ID** atau **RouterOS Software ID**, menempel ID, membuat lisensi custom, lalu menyalin atau mengunduh hasil `.txt`.
 
-**Bukan lisensi resmi MikroTik.** Hasil membutuhkan firmware lab dengan public key lisensi yang cocok. Pemeriksaan signature oleh server hanya memverifikasi ID, bentuk payload, dan kecocokan kunci; bukan bukti lisensi diterima perangkat atau firmware RouterOS **7.23.3** berhasil boot.
+**Bukan lisensi resmi MikroTik.** Hasil membutuhkan firmware lab dengan public key lisensi yang cocok. Pemeriksaan signature oleh server hanya memverifikasi ID, bentuk payload, dan kecocokan kunci; bukan bukti lisensi diterima perangkat atau firmware RouterOS **7.24.4** berhasil boot.
 
 ## Menjalankan
 

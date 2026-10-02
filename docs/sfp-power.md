@@ -1,7 +1,7 @@
 # Power SFP — Ali Patch Code (lab, belum dukungan firmware)
 
 **Status: alat diagnostik offline tersedia. Belum ada NIC/SFP yang terverifikasi
-pada RouterOS x86 7.23.3 di proyek ini. Belum ada add-on NPK atau perubahan
+pada RouterOS x86 7.24.4 di proyek ini. Belum ada add-on NPK atau perubahan
 driver untuk power SFP.** Jangan mengiklankan “semua merek SFP didukung”.
 
 ## Apa yang sudah dan belum ada
@@ -28,7 +28,7 @@ Referensi CLI RouterOS mencantumkan `sfp-tx-power`, `sfp-rx-power`,
 `sfp-temperature`, `sfp-supply-voltage`, dan `sfp-tx-bias-current`.[1]
 Dokumentasi Ethernet mendefinisikan TX/RX sebagai daya optik dalam dBm.[2]
 **Daftar field tersebut bukan daftar NIC x86 yang mendukungnya.** Sumber ini
-berstatus dokumentasi umum/current, bukan hasil pengujian build 7.23.3 kita.
+berstatus dokumentasi umum/current, bukan hasil pengujian build 7.24.4 kita.
 
 Linux `ethtool -m` membaca/mendekode EEPROM modul dan membaca diagnostik optik
 **jika driver dan modul mendukungnya**; `ethtool -i` menampilkan informasi
@@ -81,7 +81,7 @@ Catatan historis saja: pada thread Intel 82599 tahun 2015, akun `krisjanis`
 menulis "We have checked this Intel driver SFP vendor lock thing and so far
 we haven’t managed to disable it. Using Intel 10G modules remains the only
 option." Kutipan diperiksa pada **arsip 23 Juni 2026**, bukan fetch live.[20]
-Jangan gunakan laporan lama tersebut sebagai aturan RouterOS 7.23.3, sebagai
+Jangan gunakan laporan lama tersebut sebagai aturan RouterOS 7.24.4, sebagai
 bukti DDM, atau sebagai jaminan pembatasan vendor masih sama hari ini.
 
 MikroTik menyatakan tidak membatasi vendor pada perangkat/modul yang dibahas
@@ -97,7 +97,7 @@ Pemetaan Linux telah diperiksa pada sumber di atas; semua hasil RouterOS masih
 **belum diuji**. Catat model lengkap/OEM, PCI ID + subsystem, driver dan firmware
 untuk setiap kartu; nama keluarga saja tidak cukup.
 
-| Prioritas | Keluarga (driver Linux) | Syarat terdokumentasi di Linux | RouterOS x86 7.23.3 |
+| Prioritas | Keluarga (driver Linux) | Syarat terdokumentasi di Linux | RouterOS x86 7.24.4 |
 |---|---|---|---|
 | 1 | Intel X520/82599 (ixgbe) | Callback + pemeriksaan DDM/addressing.[8][21] | Belum diuji |
 | 1 | Broadcom BCM57810; kandidat kartu BCM57810S (bnx2x) | Guard akses NIC dan flag DDM.[11][17] | Belum diuji |

@@ -380,8 +380,8 @@ assert.ok(nodes['identifier-hint'].textContent.includes('O'),
         self.assertIn("Ali Patch Code", source)
         self.assertIn("Local lab license console", source)
         self.assertIn("Target RouterOS", source)
-        self.assertIn("7.23.3", source)
-        self.assertIn("Kompatibilitas RouterOS 7.23.3 belum diuji boot.", source)
+        self.assertIn("7.24.4", source)
+        self.assertIn("Kompatibilitas RouterOS 7.24.4 belum diuji boot.", source)
         self.assertIn("bukan lisensi resmi MikroTik", source)
         self.assertIn(("link", {"rel": "stylesheet", "href": "/app.css"}), dom.elements)
         scripts = [attrs for tag, attrs in dom.elements if tag == "script"]

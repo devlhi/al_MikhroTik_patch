@@ -146,7 +146,7 @@
     resultKind.textContent = kindName(data.kind);
     resultIdentifier.textContent = data.identifier;
     resultSummary.textContent =
-      "Server memverifikasi lisensi ini untuk firmware lab dengan public key yang cocok. Kompatibilitas RouterOS 7.23.3 belum diuji boot.";
+      "Server memverifikasi lisensi ini untuk firmware lab dengan public key yang cocok. Kompatibilitas RouterOS 7.24.4 belum diuji boot.";
     resultPanel.dataset.state = "success";
     resultState.textContent = "Terverifikasi";
     resultPanel.setAttribute("aria-busy", "false");

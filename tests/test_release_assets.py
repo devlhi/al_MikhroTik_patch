@@ -15,7 +15,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/release_assets.py"
-VERSION = "7.23.3"
+VERSION = "7.24.4"
 ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc"]
 METADATA_FILES = ("SHA256SUMS", "manifest.json", "RELEASE_NOTES.md")
 TOTAL_ASSETS = 37
@@ -164,7 +164,7 @@ class StageTests(Base):
 
     def test_invalid_version_is_rejected_before_creating_output(self):
         self.make_sources("arm")
-        for bad in ["latest", "7.23", "../../outside", "7.23.3\nBAD=1", "7.23.3;id"]:
+        for bad in ["latest", "7.23", "../../outside", "7.24.4\nBAD=1", "7.24.4;id"]:
             with self.subTest(version=bad):
                 output = self.root / "dist-bad"
                 result, out = self.stage("arm", output=output, version=bad)
@@ -776,7 +776,7 @@ class CombineTests(Base):
             ("deep-json", "[" * 1200 + "0" + "]" * 1200),
             ("huge-integer", '{"size":' + "1" * 5000 + "}"),
             ("deep-identity", '{"brand":' + "[" * 1200 + "0" + "]" * 1200
-             + ',"routeros_version":"7.23.3","architecture":"ppc",'
+             + ',"routeros_version":"7.24.4","architecture":"ppc",'
                '"boot_tested":false,"assets":[]}'),
         ):
             with self.subTest(case=label):
