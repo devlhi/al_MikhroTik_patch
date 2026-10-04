@@ -3,6 +3,7 @@ import argparse
 import os
 from pathlib import Path
 import sys
+import tempfile
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -93,25 +94,23 @@ def _run(argv=None):
         print('Gagal verifikasi hasil; tidak ada berkas disimpan.', file=sys.stderr)
         return 1
     output = Path(args.output).absolute()
-    created = False
     try:
-        with output.open('x', encoding='utf-8') as stream:
-            created = True
-            stream.write(text)
-    except BaseException as error:
-        if created:
-            try:
-                output.unlink()
-            except OSError:
-                print('Berkas parsial tidak dapat dihapus; hapus output sebelum mencoba ulang.',
-                      file=sys.stderr)
-        if isinstance(error, FileExistsError):
-            print('Berkas output sudah ada; tidak ditimpa.', file=sys.stderr)
-            return 1
-        if isinstance(error, OSError):
-            print('Tidak dapat menyimpan berkas output; periksa folder dan izin tulis.', file=sys.stderr)
-            return 1
-        raise
+        # Stage completely in a private same-filesystem directory, then claim
+        # the final name atomically. Never open the user's output path: Windows
+        # open('x') follows dangling symlinks, whereas link refuses an existing
+        # destination entry. Unsupported hard links fail closed; no fallback.
+        with tempfile.TemporaryDirectory(prefix='.ali-license-', dir=output.parent) as directory:
+            staging = Path(directory) / 'license.tmp'
+            with staging.open('x', encoding='utf-8') as stream:
+                stream.write(text)
+            os.link(staging, output)
+    except FileExistsError:
+        print('Berkas output sudah ada; tidak ditimpa.', file=sys.stderr)
+        return 1
+    except OSError:
+        print('Penyimpanan atau pembersihan berkas sementara gagal; periksa folder dan dukungan hard link.',
+              file=sys.stderr)
+        return 1
     print('Tersimpan:', output)
     print(WARNING)
     return 0

@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA): build GitHub `37207497763` pada `c636fa6` selesai: x86 sukses, enam arsitektur lain diblokir guard mapping 1, job rilis skipped (§13). Artifact x86 mempunyai 18 aset; boot/aktivasi belum diuji. Engine immediate x86 ter-commit `daf390f` (§11); VM pemilik tetap free (§6), disk lab sebelumnya reboot-loop (§9). Launcher Windows selesai; review independen MENOLAK (symlink dangling diikuti → fix satu baris + 2 tes regresi selesai dan direproduksi parent GREEN; suite penuh 271 total, 267 lulus, 4 cmd.exe skip). Review delta fix lulus dan diterima pada fingerprint tercatat; belum dipush/diuji di Windows (§13).**
+**Status diperbarui: 2026-10-05 (WITA): build GitHub `37207497763` pada `c636fa6`: x86 sukses (18 aset), enam arsitektur gagal guard, rilis skipped. Boot/aktivasi belum terbukti. Launcher ter-push `f392288`; run Windows `37214834349` gagal symlink walaupun seluruh tes cmd.exe lulus. Kandidat precheck ditolak review karena race; pengganti publikasi hard-link lokal lulus 272 tes (268 pass, 4 native skip). Review delta `deleg_c6179945` lulus dan pin/log diverifikasi parent; fix siap push, rerun Windows masih pending (§13).**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -905,15 +905,88 @@ keseluruhan.[8] Tidak ada akses VM pemilik atau build/probe QEMU baru.
   Pemilik menyetujui commit/push launcher, tes, workflow Windows, dan dokumentasi
   ke `main` melalui konfirmasi UI; izin itu tidak mencakup penggantian aset/tag
   rilis lama.
+- **Publikasi `f392288`:** commit `[verified] feat: add Windows custom-lab
+  license launcher` (13 file, 2353 insertions) dipush ke `main`; GET anonim
+  mengonfirmasi SHA remote dan **13/13 file publik byte-identical** dengan
+  lokal. Workflow Windows terpicu otomatis oleh push. `git diff --cached
+  --check` sempat menolak CRLF batch sebagai whitespace; validasi dengan
+  `git -c core.whitespace=cr-at-eol diff --cached --check` lulus tanpa
+  mengubah byte batch atau melewati pemeriksaan lain.
+- **Run Windows asli `37214834349` (Python 3.10.11 & 3.14.7,
+  windows-latest):** total 51 tes/job. **Keempat tes cmd.exe native `.bat`
+  lulus di kedua Python** — menu CHR pilih-1 sampai file terverifikasi
+  signature+ID, menu ROS, ID invalid exit≠0 tanpa file, dan cabang
+  Python-hilang menampilkan python.org; path uji memuat spasi, `&`, `!`.
+  **Tiga kegagalan/job, semua symlink output**, kelas baru yang tidak
+  muncul di macOS:[9]
+  1. **Bug produk di Windows terkonfirmasi:** `open('x')` pada Python
+     Windows menembus symlink dangling final — akar sebab: CRT memetakan
+     `_O_CREAT|_O_EXCL` ke `CreateFileW(CREATE_NEW)` tanpa
+     `FILE_FLAG_OPEN_REPARSE_POINT`, dan dokumentasi Microsoft menyatakan
+     pembuatan file baru tidak mengubah perilaku reparse. CLI exit 0
+     terkonfirmasi; asersi target belum tercapai karena defect tes kedua,
+     sehingga target-tercipta masih inferensi dari alur sukses, bukan
+     observasi independen dalam log asli. Tidak ada klaim native GREEN.
+  2. **Bug tes:** `readlink()` Windows mengembalikan prefix `//?/` sehingga
+     `assertEqual(readlink(), target)` gagal dan menutupi asersi target.
+  Kandidat lokal precheck `output.is_symlink()` **ditolak** review
+  `deleg_58b8d498`: penulis lain dapat memasang symlink sesudah check dan
+  sebelum `open('x')`. Ini analisis statis, bukan reproduksi native Windows
+  baru. Lima tes macOS lulus tanpa skip; parent memverifikasi pin before/after
+  dan digest log reviewer. Penolakan dan log tersanitasi dipertahankan di
+  [evidence review](evidence/windows-license-review.json).
+- **Kandidat pengganti atomik, belum dipush:** CLI menulis lengkap dan menutup
+  staging file di `TemporaryDirectory` pada folder tujuan, kemudian `os.link`
+  membuat nama output tanpa overwrite. Path final tidak dibuka untuk write;
+  tidak ada fallback jika filesystem tidak mendukung hard link. Folder lab
+  tepercaya wajib; bukan sandbox terhadap penggantian ancestor/staging oleh
+  pihak yang menguasai akun/folder. Panduan Windows menyebut NTFS dan penanganan
+  error cleanup (output mungkin sudah terbit lengkap meski exit nonzero).
+  Snapshot `readlink()` tetap dibandingkan sebelum/sesudah, bukan ejaan path.
+  Tes race akhir menyisipkan symlink tepat sebelum pemanggilan `os.link` nyata
+  lalu memeriksa exit nonzero, link utuh, target tidak dibuat, staging bersih.
+  Kontrol fresh dan partial-write juga memeriksa cleanup.
+- **Bukti TDD/iterasi:** RED awal pada macOS memakai model perilaku Windows
+  `CREATE_NEW`, bukan reproduksi Windows native. Dua subtest race gagal
+  (exit 0 dan target tercipta), kontrol fresh lulus. Kandidat staging awal
+  `NamedTemporaryFile` menyebabkan satu tes partial-write tidak lagi
+  menginjeksi API yang dipakai (28 tes, satu gagal). Diganti direktori staging
+  + `Path.open`, seam injeksi diperbarui; 28/28 lulus. Tes final disederhanakan
+  memakai race hard-link nyata saja. Kegagalan harness dan log RED/GREEN
+  dipertahankan, bukan dihapus.
+- **Verifikasi parent final:** modul CLI **28 lulus, 0 skip** (34.595 detik),
+  suite penuh **272 total, 268 lulus, 4 cmd.exe skip** (103.596 detik), rc 0.
+  Kedua run final ini hanya mempunyai ringkasan terminal, bukan capture lengkap.
+  SquashFS tersedia; `git diff --check` dan AST dua file lulus. Diff dua-file
+  dari `f392288` dipin SHA-256
+  `2649d754e61acf6b6fb1c970af96266394f8717fc807bf9b294e08b20278d399`;
+  scan baris tambahan tidak menemukan literal secret/injection.
+  **Review delta `deleg_c6179945` lulus dan diterima parent:** tujuh tes terarah
+  lulus di macOS (0 skip, rc 0, 16.453 detik). Pin dua file, diff, payload,
+  before/after reviewer, serta digest stdout/stderr cocok. Verdict: tidak ada
+  security concern atau logic error. Parser laporan reviewer sempat gagal
+  mengenali docstring tes dua baris; rc unittest tetap 0, output yang sama
+  diparse ulang dan kegagalan wrapper dipertahankan. Probe tambahan reviewer
+  hanya ditulis, **tidak dijalankan**, sehingga tidak diklaim sebagai hasil.
+  Saran nonblocking: tambah regresi permanen link unsupported, close/flush
+  gagal sebelum publikasi, dan cleanup setelah publikasi. Semantik cleanup
+  sudah dijelaskan di panduan; bukan rollback output lengkap. Tidak ada kode
+  berubah setelah review. Bukti lengkap tersanitasi disimpan di evidence.
+  Parent mengulang suite setelah penerimaan review: **272 total, 268 lulus,
+  4 cmd.exe skip**, rc 0 (100.472 detik); capture lengkap berada di scratch,
+  ringkasan dan digest output dipertahankan di evidence. Strict sources dan
+  actionlint kembali lulus. Pemilik menegaskan izin `push`. **Push fix dan
+  Windows native belum dilakukan pada titik pra-commit ini.**
 - Batas bukti tetap: belum terbukti firmware x86 ini boot/login atau menerima
   lisensi setelah reboot. Generator/parser konsisten hanya menguji bentuk
   payload, ID, dan signature; jangan melabeli artifact siap produksi atau
   aktivasi pasti berhasil. Kunci deployment tidak diganti.
 
-**Titik lanjut:** commit/push launcher yang telah diterima sesuai izin, lalu
-periksa tes native Windows dan kesamaan source publik. Verifikasi hash biner
-artifact masih terblokir unduhan. Jangan tandai launcher teruji Windows
-hanya dari tes Python macOS atau pemeriksaan struktur batch.
+**Titik lanjut:** commit/push fix hard-link yang telah diterima sesuai izin,
+lalu jalankan tes native Windows serta verifikasi source publik. Launcher
+awal sudah dipush; jangan mengulang publikasi itu sebagai pekerjaan baru.
+Verifikasi hash biner artifact masih terblokir unduhan. Jangan menyamakan
+empat tes cmd.exe yang lulus dengan suite Windows seluruhnya hijau.
 
 ## Yang bisa / perlu dikerjakan selanjutnya
 
@@ -1020,3 +1093,4 @@ env -u PYTHONPATH TMPDIR="$HOME/.hermes/cache/scratch" \
 [6] https://download.mikrotik.com/routeros/7.24.4/chr-7.24.4.img.zip
 [7] https://api.github.com/repos/devlhi/al_MikhroTik_patch/releases/tags/7.24.4
 [8] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763 — GitHub Patch v7 c636fa6: x86 sukses, enam gagal
+[9] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37214834349 — Windows launcher f392288: cmd.exe native lulus, symlink gagal

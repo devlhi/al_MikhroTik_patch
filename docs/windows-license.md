@@ -45,9 +45,17 @@ lengkap yang masih mempunyai `patch7.yml`.
 5. Jika muncul **Tersimpan**, buka file tersebut. License body tidak dicetak
    ke terminal. Tidak ada pemasangan otomatis ke router.
 
-File yang sudah ada **selalu ditolak**, tidak ditimpa. Pilih nama baru atau
-pindahkan file lama secara sadar sebelum mencoba lagi. File hasil default
-masuk `.gitignore`; file pada jalur lain harus diamankan sendiri.
+File yang sudah ada **selalu ditolak**, tidak ditimpa, termasuk symlink.
+Isi ditulis lengkap ke direktori sementara di folder tujuan, kemudian nama
+output dibuat melalui hard link tanpa overwrite. Folder tujuan harus dapat
+ditulis dan filesystem harus mendukung hard link (gunakan drive **NTFS** di
+Windows, bukan FAT32/exFAT). Jika tidak didukung, penyimpanan ditolak tanpa
+fallback yang mengikuti symlink. Gunakan folder lab sendiri yang tepercaya;
+ini bukan sandbox untuk folder yang dapat dimanipulasi pihak lain.
+
+Pilih nama baru atau pindahkan file lama secara sadar sebelum mencoba lagi.
+File hasil default masuk `.gitignore`; file pada jalur lain harus diamankan
+sendiri.
 
 Launcher mengutamakan `venv\Scripts\python.exe`, kemudian `py -3`, lalu
 `python`. Jika `venv` ada tetapi rusak/tidak memenuhi versi, perbaiki venv;
@@ -122,8 +130,13 @@ Jangan menyamakan build sukses atau file lisensi tersimpan dengan aktivasi.
   membuat keypair baru atau menampilkan nilainya untuk sekadar membuat tes hijau.
 - **ID/kunci invalid:** pastikan jenis ID dan kapitalisasi benar. Tidak ada
   file output valid yang dibuat pada kegagalan.
-- **Output sudah ada / tidak dapat disimpan:** pilih file baru dalam folder
-  yang dapat ditulis. Tidak ada overwrite otomatis.
+- **Output sudah ada / tidak dapat disimpan:** pilih nama baru di folder lab
+  tepercaya yang dapat ditulis pada drive NTFS. FAT32/exFAT tidak mendukung
+  publikasi hard link ini; tidak ada fallback atau overwrite otomatis.
+- **Pembersihan sementara gagal:** exit tetap nonzero. Periksa apakah output
+  sudah terbit lengkap sebelum mencoba lagi; jangan menganggap semua error
+  berarti output tidak ada. Periksa sisa direktori `.ali-license-*` di folder
+  tujuan dan hapus hanya setelah memastikan bukan proses lain yang masih aktif.
 - **Jendela menutup cepat:** jalankan `.bat` dari Command Prompt untuk membaca
   pesan. `pause` aktif secara default; EOF/Ctrl+C membatalkan pembuatan.
 

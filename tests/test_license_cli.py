@@ -85,6 +85,7 @@ class LicenseCLITests(unittest.TestCase):
         self.assertIn(str(self.output), result.stdout)
         self.assertIn('custom-lab-only', result.stdout)
         self.assertIn('bukan lisensi resmi MikroTik', result.stdout)
+        self.assertEqual(list(self.outside.glob('.ali-license-*')), [], 'staging must be cleaned')
 
     def test_ros_flags_sign_verify_save(self):
         result = self.run_cli(*self.flags('ros', '4JZ2-H049'))
@@ -139,13 +140,14 @@ class LicenseCLITests(unittest.TestCase):
             if os.name != 'nt' or getattr(error, 'winerror', None) not in (5, 1314):
                 raise
             self.skipTest('Windows denied symlink creation (winerror %s)' % error.winerror)
+        link_before = self.output.readlink()
         result = self.run_cli(*self.flags())
         with self.subTest(check='nonzero exit'):
             self.assertNotEqual(result.returncode, 0)
-        self.assertTrue(self.output.is_symlink(), 'output link must be preserved')
-        self.assertEqual(self.output.readlink(), target)
         with self.subTest(check='target remains absent'):
             self.assertFalse(target.exists(), 'dangling target must not be created')
+        self.assertTrue(self.output.is_symlink(), 'output link must be preserved')
+        self.assertEqual(self.output.readlink(), link_before)
         self.assert_safe(result)
 
     def test_existing_output_symlink_is_refused_with_target_preserved(self):
@@ -157,13 +159,54 @@ class LicenseCLITests(unittest.TestCase):
             if os.name != 'nt' or getattr(error, 'winerror', None) not in (5, 1314):
                 raise
             self.skipTest('Windows denied symlink creation (winerror %s)' % error.winerror)
+        link_before = self.output.readlink()
         result = self.run_cli(*self.flags())
         self.assertNotEqual(result.returncode, 0)
         self.assertTrue(self.output.is_symlink(), 'output link must be preserved')
-        self.assertEqual(self.output.readlink(), target)
         self.assertEqual(target.read_text(encoding='utf-8'), 'KEEP ME')
         self.assert_safe(result)
+        self.assertEqual(self.output.readlink(), link_before)
 
+
+    def test_symlink_inserted_at_publication_does_not_create_target(self):
+        """Inject a symlink at the single publication syscall; no open on output."""
+        from contextlib import redirect_stdout, redirect_stderr
+        import io
+        from unittest.mock import patch
+        from scripts import license_cli, license_server
+        target = self.outside / 'race target.txt'
+        original_link = os.link
+        injected = []
+
+        def insert_link():
+            try:
+                self.output.symlink_to(target)
+            except OSError as error:
+                if os.name != 'nt' or getattr(error, 'winerror', None) not in (5, 1314):
+                    raise
+                self.skipTest('Windows denied symlink creation (winerror %s)' % error.winerror)
+            injected.append(self.output.readlink())
+
+        def racing_link(source, destination, *args, **kwargs):
+            if Path(destination) == self.output:
+                insert_link()
+            return original_link(source, destination, *args, **kwargs)
+
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with patch.object(license_cli, 'REPO_ROOT', self.repo), \
+                patch.object(license_server, 'REPO_ROOT', self.repo), \
+                patch.object(os, 'link', side_effect=racing_link):
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                rc = license_cli.main(self.flags())
+        self.assertEqual(len(injected), 1, 'must exercise the publication boundary')
+        with self.subTest(check='nonzero exit'):
+            self.assertNotEqual(rc, 0)
+        with self.subTest(check='no race target'):
+            self.assertFalse(target.exists(), 'race must not create another target')
+        self.assertTrue(self.output.is_symlink())
+        self.assertEqual(self.output.readlink(), injected[0])
+        self.assert_safe(subprocess.CompletedProcess([], rc, stdout.getvalue(), stderr.getvalue()))
+        self.assertEqual(list(self.outside.glob('.ali-license-*')), [], 'staging must be cleaned')
 
     def test_invalid_identifier_is_sanitized_and_never_writes(self):
         for bad in ('', 'pjLQ21gHzf#', '///////////',
@@ -372,7 +415,7 @@ class LicenseCLITests(unittest.TestCase):
         original_open = Path.open
         def failing_open(path, mode='r', *args, **kwargs):
             stream = original_open(path, mode, *args, **kwargs)
-            if mode == 'x' and path == self.output:
+            if mode == 'x' and path.name == 'license.tmp':
                 class BrokenWriter:
                     def __enter__(self):
                         return self
@@ -393,6 +436,8 @@ class LicenseCLITests(unittest.TestCase):
         self.assertNotEqual(rc, 0)
         self.assertFalse(self.output.exists(), 'partial output must be removed')
         self.assertFalse('SECRET_ERROR_MARKER' in stdout.getvalue() + stderr.getvalue())
+        self.assert_safe(subprocess.CompletedProcess([], rc, stdout.getvalue(), stderr.getvalue()))
+        self.assertEqual(list(self.outside.glob('.ali-license-*')), [], 'partial staging must be cleaned')
 
 
     def test_unsupported_python_exits_with_official_install_hint(self):
