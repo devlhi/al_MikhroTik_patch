@@ -38,6 +38,20 @@ python3 -m pip install PyYAML
 python3 -m unittest discover -s tests -v
 ```
 
+# Generator Windows — Ali Patch Code
+
+Untuk Windows, ikuti [panduan `generate-license.bat`](docs/windows-license.md).
+Unduh seluruh repo, siapkan Python 3.10+ dan dependensi, lalu klik dua kali
+`.bat`: pilih CHR/RouterOS, masukkan ID, simpan `.txt`. Generator mengecek
+signature/ID secara lokal, tidak mengirim apa pun ke router, dan **bukan bukti
+aktivasi firmware berhasil**. Kunci harus cocok dengan build lab; tidak ada
+keypair deployment baru dibuat.
+
+Build baru run [37207497763](https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763)
+menghasilkan artifact **x86 saja**; enam arsitektur lain gagal guard cakupan,
+dan rilis gabungan tidak dibuat. Boot dan aktivasi belum diuji. Rilis/tag lama
+tidak diganti; rincian serta batas verifikasi ada di [HANDOFF](docs/HANDOFF.md#13-fokus-github-dan-launcher-windows--status-parsial-2026-10-04).
+
 # Panel lisensi lab lokal — Ali Patch Code
 
 Untuk alur **tempel System ID / Software ID → buat → salin / unduh**, lihat

@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6). Verifier aset CHR x86 7.24.4 memakai anchor vendor dalam delapan immediate (§9). Engine immediate x86 kini ter-commit daf390f (Capstone + preflight overlap, review delta lulus; §11); aktivasi tetap belum terbukti, disk lab masih reboot-loop (§9).**
+**Status diperbarui: 2026-10-04 (WITA): build GitHub `37207497763` pada `c636fa6` selesai: x86 sukses, enam arsitektur lain diblokir guard mapping 1, job rilis skipped (§13). Artifact x86 mempunyai 18 aset; boot/aktivasi belum diuji. Engine immediate x86 ter-commit `daf390f` (§11); VM pemilik tetap free (§6), disk lab sebelumnya reboot-loop (§9). Launcher Windows selesai; review independen MENOLAK (symlink dangling diikuti → fix satu baris + 2 tes regresi selesai dan direproduksi parent GREEN; suite penuh 271 total, 267 lulus, 4 cmd.exe skip). Review delta fix lulus dan diterima pada fingerprint tercatat; belum dipush/diuji di Windows (§13).**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -803,6 +803,118 @@ kesamaan byte seluruh file perubahan setelah push.
   aktivasi lisensi setelah reboot tetap belum terbukti**. Persetujuan matcher
   terbatas pada versi source dan fixture sintetis yang dijelaskan di §11.
 
+### 13. Fokus GitHub dan launcher Windows — status parsial (2026-10-04)
+
+Pemilik membatalkan rencana build/QEMU lokal dan meminta fokus GitHub serta
+file `.bat` untuk generator lisensi lab. Build manual `patch7.yml` didispatch
+pada `c636fa654f23b807b2adb51e24106396783cb246` dengan
+`create_draft_release=true`; run `37207497763` selesai **failure** secara
+keseluruhan.[8] Tidak ada akses VM pemilik atau build/probe QEMU baru.
+
+- **x86 sukses**, dengan artifact `11305142056`, nama
+  `ali-patch-code-x86-7.24.4`, ukuran arsip **1.017.399.188 byte**. Log staging
+  menyebut 18 aset. Metadata ZIP diambil lewat HTTPS byte ranges: **21 entri
+  unik = 18 aset + 3 metadata**, daftar aset cocok persis dengan
+  `release_assets.expected_sources`, ukuran ZIP cocok dengan manifest, dan
+  seluruh 18 digest pada `SHA256SUMS` cocok dengan manifest. Pemeriksaan ini
+  **belum hash ulang isi biner**; unduhan utuh sebelumnya timeout dengan 0 byte
+  tersimpan. Percobaan unduhan range dihentikan setelah lebih dari 10 menit
+  tanpa kemajuan terlapor; file sparse lokal bukan bukti unduhan lengkap.
+  Verifikasi hash isi biner masih terblokir. `boot_tested` tetap `false`.
+- **arm, arm64, mipsbe, mmips, smips, ppc gagal**. Ketujuh log job diperiksa;
+  seluruh enam kegagalan memuat `no replacement for required mapping(s) 1 in
+  system package; signing blocked`. Mapping 1 ialah kunci lisensi pada CLI
+  `patch.py`. ARM64 gagal saat patch NPK di ISO; lima lainnya saat patch NPK
+  mandiri. Ini bukti pola tidak ditemukan oleh transformer saat ini, **bukan
+  bukti lokasi atau representasi kunci non-x86 sudah didiagnosis**. Guard
+  tidak diubah/dilewati dan tidak ada artifact non-x86 dari run ini.
+- Job `release` **skipped**, sehingga permintaan draft tidak menghasilkan
+  draft rilis gabungan. Tag/aset rilis lama tidak diganti. Artifact Actions
+  tercatat kedaluwarsa **2026-10-18T14:04:00Z**; bukan rilis permanen.
+- Bukti tersanitasi: [rekaman CI dan manifest](evidence/ci-7.24.4-run37207497763.json).
+  Record membedakan digest yang dilaporkan GitHub/manifest, metadata yang
+  diverifikasi, serta hash biner yang belum selesai. Error helper awal
+  (`total_count`, HTTP 415/403, timeout) tidak dihapus dari catatan.
+- Launcher `generate-license.bat`, companion `scripts/license_cli.py`, serta
+  dua modul tes sudah dibuat. `license_util.py` adalah modul, **bukan CLI**;
+  draft tes parent yang mengasumsikan sebaliknya ditolak/diganti. Batch hanya
+  membuka menu, tidak meneruskan argumen atau input ID melalui shell. CLI
+  menyediakan flags terpisah, memeriksa signature/jenis/ID dan kecocokan kunci
+  terhadap workflow sebelum menyimpan, menolak overwrite, dan tidak mencetak
+  private key atau license body. Panduan: [Windows](windows-license.md).
+- **Tes parent aktual:** focused **49 total, 45 lulus, 4 skip** (33.591 detik);
+  full suite **269 total, 265 lulus, 4 skip** (102.585 detik), returncode 0.
+  Empat skip semuanya cmd.exe native pada macOS; bukan tes Windows sukses.
+  SquashFS/Node tersedia, Caddy diaktifkan. Pipeline parent mempertahankan
+  exit code perintah tes melalui `PIPESTATUS`, tetapi hanya ringkasan terminal disimpan; jangan menyebut
+  run parent itu mempunyai capture lengkap. `pip check`, `git diff --check`,
+  actionlint 1.7.12 workflow Windows, aturan ignore hasil, dan atribut batch
+  semuanya lulus. `.gitattributes` mempertahankan byte CRLF batch di checkout.
+- **Bukti tahan lama:** [verifikasi Windows/CLI](evidence/windows-license-verification.json)
+  memuat 51 rekaman implementer RED/GREEN/failure, fingerprint source,
+  batas tes, dan rerun parent terpisah. Implementer melaporkan dua percobaan
+  in-process sempat membaca workflow aktual karena root helper tidak ikut
+  diisolasi; tidak mencetak/mengubah nilai kunci. Tes akhir mengisolasi root
+  CLI **dan** helper server. Kegagalan harness/refactor awal dipertahankan.
+- **Review independen `deleg_6132069f`: TIDAK lulus (bukan `{}`):** reviewer
+  menemukan defect kontrak nyata — `scripts/license_cli.py` baris 95–98
+  melakukan `Path(...).resolve()` pada jalur output sebelum `open('x')`,
+  sehingga **symlink dangling yang sudah ada diikuti**: lisensi malah dibuat
+  di target baru dan exit 0, padahal kontrak menolak nama output yang sudah
+  ada. Parent mereproduksi sendiri lewat probe sintetis terisolasi:
+  `dangling-link` → rc 0, target tercipta, link tetap ada (**kontrak gagal**);
+  kontrol `fresh` (rc 0 + ID cocok), `existing-regular` (rc≠0, isi dijaga),
+  dan symlink ke target yang sudah ada (rc≠0, isi target dijaga) semuanya
+  benar. Verdict lengkap + bukti reviewer:
+  `scratch/windows-license-independent-review-7tawltxz/`; rekaman parent
+  `parent-symlink-red.json` (probe dir sementara). Catatan: hasil review yang
+  sampai ke parent tampil sebagai objek kosong `{}`; verdict asli diambil
+  dari `verdict.json` reviewer — kegagalan transport ringkasan bukan approval.
+- **Fix `deleg_e4d96de0` selesai:** satu baris produksi `resolve()` → `absolute()`,
+  sehingga komponen symlink output tidak diikuti sebelum exclusive `open('x')`;
+  dua tes regresi melindungi link dangling dan link ke target existing.
+  Fix-agent membuktikan RED (dua subtest gagal pada source awal; kontrol
+  fresh sign+parse lulus), kemudian **27 tes CLI lulus, 0 skip**.
+  Parent mengulang probe miliknya: **4/4 kontrak lulus**, link tetap utuh,
+  target dangling tidak tercipta, fresh output tetap sign+parse.
+  Suite penuh parent sesudah fix: **271 total, 267 lulus, 4 cmd.exe skip**,
+  returncode 0 (99.972 detik); hanya ringkasan terminal retained untuk run ini.
+  Fingerprint lima file source diperiksa; hanya CLI dan tes CLI berubah dari
+  payload review awal. Bukti reviewer, RED/GREEN fix-agent, dan reproduksi
+  parent: [review Windows](evidence/windows-license-review.json).
+  **Review delta `deleg_0689555e` lulus dan diterima parent:** 0 security
+  concerns, 0 logic errors; tiga tes yang diizinkan benar-benar lulus (0 skip,
+  2.200 detik). Parent memeriksa lima pin source, payload delta, digest log
+  tes dan seluruh cek pin reviewer; semuanya cocok. Bukti lengkap reviewer
+  telah disalin tersanitasi ke JSON review di atas. Approval hanya untuk
+  source/fix launcher, **bukan firmware**. Suite parent diulang setelah
+  penerimaan: **271 total, 267 lulus, 4 cmd.exe skip**, returncode 0
+  (116.808 detik; ringkasan terminal, bukan capture penuh). Strict sources,
+  actionlint dan `git diff --check` kembali lulus. Push belum dilakukan
+  saat catatan pra-commit ini ditulis.
+  Scan baris tambahan: tidak ada token/material kunci baru. Scan awal seluruh
+  README menemukan dua contoh blok lisensi legacy; perbandingan dengan HEAD
+  memastikan keduanya tidak berubah/tidak ditambahkan pada delta. Pemeriksaan
+  diagnostik sempat menampilkan contoh legacy beserta argumen kunci di output
+  tool; nilainya tidak disalin ke bukti baru. Ini bukan klaim repo bebas secret.
+  Workflow kunci dan konfigurasi deployment tetap byte-identik dengan HEAD.
+- Workflow Windows native Python **3.10 dan 3.14** sudah lulus actionlint,
+  tetapi belum dipush/dijalankan. Validasi terakhir juga lulus strict sources,
+  parse tiga JSON bukti, dan `git diff --check`; fetch remote tetap 0 ahead/
+  0 behind pada `c636fa6`.
+  Pemilik menyetujui commit/push launcher, tes, workflow Windows, dan dokumentasi
+  ke `main` melalui konfirmasi UI; izin itu tidak mencakup penggantian aset/tag
+  rilis lama.
+- Batas bukti tetap: belum terbukti firmware x86 ini boot/login atau menerima
+  lisensi setelah reboot. Generator/parser konsisten hanya menguji bentuk
+  payload, ID, dan signature; jangan melabeli artifact siap produksi atau
+  aktivasi pasti berhasil. Kunci deployment tidak diganti.
+
+**Titik lanjut:** commit/push launcher yang telah diterima sesuai izin, lalu
+periksa tes native Windows dan kesamaan source publik. Verifikasi hash biner
+artifact masih terblokir unduhan. Jangan tandai launcher teruji Windows
+hanya dari tes Python macOS atau pemeriksaan struktur batch.
+
 ## Yang bisa / perlu dikerjakan selanjutnya
 
 1. **Lanjutkan investigasi laporan boot VMware** (lihat §5): identifikasi ISO dan
@@ -907,3 +1019,4 @@ env -u PYTHONPATH TMPDIR="$HOME/.hermes/cache/scratch" \
 [5] https://help.mikrotik.com/docs/spaces/ROS/pages/18350234/Cloud+Hosted+Router+CHR — MikroTik CHR licensing docs (current page)
 [6] https://download.mikrotik.com/routeros/7.24.4/chr-7.24.4.img.zip
 [7] https://api.github.com/repos/devlhi/al_MikhroTik_patch/releases/tags/7.24.4
+[8] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763 — GitHub Patch v7 c636fa6: x86 sukses, enam gagal

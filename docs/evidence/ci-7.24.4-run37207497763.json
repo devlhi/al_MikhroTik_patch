@@ -1,0 +1,310 @@
+{
+  "scope": "CI build and artifact metadata only; not runtime acceptance",
+  "source_commit": "c636fa654f23b807b2adb51e24106396783cb246",
+  "run": {
+    "id": 37207497763,
+    "html_url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-04T13:57:46Z",
+    "updated_at": "2026-10-04T14:04:36Z"
+  },
+  "jobs": [
+    {
+      "name": "patch (arm64)",
+      "job_id": 111451653443,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "5d2a7377dd2694738f92f3945d08d1265d57c32708f51b5420f6cb6bf70acf49",
+      "failed_steps": [
+        "Patch mikrotik-7.24.4-arm64.iso"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:29.1597147Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:29.1742209Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 4
+      }
+    },
+    {
+      "name": "patch (ppc)",
+      "job_id": 111451653622,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "56aa99dcc2f73e97533b180945c56586d676b04205e178c8143a737c3da71dbc",
+      "failed_steps": [
+        "Patch routeros-7.24.4-ppc.npk & all_packages-ppc-7.24.4.zip"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:22.7506093Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:22.7661258Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 7
+      }
+    },
+    {
+      "name": "patch (smips)",
+      "job_id": 111451653648,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "5cda7f7f4bc8f9d709e6ae3c17748a2ad9b50e1913afd48c6a6ed2bd2f81bacf",
+      "failed_steps": [
+        "Patch routeros-7.24.4-smips.npk & all_packages-smips-7.24.4.zip"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:11.3341201Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:11.3519893Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 4
+      }
+    },
+    {
+      "name": "patch (x86)",
+      "job_id": 111451653661,
+      "conclusion": "success",
+      "log_fetched": true,
+      "sanitized_log_sha256": "cdf73fc6e3806c2ebbd1690692df0a84c29f2fae42847fcce5ad3bb870889aaf",
+      "failed_steps": [],
+      "error_lines": [],
+      "stage_lines": [
+        "2026-10-04T14:04:00.7953684Z staged 18 x86 assets into dist/x86"
+      ],
+      "mapping_counts": {
+        "1": 9,
+        "2": 43
+      }
+    },
+    {
+      "name": "patch (arm)",
+      "job_id": 111451653685,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "18c1a5a468f87e35f9fdee77bdaf1e9fada8e1b04c9323af4a22e7b77d8ed884",
+      "failed_steps": [
+        "Patch routeros-7.24.4-arm.npk & all_packages-arm-7.24.4.zip"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:06.5969998Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:06.6136709Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 4
+      }
+    },
+    {
+      "name": "patch (mmips)",
+      "job_id": 111451653694,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "7c0b9f9ef9dcf53813bc93f745764d62b9a100b72777b91ac90bde2af2940238",
+      "failed_steps": [
+        "Patch routeros-7.24.4-mmips.npk & all_packages-mmips-7.24.4.zip"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:10.7922978Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:10.8082605Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 4
+      }
+    },
+    {
+      "name": "patch (mipsbe)",
+      "job_id": 111451653707,
+      "conclusion": "failure",
+      "log_fetched": true,
+      "sanitized_log_sha256": "3ec601fbdac850967b12a4757394aef663fdcd4b2c90c76f588f6059d15ad4d9",
+      "failed_steps": [
+        "Patch routeros-7.24.4-mipsbe.npk & all_packages-mipsbe-7.24.4.zip"
+      ],
+      "error_lines": [
+        "2026-10-04T13:58:07.2926153Z ValueError: no replacement for required mapping(s) 1 in system package; signing blocked",
+        "2026-10-04T13:58:07.3080955Z ##[error]Process completed with exit code 1."
+      ],
+      "stage_lines": [],
+      "mapping_counts": {
+        "1": 0,
+        "2": 4
+      }
+    },
+    {
+      "name": "release",
+      "job_id": 111452919689,
+      "conclusion": "skipped",
+      "log_fetched": false
+    }
+  ],
+  "artifact": {
+    "id": 11305142056,
+    "name": "ali-patch-code-x86-7.24.4",
+    "size_in_bytes": 1017399188,
+    "digest": "sha256:0524565729356920ca1bdc312700ff0c7354dc0c3af58b9dc1065a61317a1368",
+    "created_at": "2026-10-04T14:04:31Z",
+    "expires_at": "2026-10-18T14:04:00Z",
+    "expired": false
+  },
+  "manifest": {
+    "brand": "Ali Patch Code",
+    "routeros_version": "7.24.4",
+    "architecture": "x86",
+    "boot_tested": false,
+    "assets": [
+      {
+        "source": "routeros-7.24.4-patched.npk",
+        "filename": "ali-patch-code-x86-routeros-7.24.4-patched.npk",
+        "size": 20524705,
+        "sha256": "9d8b97c64f8c56dfd224a29f796f061c9bcb9d4241946be047966742d680a6ec"
+      },
+      {
+        "source": "all_packages-7.24.4-patched.zip",
+        "filename": "ali-patch-code-x86-all_packages-7.24.4-patched.zip",
+        "size": 30850620,
+        "sha256": "018b97da49f94dbc4beeab196cc9fa084d5ea2de899146c1803e26e885eb44b3"
+      },
+      {
+        "source": "mikrotik-7.24.4-patched.iso",
+        "filename": "ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+        "size": 71161856,
+        "sha256": "6fa8ce78a144ed3b7f8a527d1b550fae40f3a17349cad57375e40897aa604a0d"
+      },
+      {
+        "source": "chr-7.24.4-patched.img.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+        "size": 65563314,
+        "sha256": "2cd177c9e9c60f1e97ff3b662a9b75311778fafaf52c63a22de5ffa5beffbb94"
+      },
+      {
+        "source": "chr-7.24.4-patched.qcow2.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+        "size": 65485439,
+        "sha256": "3d690d3e1b8d441c32a2eddd9e133b8922e227466340a062592d6a8d0c54650c"
+      },
+      {
+        "source": "chr-7.24.4-patched.vmdk.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+        "size": 65484382,
+        "sha256": "8dab31741761959ee4ed9e26d2d9abd6e7144f6fe68f95e3ed9e083a5c2f7e4f"
+      },
+      {
+        "source": "chr-7.24.4-patched.vhd.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+        "size": 65510569,
+        "sha256": "78730388d3e5fdce2e9d12e4cf674f3ba883d1efc295151745f8ce86179caba6"
+      },
+      {
+        "source": "chr-7.24.4-patched.vhdx.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+        "size": 65538907,
+        "sha256": "bfdd604c6e037a2e18a1db4e27e911c56db12dcdb7c29aef87a56b385e2fe840"
+      },
+      {
+        "source": "chr-7.24.4-patched.vdi.zip",
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+        "size": 65501205,
+        "sha256": "a1e81d4d62168cc168003178915da7a6c7c71763fd0bd60e79691ec9426111f7"
+      },
+      {
+        "source": "netinstall-7.24.4-patched.zip",
+        "filename": "ali-patch-code-x86-netinstall-7.24.4-patched.zip",
+        "size": 36183206,
+        "sha256": "0152c00101af660f4779b57d1f1271e5da5d69e4982fa35b17aeebe97449c69c"
+      },
+      {
+        "source": "netinstall64-7.24.4-patched.zip",
+        "filename": "ali-patch-code-x86-netinstall64-7.24.4-patched.zip",
+        "size": 36220441,
+        "sha256": "92cb122f454404eeb7c152dbc61132e8f847dfdc019988376eeb76f2a94a424a"
+      },
+      {
+        "source": "netinstall-7.24.4-patched.tar.gz",
+        "filename": "ali-patch-code-x86-netinstall-7.24.4-patched.tar.gz",
+        "size": 43593929,
+        "sha256": "2eabc7061f192156017ab1cf2eefea3fe7913e6a5460f64e3989be0a91bbc99a"
+      },
+      {
+        "source": "install-image-7.24.4-patched.img.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.img.zip",
+        "size": 69182017,
+        "sha256": "ea79d7f5e0533d4ef9b5dd6267240ca312e44a6e1c9d7b614e1c12fdb8764a6e"
+      },
+      {
+        "source": "install-image-7.24.4-patched.qcow2.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.qcow2.zip",
+        "size": 69057487,
+        "sha256": "f25ff30b729716798a5e05c5189a09bfba290f3c9e8b423a03e5b104618da2c2"
+      },
+      {
+        "source": "install-image-7.24.4-patched.vmdk.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vmdk.zip",
+        "size": 69054890,
+        "sha256": "5353745d576f468bb187aef7cd51ba70591290ba50d1c0a5918118e64e7a2a98"
+      },
+      {
+        "source": "install-image-7.24.4-patched.vhd.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vhd.zip",
+        "size": 69057096,
+        "sha256": "4ac9c1400cc47a0dd329fdacc8d57c5fb81fdaa7a756aefdb9a81145592672a4"
+      },
+      {
+        "source": "install-image-7.24.4-patched.vhdx.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vhdx.zip",
+        "size": 69068663,
+        "sha256": "01db3430147b4f0f7be35c5231cc236b61c777e434b6616b2d1823e1054b8080"
+      },
+      {
+        "source": "install-image-7.24.4-patched.vdi.zip",
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vdi.zip",
+        "size": 69054695,
+        "sha256": "a94bbd464c8751057e1a28ac4e36b67a4c18ff784b24fec03c83e7d97d0bd714"
+      }
+    ]
+  },
+  "metadata_verification": {
+    "unique_asset_count": 18,
+    "zip_entry_count": 21,
+    "expected_sources_exact_match": true,
+    "zip_size_metadata_matches_manifest": true,
+    "checksum_list_matches_manifest": true,
+    "metadata_download_method": "HTTPS byte ranges with ZIP CRC validation; full body download timed out before any bytes"
+  },
+  "binary_verification": {
+    "full_archive_sha256_verified": false,
+    "asset_sha256_verified_count": 0,
+    "status": "blocked: whole-body download timed out with zero stored bytes; range download stopped after over 10 minutes without reported progress. Sparse destination is not a verified download. Metadata match is not binary hashing."
+  },
+  "runtime": {
+    "boot_tested": false,
+    "activation_tested": false,
+    "owner_vm_accessed": false
+  },
+  "publication": {
+    "draft_release_created": false,
+    "release_job": "skipped",
+    "existing_tags_or_assets_modified": false
+  },
+  "download_errors": [
+    "Initial API helper used wrong total-count key; fixed to total_count.",
+    "Initial artifact Accept application/zip rejected HTTP 415; fixed to application/vnd.github+json.",
+    "Initial default urllib redirect carried Authorization to GitHub-provided Azure storage and received HTTP 403; corrected to credential-free HTTPS storage requests.",
+    "Whole-body artifact download timed out with zero stored bytes; switched to validated byte ranges."
+  ],
+  "limitations": [
+    "Mapping 1 not found by current transformation in all six non-x86 jobs; underlying representation and compatibility not diagnosed.",
+    "Source matcher approval and successful x86 signing do not prove boot or license activation.",
+    "Existing historical firmware release remains unchanged; this artifact belongs to the new Actions run."
+  ]
+}

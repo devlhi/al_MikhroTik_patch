@@ -1,0 +1,391 @@
+{
+  "scope": "Independent Windows-launcher review; rejected output-symlink behavior before publication",
+  "delegation": "deleg_6132069f",
+  "returned_summary": {},
+  "review_transport_issue": "Empty returned summary was not accepted. Actual rejected verdict read from reviewer-owned verdict.json and parent independently reproduced the failing contract.",
+  "reviewed_source": {
+    "generate-license.bat": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+    "scripts/license_cli.py": "112f9381519feeb0ed1311c7931323d6a89fd6621c18069351def3b8425f93e0",
+    "tests/test_license_cli.py": "392d7a5fcc5dbc5ef779ed10f2b442f19b8363a9a5a01fb05c7a628b07de5ca6",
+    "tests/test_windows_bat.py": "1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20",
+    ".github/workflows/windows-license.yml": "7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c"
+  },
+  "reviewed_payload_sha256": "75e7c43dc1f2ba5792c2dce3b5066e538cec13a21bdb077a5a9c43301173e741",
+  "reviewer_record_count": 8,
+  "reviewer_records": {
+    "diff-vs-disk.json": {
+      "generate-license.bat": {
+        "disk_sha256": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+        "match_lf": false,
+        "match_crlf": true
+      },
+      "scripts/license_cli.py": {
+        "disk_sha256": "112f9381519feeb0ed1311c7931323d6a89fd6621c18069351def3b8425f93e0",
+        "match_lf": true,
+        "match_crlf": false
+      },
+      "tests/test_license_cli.py": {
+        "disk_sha256": "392d7a5fcc5dbc5ef779ed10f2b442f19b8363a9a5a01fb05c7a628b07de5ca6",
+        "match_lf": true,
+        "match_crlf": false
+      },
+      "tests/test_windows_bat.py": {
+        "disk_sha256": "1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20",
+        "match_lf": true,
+        "match_crlf": false
+      },
+      ".github/workflows/windows-license.yml": {
+        "disk_sha256": "7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c",
+        "match_lf": true,
+        "match_crlf": false
+      }
+    },
+    "focused-tests-observed.json": {
+      "invocation": "env -u PYTHONPATH TMPDIR=<scratch> <repo>/venv/bin/python -B -m unittest tests.test_license_cli tests.test_windows_bat tests.test_license_util -v",
+      "summary_observed": "Ran 49 tests in 29.252s; OK (skipped=4)",
+      "reported_tests": 49,
+      "executed_passes": 45,
+      "native_windows_skips": 4,
+      "host": "macOS",
+      "terminal_command_exit": 0,
+      "capture_limitation": "Output was piped through tail -35 without pipefail. The displayed unittest summary is OK; the Python process exit was not captured independently. No full-suite rerun.",
+      "test_output_retained": "Summary and last-35-line observations only, not a raw stdout log."
+    },
+    "harness-observed.json": {
+      "initial_diff_reconstruction": {
+        "terminal_exit": 1,
+        "reason": "Reviewer harness omitted the final newline, making all five byte comparisons fail.",
+        "effect": "The && chain did not run the test command in this attempt."
+      },
+      "corrected_diff_reconstruction": {
+        "terminal_exit": 0,
+        "result": "All five reconstructed files match the pinned source bytes: batch CRLF, others LF.",
+        "evidence": "diff-vs-disk.json"
+      },
+      "synthetic_subprocess_probes": {
+        "terminal_exit": 0,
+        "result": "Fresh output signed/verified; existing regular output refused/preserved; existing dangling symlink accepted and its absent target created; cyclic link refused.",
+        "evidence": "probes-results.json"
+      },
+      "scope": "Only supplied diff, limited helper source reads, focused tests and own synthetic probes. No deployment key reads, network, VM, firmware, native Windows execution, git mutation or repository edits. Private fixture and generated license files removed."
+    },
+    "pins-after.json": {
+      "head": "c636fa654f23b807b2adb51e24106396783cb246",
+      "head_matches": true,
+      "source": {
+        "generate-license.bat": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+        "scripts/license_cli.py": "112f9381519feeb0ed1311c7931323d6a89fd6621c18069351def3b8425f93e0",
+        "tests/test_license_cli.py": "392d7a5fcc5dbc5ef779ed10f2b442f19b8363a9a5a01fb05c7a628b07de5ca6",
+        "tests/test_windows_bat.py": "1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20",
+        ".github/workflows/windows-license.yml": "7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c"
+      },
+      "source_matches": {
+        "generate-license.bat": true,
+        "scripts/license_cli.py": true,
+        "tests/test_license_cli.py": true,
+        "tests/test_windows_bat.py": true,
+        ".github/workflows/windows-license.yml": true
+      },
+      "payload_sha256": "75e7c43dc1f2ba5792c2dce3b5066e538cec13a21bdb077a5a9c43301173e741",
+      "payload_matches": true
+    },
+    "pins-before.json": {
+      "head": "c636fa654f23b807b2adb51e24106396783cb246",
+      "head_matches": true,
+      "source": {
+        "generate-license.bat": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+        "scripts/license_cli.py": "112f9381519feeb0ed1311c7931323d6a89fd6621c18069351def3b8425f93e0",
+        "tests/test_license_cli.py": "392d7a5fcc5dbc5ef779ed10f2b442f19b8363a9a5a01fb05c7a628b07de5ca6",
+        "tests/test_windows_bat.py": "1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20",
+        ".github/workflows/windows-license.yml": "7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c"
+      },
+      "source_matches": {
+        "generate-license.bat": true,
+        "scripts/license_cli.py": true,
+        "tests/test_license_cli.py": true,
+        "tests/test_windows_bat.py": true,
+        ".github/workflows/windows-license.yml": true
+      },
+      "payload_sha256": "75e7c43dc1f2ba5792c2dce3b5066e538cec13a21bdb077a5a9c43301173e741",
+      "payload_matches": true
+    },
+    "probes-results.json": {
+      "python": "3.14.6",
+      "probes": {
+        "ordinary_new_output": {
+          "returncode": 0,
+          "stdout": "Tersimpan: <scratch>/windows-license-independent-review-7tawltxz/new-output.txt\ncustom-lab-only: bukan lisensi resmi MikroTik; penerimaan atau aktivasi firmware belum dibuktikan.\n",
+          "stderr": "<scratch>/windows-license-independent-review-7tawltxz/synthetic lab & !/toyecc/ShortWeierstrassCurve.py:90: SyntaxWarning: \"\\p\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\p\"? A raw string is also an option.\n  \\phi in the field (i.e. that the curve is commonly known as a 'Koblitz\n",
+          "traceback": false,
+          "verified_correct_id_and_kind": true
+        },
+        "ordinary_existing_output": {
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "<scratch>/windows-license-independent-review-7tawltxz/synthetic lab & !/toyecc/ShortWeierstrassCurve.py:90: SyntaxWarning: \"\\p\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\p\"? A raw string is also an option.\n  \\phi in the field (i.e. that the curve is commonly known as a 'Koblitz\nBerkas output sudah ada; tidak ditimpa.\n",
+          "traceback": false,
+          "original_preserved": true
+        },
+        "existing_dangling_symlink": {
+          "output_name_preexists": true,
+          "target_preexists": false,
+          "returncode": 0,
+          "stdout": "Tersimpan: <scratch>/windows-license-independent-review-7tawltxz/previously-missing-target.txt\ncustom-lab-only: bukan lisensi resmi MikroTik; penerimaan atau aktivasi firmware belum dibuktikan.\n",
+          "stderr": "<scratch>/windows-license-independent-review-7tawltxz/synthetic lab & !/toyecc/ShortWeierstrassCurve.py:90: SyntaxWarning: \"\\p\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\p\"? A raw string is also an option.\n  \\phi in the field (i.e. that the curve is commonly known as a 'Koblitz\n",
+          "traceback": false,
+          "target_created": true,
+          "link_still_present": true,
+          "contract_satisfied": false
+        },
+        "cyclic_symlink_output": {
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "<scratch>/windows-license-independent-review-7tawltxz/synthetic lab & !/toyecc/ShortWeierstrassCurve.py:90: SyntaxWarning: \"\\p\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\p\"? A raw string is also an option.\n  \\phi in the field (i.e. that the curve is commonly known as a 'Koblitz\nBerkas output sudah ada; tidak ditimpa.\n",
+          "traceback": false,
+          "loop_remains_symlink": true
+        }
+      }
+    },
+    "static-scan.json": {
+      "payload_sha256": "75e7c43dc1f2ba5792c2dce3b5066e538cec13a21bdb077a5a9c43301173e741",
+      "file_count": 5,
+      "added_line_count": 838,
+      "matches_by_diff_line": {
+        "hardcoded-secrets": [],
+        "private-marker": [],
+        "token": [],
+        "shell-injection": [],
+        "eval": [],
+        "pickle": [],
+        "hex64": []
+      }
+    },
+    "verdict.json": {
+      "passed": false,
+      "security_concerns": [],
+      "logic_errors": [
+        {
+          "file": "scripts/license_cli.py",
+          "lines": "95-98",
+          "issue": "Resolving the output path before exclusive creation follows an existing dangling symlink, violating the contract to refuse an existing output name.",
+          "minimal_repro": "In an isolated lab with an ephemeral key file, create output.txt as a symlink to absent target.txt. Run python -B scripts/license_cli.py --kind chr --id pjLQ21gHzfI --output output.txt --private-key-file ephemeral.hex. Observed on macOS/Python 3.14.6: exit 0, target.txt created, original output symlink still present. Expected: nonzero and no target creation.",
+          "fix": "Do not resolve the final output component before opening it exclusively; preserve refusal of pre-existing directory entries and add this regression test.",
+          "evidence": "<scratch>/windows-license-independent-review-7tawltxz/probes-results.json"
+        }
+      ],
+      "suggestions": [
+        "Native cmd.exe behavior remains unverified locally: all four native cases were explicitly skipped on macOS. Require the supplied Windows CI matrix results before claiming Windows execution is verified; this availability limit is not itself a product defect."
+      ],
+      "summary": "Fail: an existing dangling output symlink is accepted and redirected to a newly created target. All five source pins and the diff SHA256 remained unchanged; added-line static scan found zero hits. Focused tests reported 49 tests, 45 passes and four honest Windows skips. Only own new scratch evidence was created; no firmware compatibility established.",
+      "evidence_path": "<scratch>/windows-license-independent-review-7tawltxz"
+    }
+  },
+  "reviewer_record_fingerprints": {
+    "diff-vs-disk.json": "c807645cbd8e8c55b4a99b13b00d67436925267865488212dfd820b7bed061bf",
+    "focused-tests-observed.json": "bd3c31f003aa52213faf7c2cc81db515da44748e7e5f84a7fb729ee23778214d",
+    "harness-observed.json": "daa5966395241c7c9a2d62c6c54d8bea20e15e6342cdc3290e0748297137d078",
+    "pins-after.json": "0f247ab0bb4d5ccf91031bed05c33438b134390766add1401b9458a43be2f3be",
+    "pins-before.json": "0f247ab0bb4d5ccf91031bed05c33438b134390766add1401b9458a43be2f3be",
+    "probes-results.json": "1699554e58fb90fe9ab9f43299e4b130fd2278e15eeae245b69a1ee0151b287b",
+    "static-scan.json": "f29d7766194ca9b00aa1e23aee6d34302336626b2737a143711fa1ecff87fef0",
+    "verdict.json": "03e7cfe71d556cbbdec57fbe6fb741aafbf46638ba71236f8d4389c4104fe18a"
+  },
+  "parent_probe_source": "\"\"\"Parent-owned synthetic probe; only writes a new temporary scratch dir.\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nimport shutil\nimport subprocess\nimport sys\nimport tempfile\n\nROOT = Path('<repo>')\nBASE = Path(__file__).resolve().parent\n\n\ndef main():\n    records = []\n    with tempfile.TemporaryDirectory(prefix='symlink-probe-', dir=BASE) as directory:\n        base = Path(directory)\n        fixture = base / 'lab repo & !'\n        fixture.mkdir()\n        for name in ('license.py', 'mikro.py', 'sha256.py'):\n            shutil.copy2(ROOT / name, fixture / name)\n        shutil.copytree(ROOT / 'toyecc', fixture / 'toyecc',\n                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))\n        (fixture / 'scripts').mkdir()\n        for name in ('license_cli.py', 'license_util.py', 'license_server.py'):\n            shutil.copy2(ROOT / 'scripts' / name, fixture / 'scripts' / name)\n        sys.path.insert(0, str(fixture))\n        import license as fixture_license\n        from scripts import license_util\n        private, public = fixture_license.generate_kcdsa_keypair()\n        key = base / 'ephemeral.hex'\n        key.write_text(private.hex())\n        key.chmod(0o600)\n        env = {k: os.environ[k] for k in ('PATH', 'HOME', 'TMPDIR') if k in os.environ}\n        env.update(PYTHONIOENCODING='utf-8', PYTHONDONTWRITEBYTECODE='1')\n        for mode in ('fresh', 'existing-regular', 'dangling-link', 'existing-link'):\n            output = base / (mode + '.txt')\n            target = base / (mode + '-target.txt')\n            if mode == 'existing-regular':\n                output.write_text('KEEP')\n            elif mode == 'dangling-link':\n                output.symlink_to(target.name)\n            elif mode == 'existing-link':\n                target.write_text('KEEP')\n                output.symlink_to(target.name)\n            result = subprocess.run([sys.executable, '-B', str(fixture / 'scripts' / 'license_cli.py'),\n                '--kind', 'chr', '--id', 'pjLQ21gHzfI', '--output', str(output),\n                '--private-key-file', str(key)], capture_output=True, text=True,\n                env=env, cwd=base, timeout=30)\n            combined = result.stdout + result.stderr\n            assert private.hex() not in combined and '-----BEGIN MIKROTIK' not in combined\n            row = {'mode': mode, 'returncode': result.returncode,\n                   'target_created': target.exists(), 'link_still_present': output.is_symlink(),\n                   'traceback': 'Traceback' in combined}\n            if mode == 'fresh':\n                fields = license_util.parse(output.read_text(), public.hex())\n                row['contract_satisfied'] = result.returncode == 0 and fields['System ID'] == 'pjLQ21gHzfI'\n            elif mode == 'existing-regular':\n                row['contract_satisfied'] = result.returncode != 0 and output.read_text() == 'KEEP'\n            elif mode == 'existing-link':\n                row['contract_satisfied'] = result.returncode != 0 and target.read_text() == 'KEEP'\n            else:\n                row['contract_satisfied'] = result.returncode != 0 and not target.exists()\n            records.append(row)\n    destination = BASE / ('parent-symlink-' + ('green' if all(r['contract_satisfied'] for r in records) else 'red') + '.json')\n    destination.write_text(json.dumps(records, indent=2) + '\\n')\n    print(json.dumps(records, indent=2))\n    return 0 if all(r['contract_satisfied'] for r in records) else 1\n\n\nif __name__ == '__main__':\n    raise SystemExit(main())\n",
+  "parent_probe_source_sha256": "f19018b89357956da585796b6a089b5d235e6a75370dadd3616bee64929ef8aa",
+  "parent_reproduced_red": [
+    {
+      "mode": "fresh",
+      "returncode": 0,
+      "target_created": false,
+      "link_still_present": false,
+      "traceback": false,
+      "contract_satisfied": true
+    },
+    {
+      "mode": "existing-regular",
+      "returncode": 1,
+      "target_created": false,
+      "link_still_present": false,
+      "traceback": false,
+      "contract_satisfied": true
+    },
+    {
+      "mode": "dangling-link",
+      "returncode": 0,
+      "target_created": true,
+      "link_still_present": true,
+      "traceback": false,
+      "contract_satisfied": false
+    },
+    {
+      "mode": "existing-link",
+      "returncode": 1,
+      "target_created": true,
+      "link_still_present": true,
+      "traceback": false,
+      "contract_satisfied": true
+    }
+  ],
+  "parent_probe_returncode": 1,
+  "parent_harness_failure": "First shell reproduction attempt failed bash parsing before Python ran; replaced by parent-owned standalone probe. Not a product test failure.",
+  "review_adjudication": {
+    "accepted": false,
+    "fix_delegation": "deleg_e4d96de0",
+    "status": "minimal fix and regression pending"
+  },
+  "post_review_fix": {
+    "status": "fix implemented, parent-reproduced and independent delta review accepted",
+    "fix_delegation": "deleg_e4d96de0",
+    "fix_summary": {
+      "head": "c636fa654f23b807b2adb51e24106396783cb246",
+      "verdict": "defect fixed, minimal change, TDD RED->GREEN verified",
+      "root_cause": "scripts/license_cli.py line 95 Path(args.output).resolve() followed the final output symlink before open(\"x\"), so an existing dangling symlink was accepted (exit 0) and redirected creation to its target",
+      "fix": "one-line change: Path(args.output).resolve() -> Path(args.output).absolute() (lexical absolute path, no symlink resolution), exclusive open(\"x\") retained",
+      "cli_changed_lines": 1,
+      "tests_added": [
+        "test_dangling_output_symlink_is_refused_without_creating_target (RED on pinned source: returncode 0==0 and target created; GREEN after fix)",
+        "test_existing_output_symlink_is_refused_with_target_preserved (kept green, guards existing-target case)"
+      ],
+      "red": {
+        "command": "env -u PYTHONPATH TMPDIR=... venv/bin/python -B -m unittest ...test_dangling_output_symlink... ...test_chr_flags_sign_verify_save_outside_repo_cwd -v",
+        "result": "FAILED (failures=2): returncode 0 == 0; dangling target created True. Positive fresh-output control: ok",
+        "log": "red-run.txt"
+      },
+      "green_focused": {
+        "command": "env -u PYTHONPATH TMPDIR=/Users/djunardiali/.hermes/cache/scratch venv/bin/python -B -m unittest tests.test_license_cli -v",
+        "result": "Ran 27 tests in 27.935s, OK (0 skips on macOS)",
+        "log": "green-module.txt"
+      },
+      "green_regression_slice": "dangling-symlink test + fresh-output positive both ok immediately after fix (green-run-focused.txt)",
+      "git_diff_check": "exit 0 clean; per-file git diff --no-index --check (vs pinned before copies) also clean",
+      "final_sha256": {
+        "scripts/license_cli.py": "3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add",
+        "tests/test_license_cli.py": "fddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788"
+      },
+      "scope": "only scripts/license_cli.py + tests/test_license_cli.py edited; no staging/commit/push/stash/reset/restore; no firmware/key/network/device actions; no other scratch used",
+      "windows_skip_policy": "symlink tests run on Windows when creation succeeds; skip only on winerror 5 (access denied) or 1314 (privilege missing) with honest reason",
+      "full_suite": "not run per instruction (focused module only)"
+    },
+    "fix_records": {
+      "red-run.txt": "test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) ... \n  test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) (check='nonzero exit') ... FAIL\n  test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) (check='target remains absent') ... FAIL\ntest_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd) ... ok\n\n======================================================================\nFAIL: test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) (check='nonzero exit')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<repo>/tests/test_license_cli.py\", line 144, in test_dangling_output_symlink_is_refused_without_creating_target\n    self.assertNotEqual(result.returncode, 0)\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 == 0\n\n======================================================================\nFAIL: test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) (check='target remains absent')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<repo>/tests/test_license_cli.py\", line 148, in test_dangling_output_symlink_is_refused_without_creating_target\n    self.assertFalse(target.exists(), 'dangling target must not be created')\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false : dangling target must not be created\n\n----------------------------------------------------------------------\nRan 2 tests in 2.317s\n\nFAILED (failures=2)\n",
+      "green-run-focused.txt": "test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) ... ok\ntest_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 1.382s\n\nOK\n",
+      "green-module.txt": "test_argument_errors_do_not_echo_raw_input (tests.test_license_cli.LicenseCLITests.test_argument_errors_do_not_echo_raw_input) ... ok\ntest_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd) ... ok\ntest_corrupt_generated_signature_is_not_saved_or_printed (tests.test_license_cli.LicenseCLITests.test_corrupt_generated_signature_is_not_saved_or_printed) ... ok\ntest_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) ... ok\ntest_existing_output_file_is_refused_not_overwritten (tests.test_license_cli.LicenseCLITests.test_existing_output_file_is_refused_not_overwritten) ... ok\ntest_existing_output_symlink_is_refused_with_target_preserved (tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved) ... ok\ntest_explicit_bad_key_file_never_falls_back_or_leaks_contents (tests.test_license_cli.LicenseCLITests.test_explicit_bad_key_file_never_falls_back_or_leaks_contents) ... ok\ntest_interactive_chr_menu_uses_python_input_and_default_repo_output (tests.test_license_cli.LicenseCLITests.test_interactive_chr_menu_uses_python_input_and_default_repo_output) ... ok\ntest_interactive_eof_is_clean_nonzero_without_output (tests.test_license_cli.LicenseCLITests.test_interactive_eof_is_clean_nonzero_without_output) ... ok\ntest_interactive_existing_file_is_refused (tests.test_license_cli.LicenseCLITests.test_interactive_existing_file_is_refused) ... ok\ntest_interactive_invalid_output_path_is_sanitized (tests.test_license_cli.LicenseCLITests.test_interactive_invalid_output_path_is_sanitized) ... ok\ntest_interactive_menu_loop_retries_on_invalid_kind_choice (tests.test_license_cli.LicenseCLITests.test_interactive_menu_loop_retries_on_invalid_kind_choice) ... ok\ntest_interactive_ros_uses_unicode_output_path (tests.test_license_cli.LicenseCLITests.test_interactive_ros_uses_unicode_output_path) ... ok\ntest_invalid_identifier_is_sanitized_and_never_writes (tests.test_license_cli.LicenseCLITests.test_invalid_identifier_is_sanitized_and_never_writes) ... ok\ntest_key_priority_explicit_file_then_environment_then_default_file (tests.test_license_cli.LicenseCLITests.test_key_priority_explicit_file_then_environment_then_default_file) ... ok\ntest_keyboard_interrupt_exits_130_without_file (tests.test_license_cli.LicenseCLITests.test_keyboard_interrupt_exits_130_without_file) ... ok\ntest_malformed_workflow_is_sanitized_for_explicit_key (tests.test_license_cli.LicenseCLITests.test_malformed_workflow_is_sanitized_for_explicit_key) ... ok\ntest_missing_optional_yaml_only_blocks_workflow_loading (tests.test_license_cli.LicenseCLITests.test_missing_optional_yaml_only_blocks_workflow_loading) ... ok\ntest_missing_pair_config_fails_without_ambiguous_success (tests.test_license_cli.LicenseCLITests.test_missing_pair_config_fails_without_ambiguous_success) ... ok\ntest_output_write_failure_is_nonzero_without_traceback (tests.test_license_cli.LicenseCLITests.test_output_write_failure_is_nonzero_without_traceback) ... ok\ntest_partial_output_is_removed_on_write_error (tests.test_license_cli.LicenseCLITests.test_partial_output_is_removed_on_write_error) ... ok\ntest_ros_flags_sign_verify_save (tests.test_license_cli.LicenseCLITests.test_ros_flags_sign_verify_save) ... ok\ntest_selected_key_must_match_workflow_public_when_present (tests.test_license_cli.LicenseCLITests.test_selected_key_must_match_workflow_public_when_present) ... ok\ntest_unsupported_python_exits_with_official_install_hint (tests.test_license_cli.LicenseCLITests.test_unsupported_python_exits_with_official_install_hint) ... ok\ntest_workflow_fallback_rejects_mismatch_and_missing_pair (tests.test_license_cli.LicenseCLITests.test_workflow_fallback_rejects_mismatch_and_missing_pair) ... ok\ntest_workflow_pair_is_last_fallback_and_real_signature_verifies (tests.test_license_cli.LicenseCLITests.test_workflow_pair_is_last_fallback_and_real_signature_verifies) ... ok\ntest_wrong_payload_kind_is_rejected_before_save (tests.test_license_cli.LicenseCLITests.test_wrong_payload_kind_is_rejected_before_save) ... ok\n\n----------------------------------------------------------------------\nRan 27 tests in 27.935s\n\nOK"
+    },
+    "source": {
+      "generate-license.bat": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+      "scripts/license_cli.py": "3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add",
+      "tests/test_license_cli.py": "fddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788",
+      "tests/test_windows_bat.py": "1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20",
+      ".github/workflows/windows-license.yml": "7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c"
+    },
+    "delta_sha256": "e85d9e80b01e8f0ae40ac272f6ba502213ffff85804d1f9478c594a127e14bcd",
+    "parent_probe_green": [
+      {
+        "mode": "fresh",
+        "returncode": 0,
+        "target_created": false,
+        "link_still_present": false,
+        "traceback": false,
+        "contract_satisfied": true
+      },
+      {
+        "mode": "existing-regular",
+        "returncode": 1,
+        "target_created": false,
+        "link_still_present": false,
+        "traceback": false,
+        "contract_satisfied": true
+      },
+      {
+        "mode": "dangling-link",
+        "returncode": 1,
+        "target_created": false,
+        "link_still_present": true,
+        "traceback": false,
+        "contract_satisfied": true
+      },
+      {
+        "mode": "existing-link",
+        "returncode": 1,
+        "target_created": true,
+        "link_still_present": true,
+        "traceback": false,
+        "contract_satisfied": true
+      }
+    ],
+    "parent_probe_returncode": 0,
+    "parent_full_suite": {
+      "tests_run": 271,
+      "passed": 267,
+      "skipped": 4,
+      "returncode": 0,
+      "seconds": 99.972,
+      "capture": "Displayed summary and explicit SUITE_RC=0; full output not retained for this run.",
+      "skip_scope": "four native cmd.exe tests on macOS; SquashFS/Node and Caddy enabled"
+    },
+    "delta_review": {
+      "delegation": "deleg_0689555e",
+      "status": "accepted by parent; pinned delta only",
+      "passed": true,
+      "security_concerns": [],
+      "logic_errors": [],
+      "reviewer_verdict": {
+        "passed": true,
+        "security_concerns": [],
+        "logic_errors": [],
+        "summary": "Delta lulus: .absolute() mempertahankan symlink final sehingga open('x') menolak link menggantung maupun link ke berkas tanpa menciptakan atau mengubah target. Tiga tes yang diizinkan benar-benar dijalankan: 3 lulus, 0 skip, 2,200 detik, exit 0; kontrol positif berhasil menyimpan output baru. Lima pin sumber, diff SHA256, dan manifest tetap cocok sebelum/sesudah. Tidak ada perubahan repository atau eksekusi full suite, jaringan, VM, firmware, maupun skrip scratch pekerja lain. Bukti disimpan hanya di scratch reviewer; Windows native dan firmware belum diverifikasi, bukan cacat delta. RED tambahan tidak dijalankan.",
+        "evidence_path": "<scratch>/symlink-delta-independent-qzgswkxe/verdict.json"
+      },
+      "reviewer_records": {
+        "verdict.json": "{\n  \"passed\": true,\n  \"security_concerns\": [],\n  \"logic_errors\": [],\n  \"summary\": \"Delta lulus: .absolute() mempertahankan symlink final sehingga open('x') menolak link menggantung maupun link ke berkas tanpa menciptakan atau mengubah target. Tiga tes yang diizinkan benar-benar dijalankan: 3 lulus, 0 skip, 2,200 detik, exit 0; kontrol positif berhasil menyimpan output baru. Lima pin sumber, diff SHA256, dan manifest tetap cocok sebelum/sesudah. Tidak ada perubahan repository atau eksekusi full suite, jaringan, VM, firmware, maupun skrip scratch pekerja lain. Bukti disimpan hanya di scratch reviewer; Windows native dan firmware belum diverifikasi, bukan cacat delta. RED tambahan tidak dijalankan.\",\n  \"evidence_path\": \"<scratch>/symlink-delta-independent-qzgswkxe/verdict.json\"\n}\n",
+        "EVIDENCE.md": "Independent delta review evidence — reviewer scratch only, repo untouched.\n\n## Scope\nDelta only: one-line `.resolve()` -> `.absolute()` in scripts/license_cli.py (line 95)\nplus two tests in tests/test_license_cli.py (dangling-symlink refusal, existing-target-symlink refusal).\nNo edits, no full suite, no network/VM/firmware, no deployment key reads, no execution of other workers' scripts.\n\n## Payload pin\nsymlink-review.diff SHA256 = e85d9e80b01e8f0ae40ac272f6ba502213ffff85804d1f9478c594a127e14bcd\n(matches task/context; also equals payload_sha256 in source-manifest-fixed.json)\nsource-manifest-fixed.json SHA256 = bb4063d2ecd1618a208cb1f0c938b02bde9be4435c94072791ca8c3de1200142\n\n## Contract analysis (from diff + live code read)\n1. `Path(args.output).absolute()` does NOT resolve symlinks (nor normalize `..`, which is\n   irrelevant to creation semantics); `open('x')` = O_CREAT|O_EXCL on the final component,\n   so a symlink at the output path is now correctly treated as \"already exists\" ->\n   FileExistsError -> exit 1, \"Berkas output sudah ada; tidak ditimpa.\"\n2. Pre-delta `.resolve()` collapsed a dangling final symlink to its absent target and\n   created the TARGET — exactly the defect; delta removes it. No caller relies on\n   `.resolve()` semantics elsewhere in the write path (created/unlink cleanup operates\n   on the same absolute, non-following path — no mixed-path unlink risk).\n3. Dangling test: link preserved (is_symlink, readlink equal), target still absent\n   (assertFalse(target.exists()) with subTest), nonzero exit, no leak/traceback.\n4. Existing-target test: link preserved, 'KEEP ME' content intact, nonzero exit.\n   Pairing rule satisfied: adjacent genuine positive test\n   test_chr_flags_sign_verify_save_outside_repo_cwd creates a fresh file successfully.\n5. Windows skip guards (winerror 5/1314, non-nt re-raise) fail closed on POSIX;\n   symlink creation permission is an environment limitation, not delta logic.\n6. Tests use `os` and `Path` — both imported at module top. Fixture env pops\n   ALI_LICENSE_PRIVATE_KEY/PYTHONPATH per test; Unicode output path + cwd outside repo.\n   assert_safe forbids private-key/PEM leak and tracebacks in stdout/stderr.\n\n## Static scan of delta\nNo secrets, keys, licenses, eval/exec, pickle, injection, traversal, network, subprocess\nin added lines. Nothing printed that could leak key/license material.\n\n## Actual invocations (real output, not claims)\n$ env -u PYTHONPATH TMPDIR=<scratch> \\\n    venv/bin/python -B -m unittest \\\n    tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target \\\n    tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved \\\n    tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd -v\ntest_dangling_output_symlink_is_refused_without_creating_target ... ok\ntest_existing_output_symlink_is_refused_with_target_preserved ... ok\ntest_chr_flags_sign_verify_save_outside_repo_cwd ... ok\nRan 3 tests in 2.200s / OK / exit code 0 (full log: targeted-tests.txt, sha256\n0e7a228461fbb6b2c21ecd8680d6e8494e978b65135832225af9c57e372ba972)\n\n## Pin verification (before tests: pins-before.json; after: pins-after.json)\ngenerate-license.bat           0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78  unchanged\nscripts/license_cli.py         3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add  unchanged (matches context)\ntests/test_license_cli.py      fddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788  unchanged (matches context)\ntests/test_windows_bat.py      1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20  unchanged\n.github/workflows/windows-license.yml 7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c  unchanged\nAll 5 manifest source pins true before AND after; diff and fixed-manifest hashes also unchanged. Git status was read, but no before/after status-hash comparison was recorded; no git mutation commands were executed.\n\n## Limitations (out of scope per task, not delta defects)\n- Native Windows behavior (winerror paths) unverified on this host.\n- RED-state re-derivation not executed: parent's RED/GREEN reproduction and full-suite\n  271/267/4-skip results are parent-reported, not independently corroborated here.\n- Full suite not run by reviewer (bounded to the three permitted tests).\n\n## Verdict\npassed = true; security_concerns = []; logic_errors = [] (see verdict.json)\n",
+        "targeted-tests.txt": "test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) ... ok\ntest_existing_output_symlink_is_refused_with_target_preserved (tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved) ... ok\ntest_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 2.200s\n\nOK\n",
+        "pins-before.json": "{\n  \"checks\": {\n    \"generate-license.bat\": true,\n    \"scripts/license_cli.py\": true,\n    \"tests/test_license_cli.py\": true,\n    \"tests/test_windows_bat.py\": true,\n    \".github/workflows/windows-license.yml\": true,\n    \"symlink-review.diff\": true\n  },\n  \"manifest_sha256\": \"bb4063d2ecd1618a208cb1f0c938b02bde9be4435c94072791ca8c3de1200142\",\n  \"source\": {\n    \"generate-license.bat\": \"0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78\",\n    \"scripts/license_cli.py\": \"3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add\",\n    \"tests/test_license_cli.py\": \"fddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788\",\n    \"tests/test_windows_bat.py\": \"1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20\",\n    \".github/workflows/windows-license.yml\": \"7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c\"\n  },\n  \"payload_sha256\": \"e85d9e80b01e8f0ae40ac272f6ba502213ffff85804d1f9478c594a127e14bcd\"\n}\n",
+        "pins-after.json": "{\n  \"checks\": {\n    \"generate-license.bat\": true,\n    \"scripts/license_cli.py\": true,\n    \"tests/test_license_cli.py\": true,\n    \"tests/test_windows_bat.py\": true,\n    \".github/workflows/windows-license.yml\": true,\n    \"symlink-review.diff\": true,\n    \"source-manifest-fixed.json\": true\n  },\n  \"all_unchanged\": true,\n  \"test_log_sha256\": \"0e7a228461fbb6b2c21ecd8680d6e8494e978b65135832225af9c57e372ba972\"\n}\n",
+        "pins-before-tests.txt": "3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add  scripts/license_cli.py\nfddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788  tests/test_license_cli.py\n0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78  generate-license.bat\n1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20  tests/test_windows_bat.py\n7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c  .github/workflows/windows-license.yml\n",
+        "pins-after-tests.txt": "3ecbb152a25abe5853aa05947cd7387b7fb824d3eabe1b1bd77ed94fad3e7add  scripts/license_cli.py\nfddd182dd2c30fb23b034b225fb6e8ccff98e488829334cfd08d0942e6aca788  tests/test_license_cli.py\n0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78  generate-license.bat\n1cceb2a42edbfe8636735fca39aaf88b04f71e03bdeb9d1c8fcb2471ec44ec20  tests/test_windows_bat.py\n7ab7f8919fc3f3386d9ee3d56d2442d7b6251b90d98e0bdc7959baa616793c8c  .github/workflows/windows-license.yml\n"
+      },
+      "reviewer_fingerprints": {
+        "verdict.json": "6f5922510149eac123e3daae6d5fa525d5e6e768f156169a33e89a3845507fc4",
+        "EVIDENCE.md": "3049d3f6e3cf25cedbaefa6278b3a8ef01c335c1b06adc62858947e94abd1d84",
+        "targeted-tests.txt": "0e7a228461fbb6b2c21ecd8680d6e8494e978b65135832225af9c57e372ba972",
+        "pins-before.json": "503ce8a8f01dbe2f7e4eb903ac6ad65c9fa26093e38ce6e334fd857190ae7b1e",
+        "pins-after.json": "771b2a06f3097d08cca1f51ad469373077dfc977d7aa1ceef32fc24894fe2b50",
+        "pins-before-tests.txt": "f7a84b3cabd0778567199225c3c6fde9ce3ff9e53252e853aa4fb53b65a67a96",
+        "pins-after-tests.txt": "f7a84b3cabd0778567199225c3c6fde9ce3ff9e53252e853aa4fb53b65a67a96"
+      },
+      "parent_checked": {
+        "all_five_source_pins": true,
+        "delta_payload_sha256": "e85d9e80b01e8f0ae40ac272f6ba502213ffff85804d1f9478c594a127e14bcd",
+        "test_log_sha256_matches": true,
+        "reviewer_after_checks_all_true": true
+      },
+      "limitations": [
+        "Reviewer ran only three permitted tests; native Windows not yet run.",
+        "Original five-file review remains rejected historical evidence, not converted into a pass.",
+        "Parent full-suite 271/267/4 and RED/GREEN records are separately retained."
+      ]
+    },
+    "post_acceptance_parent_suite": {
+      "tests_run": 271,
+      "passed": 267,
+      "skipped": 4,
+      "returncode": 0,
+      "seconds": 116.808,
+      "capture": "Terminal summary with SUITE_RC=0; full output not retained for this run.",
+      "skip_scope": "four real cmd.exe tests unavailable on macOS",
+      "source_pins_match": true,
+      "strict_sources": "passed",
+      "actionlint": "passed",
+      "git_diff_check": "passed"
+    },
+    "native_windows": "not yet run"
+  },
+  "publication": {
+    "pushed": false
+  },
+  "runtime": {
+    "windows_native_run": false,
+    "firmware_activation_tested": false
+  }
+}

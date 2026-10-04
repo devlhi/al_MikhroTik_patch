@@ -1,0 +1,2 @@
+# Keep native cmd.exe launcher bytes (ASCII/CRLF) identical on every host.
+/generate-license.bat -text
