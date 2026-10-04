@@ -1,5 +1,8 @@
 # Notice
 
+**Developer berikutnya:** mulai dari [memori proyek / HANDOFF](docs/HANDOFF.md) untuk
+status pekerjaan, batas bukti, cara menjalankan tes, dan langkah lanjut.
+
 ## Historical reports (not verified for the current target):
 - **X86 (ROS & CHR working)**
 - **ARM64 (CHR working)**
