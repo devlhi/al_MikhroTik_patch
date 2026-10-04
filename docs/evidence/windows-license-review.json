@@ -785,7 +785,7 @@
       },
       "suggestion_adjudication": "No concrete bug or blocking finding. Native Windows rerun is next gate. Additional permanent failure-injection coverage (unsupported link, close/flush, postpublication cleanup) recorded as nonblocking follow-up. Cleanup nonzero may leave complete output and trusted directory requirement already documented. Reviewer extra synthetic probe script was prepared but NOT executed; no claim of those results."
     },
-    "status": "Independent delta review deleg_c6179945 accepted after parent pin/log verification; ready for approved push and native Windows rerun, neither claimed complete here",
+    "status": "Accepted; pushed as 9b4d6f9054810bf5fc67226feccfecd5590baa64. Native run 37219037250 passed 52/52 tests per Python with zero skips; see windows-license-native-37219037250.json",
     "base_commit": "f392288d512f2044b5e43ee1e9ec39f7ff6f212d",
     "reviewed_payload": {
       "base_commit": "f392288d512f2044b5e43ee1e9ec39f7ff6f212d",
@@ -896,7 +896,7 @@
     "runtime_firmware_activation_tested": false
   },
   "runtime": {
-    "windows_native_run": "first run 37214834349 executed on f392288; native cmd.exe tests passed, symlink tests failed (see windows_native_first_run)",
+    "windows_native_run": "first run 37214834349 failed symlinks; corrected source 9b4d6f9 passed run 37219037250, 52/52 per Python, no skips (see windows-license-native-37219037250.json)",
     "firmware_activation_tested": false
   }
 }

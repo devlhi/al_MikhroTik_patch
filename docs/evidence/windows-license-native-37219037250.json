@@ -1,0 +1,723 @@
+{
+  "scope": "Native Windows verification of atomic no-clobber output publication; not firmware runtime/activation",
+  "collected_at": "2026-10-04T17:12:42.285533+00:00",
+  "publication_verification": {
+    "commit": "9b4d6f9054810bf5fc67226feccfecd5590baa64",
+    "verified_at": "2026-10-04T17:03:36.669234+00:00",
+    "remote_main": "9b4d6f9054810bf5fc67226feccfecd5590baa64",
+    "branch_matches": true,
+    "anonymous_public_files": [
+      {
+        "name": "scripts/license_cli.py",
+        "remote_sha256": "7c1e89b7cd45200a4a911b51232099be92337e020ed7e47f943254a11f15416b",
+        "byte_identical": true
+      },
+      {
+        "name": "tests/test_license_cli.py",
+        "remote_sha256": "71ad18dbcdf77eb04e360812767499918f65fcb661e43b3d5ac5e827cc69eb25",
+        "byte_identical": true
+      },
+      {
+        "name": "docs/HANDOFF.md",
+        "remote_sha256": "83a6e1962b443e96228a8c71df38f9e3180a84d3654a75fecca5cbb8eb58db62",
+        "byte_identical": true
+      },
+      {
+        "name": "docs/windows-license.md",
+        "remote_sha256": "507f75406f377203d161110465853b1abc08764e1e5fa7bd1cd7fa085864d932",
+        "byte_identical": true
+      },
+      {
+        "name": "docs/evidence/windows-license-review.json",
+        "remote_sha256": "d3fcca738ae5a1b3fd6df587d99ff369586b3e541d4f4e291a23f81147e8e8f2",
+        "byte_identical": true
+      }
+    ],
+    "all_files_match": true,
+    "windows_runs": [
+      {
+        "id": 37219037250,
+        "head_sha": "9b4d6f9054810bf5fc67226feccfecd5590baa64",
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37219037250",
+        "event": "push",
+        "created_at": "2026-10-04T17:03:03Z"
+      }
+    ]
+  },
+  "native_windows": {
+    "run_id": 37219037250,
+    "head_sha": "9b4d6f9054810bf5fc67226feccfecd5590baa64",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37219037250",
+    "jobs": [
+      {
+        "job_id": 111485420195,
+        "name": "Native cmd.exe / Python 3.14",
+        "conclusion": "success",
+        "tests_total": 52,
+        "seconds": 90.678,
+        "python_version": "3.14.7",
+        "overall_OK": true,
+        "test_records": [
+          {
+            "name": "test_argument_errors_do_not_echo_raw_input",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_argument_errors_do_not_echo_raw_input",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_argument_errors_do_not_echo_raw_input"
+          },
+          {
+            "name": "test_chr_flags_sign_verify_save_outside_repo_cwd",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd"
+          },
+          {
+            "name": "test_corrupt_generated_signature_is_not_saved_or_printed",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_corrupt_generated_signature_is_not_saved_or_printed",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_corrupt_generated_signature_is_not_saved_or_printed"
+          },
+          {
+            "name": "test_dangling_output_symlink_is_refused_without_creating_target",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target"
+          },
+          {
+            "name": "test_existing_output_file_is_refused_not_overwritten",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_file_is_refused_not_overwritten",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_file_is_refused_not_overwritten"
+          },
+          {
+            "name": "test_existing_output_symlink_is_refused_with_target_preserved",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved"
+          },
+          {
+            "name": "test_explicit_bad_key_file_never_falls_back_or_leaks_contents",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_explicit_bad_key_file_never_falls_back_or_leaks_contents",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_explicit_bad_key_file_never_falls_back_or_leaks_contents"
+          },
+          {
+            "name": "test_interactive_chr_menu_uses_python_input_and_default_repo_output",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_chr_menu_uses_python_input_and_default_repo_output",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_chr_menu_uses_python_input_and_default_repo_output"
+          },
+          {
+            "name": "test_interactive_eof_is_clean_nonzero_without_output",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_eof_is_clean_nonzero_without_output",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_eof_is_clean_nonzero_without_output"
+          },
+          {
+            "name": "test_interactive_existing_file_is_refused",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_existing_file_is_refused",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_existing_file_is_refused"
+          },
+          {
+            "name": "test_interactive_invalid_output_path_is_sanitized",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_invalid_output_path_is_sanitized",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_invalid_output_path_is_sanitized"
+          },
+          {
+            "name": "test_interactive_menu_loop_retries_on_invalid_kind_choice",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_menu_loop_retries_on_invalid_kind_choice",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_menu_loop_retries_on_invalid_kind_choice"
+          },
+          {
+            "name": "test_interactive_ros_uses_unicode_output_path",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_interactive_ros_uses_unicode_output_path",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_ros_uses_unicode_output_path"
+          },
+          {
+            "name": "test_invalid_identifier_is_sanitized_and_never_writes",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_invalid_identifier_is_sanitized_and_never_writes",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_invalid_identifier_is_sanitized_and_never_writes"
+          },
+          {
+            "name": "test_key_priority_explicit_file_then_environment_then_default_file",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_key_priority_explicit_file_then_environment_then_default_file",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_key_priority_explicit_file_then_environment_then_default_file"
+          },
+          {
+            "name": "test_keyboard_interrupt_exits_130_without_file",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_keyboard_interrupt_exits_130_without_file",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_keyboard_interrupt_exits_130_without_file"
+          },
+          {
+            "name": "test_malformed_workflow_is_sanitized_for_explicit_key",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_malformed_workflow_is_sanitized_for_explicit_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_malformed_workflow_is_sanitized_for_explicit_key"
+          },
+          {
+            "name": "test_missing_optional_yaml_only_blocks_workflow_loading",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_missing_optional_yaml_only_blocks_workflow_loading",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_missing_optional_yaml_only_blocks_workflow_loading"
+          },
+          {
+            "name": "test_missing_pair_config_fails_without_ambiguous_success",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_missing_pair_config_fails_without_ambiguous_success",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_missing_pair_config_fails_without_ambiguous_success"
+          },
+          {
+            "name": "test_output_write_failure_is_nonzero_without_traceback",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_output_write_failure_is_nonzero_without_traceback",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_output_write_failure_is_nonzero_without_traceback"
+          },
+          {
+            "name": "test_partial_output_is_removed_on_write_error",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_partial_output_is_removed_on_write_error",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_partial_output_is_removed_on_write_error"
+          },
+          {
+            "name": "test_ros_flags_sign_verify_save",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_ros_flags_sign_verify_save",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_ros_flags_sign_verify_save"
+          },
+          {
+            "name": "test_selected_key_must_match_workflow_public_when_present",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_selected_key_must_match_workflow_public_when_present",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_selected_key_must_match_workflow_public_when_present"
+          },
+          {
+            "name": "test_symlink_inserted_at_publication_does_not_create_target",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_symlink_inserted_at_publication_does_not_create_target",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_symlink_inserted_at_publication_does_not_create_target"
+          },
+          {
+            "name": "test_unsupported_python_exits_with_official_install_hint",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_unsupported_python_exits_with_official_install_hint",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_unsupported_python_exits_with_official_install_hint"
+          },
+          {
+            "name": "test_workflow_fallback_rejects_mismatch_and_missing_pair",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_workflow_fallback_rejects_mismatch_and_missing_pair",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_workflow_fallback_rejects_mismatch_and_missing_pair"
+          },
+          {
+            "name": "test_workflow_pair_is_last_fallback_and_real_signature_verifies",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_workflow_pair_is_last_fallback_and_real_signature_verifies",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_workflow_pair_is_last_fallback_and_real_signature_verifies"
+          },
+          {
+            "name": "test_wrong_payload_kind_is_rejected_before_save",
+            "selector": "tests.test_license_cli.LicenseCLITests.test_wrong_payload_kind_is_rejected_before_save",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_wrong_payload_kind_is_rejected_before_save"
+          },
+          {
+            "name": "test_double_click_menu_generates_verifiable_license_file",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests.test_double_click_menu_generates_verifiable_license_file",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_double_click_menu_generates_verifiable_license_file"
+          },
+          {
+            "name": "test_invalid_identifier_exits_nonzero_and_writes_no_file",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests.test_invalid_identifier_exits_nonzero_and_writes_no_file",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_invalid_identifier_exits_nonzero_and_writes_no_file"
+          },
+          {
+            "name": "test_missing_interpreter_reports_python_org_and_exits_nonzero",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests.test_missing_interpreter_reports_python_org_and_exits_nonzero",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_missing_interpreter_reports_python_org_and_exits_nonzero"
+          },
+          {
+            "name": "test_ros_choice_generates_ros_license",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests.test_ros_choice_generates_ros_license",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_ros_choice_generates_ros_license"
+          },
+          {
+            "name": "test_bat_is_ascii_with_crlf_lines",
+            "selector": "tests.test_windows_bat.BatStructureTests.test_bat_is_ascii_with_crlf_lines",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_bat_is_ascii_with_crlf_lines"
+          },
+          {
+            "name": "test_echo_statements_are_fixed_literals_only",
+            "selector": "tests.test_windows_bat.BatStructureTests.test_echo_statements_are_fixed_literals_only",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_echo_statements_are_fixed_literals_only"
+          },
+          {
+            "name": "test_forbidden_constructs_absent",
+            "selector": "tests.test_windows_bat.BatStructureTests.test_forbidden_constructs_absent",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_forbidden_constructs_absent"
+          },
+          {
+            "name": "test_no_delayed_expansion_variables",
+            "selector": "tests.test_windows_bat.BatStructureTests.test_no_delayed_expansion_variables",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_no_delayed_expansion_variables"
+          },
+          {
+            "name": "test_required_safety_and_flow_lines_present",
+            "selector": "tests.test_windows_bat.BatStructureTests.test_required_safety_and_flow_lines_present",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_required_safety_and_flow_lines_present"
+          },
+          {
+            "name": "test_chr_rejects_base64_id_that_overflows_64_bits",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_chr_rejects_base64_id_that_overflows_64_bits",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_chr_rejects_base64_id_that_overflows_64_bits"
+          },
+          {
+            "name": "test_generate_accepts_surrounding_whitespace",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_accepts_surrounding_whitespace",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_accepts_surrounding_whitespace"
+          },
+          {
+            "name": "test_generate_chr_rejects_malformed_system_id",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_rejects_malformed_system_id",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_rejects_malformed_system_id"
+          },
+          {
+            "name": "test_generate_chr_round_trips_against_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_round_trips_against_public_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_round_trips_against_public_key"
+          },
+          {
+            "name": "test_generate_rejects_invalid_private_key",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_invalid_private_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_invalid_private_key"
+          },
+          {
+            "name": "test_generate_rejects_non_string_identifier",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_non_string_identifier",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_non_string_identifier"
+          },
+          {
+            "name": "test_generate_ros_rejects_malformed_software_id",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_rejects_malformed_software_id",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_rejects_malformed_software_id"
+          },
+          {
+            "name": "test_generate_ros_round_trips_against_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_round_trips_against_public_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_round_trips_against_public_key"
+          },
+          {
+            "name": "test_importing_util_does_not_run_cli_or_print",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_importing_util_does_not_run_cli_or_print",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_importing_util_does_not_run_cli_or_print"
+          },
+          {
+            "name": "test_invalid_scalar_is_rejected_before_vendor_signing",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_invalid_scalar_is_rejected_before_vendor_signing",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_invalid_scalar_is_rejected_before_vendor_signing"
+          },
+          {
+            "name": "test_parse_rejects_garbage_license",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_garbage_license",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_garbage_license"
+          },
+          {
+            "name": "test_parse_rejects_invalid_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_invalid_public_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_invalid_public_key"
+          },
+          {
+            "name": "test_parse_rejects_tampered_signature",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_tampered_signature",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_tampered_signature"
+          },
+          {
+            "name": "test_parse_rejects_wrong_verification_key",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_wrong_verification_key",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_wrong_verification_key"
+          },
+          {
+            "name": "test_repeated_generation_preserves_id_and_signature_validity",
+            "selector": "tests.test_license_util.LicenseUtilTests.test_repeated_generation_preserves_id_and_signature_validity",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_repeated_generation_preserves_id_and_signature_validity"
+          }
+        ],
+        "sanitized_log_sha256": "0229a3b13f8220ba5e19ea2e5e7611a2d7ea82a5856a39c3a0eec6c95b1f67ae",
+        "log_file": "native-111485420195.sanitized.log",
+        "sanitized_log": "﻿2026-10-04T17:03:07.0101822Z Current runner version: '2.337.0'\r\n2026-10-04T17:03:07.0137326Z ##[group]Runner Image Provisioner\r\n2026-10-04T17:03:07.0138581Z Hosted Compute Agent\r\n2026-10-04T17:03:07.0139449Z Version: 20260901.588\r\n2026-10-04T17:03:07.0140421Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b\r\n2026-10-04T17:03:07.0141605Z Build Date: 2026-09-01T19:56:44Z\r\n2026-10-04T17:03:07.0142716Z Worker ID: {8aae02b4-086b-4b44-be74-c054aacd16df}\r\n2026-10-04T17:03:07.0143988Z Azure Region: northcentralus\r\n2026-10-04T17:03:07.0145086Z ##[endgroup]\r\n2026-10-04T17:03:07.0147592Z ##[group]Operating System\r\n2026-10-04T17:03:07.0148686Z Microsoft Windows Server 2025\r\n2026-10-04T17:03:07.0149661Z 10.0.26100\r\n2026-10-04T17:03:07.0150490Z Datacenter\r\n2026-10-04T17:03:07.0151468Z ##[endgroup]\r\n2026-10-04T17:03:07.0152333Z ##[group]Runner Image\r\n2026-10-04T17:03:07.0153353Z Image: windows-2025-vs2026\r\n2026-10-04T17:03:07.0154282Z Version: 20260925.250.1\r\n2026-10-04T17:03:07.0156655Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md\r\n2026-10-04T17:03:07.0159405Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260925.250\r\n2026-10-04T17:03:07.0161026Z ##[endgroup]\r\n2026-10-04T17:03:07.0162770Z ##[group]GITHUB_TOKEN Permissions\r\n2026-10-04T17:03:07.0165953Z Contents: read\r\n2026-10-04T17:03:07.0166820Z Metadata: read\r\n2026-10-04T17:03:07.0167661Z ##[endgroup]\r\n2026-10-04T17:03:07.0170493Z Secret source: Actions\r\n2026-10-04T17:03:07.0171863Z Cache mode: write\r\n2026-10-04T17:03:07.0173077Z Prepare workflow directory\r\n2026-10-04T17:03:07.0732760Z Prepare all required actions\r\n2026-10-04T17:03:07.0783602Z Getting action download info\r\n2026-10-04T17:03:07.2966369Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)\r\n2026-10-04T17:03:07.4337217Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)\r\n2026-10-04T17:03:07.7371229Z Complete job name: Native cmd.exe / Python 3.14\r\n2026-10-04T17:03:07.9256383Z ##[group]Run actions/checkout@v4\r\n2026-10-04T17:03:07.9257385Z with:\r\n2026-10-04T17:03:07.9257806Z   repository: devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:07.9261553Z   token: ***\r\n2026-10-04T17:03:07.9261952Z   ssh-strict: true\r\n2026-10-04T17:03:07.9262794Z   ssh-user: git\r\n2026-10-04T17:03:07.9263208Z   persist-credentials: true\r\n2026-10-04T17:03:07.9263659Z   clean: true\r\n2026-10-04T17:03:07.9264080Z   sparse-checkout-cone-mode: true\r\n2026-10-04T17:03:07.9264564Z   fetch-depth: 1\r\n2026-10-04T17:03:07.9264959Z   fetch-tags: false\r\n2026-10-04T17:03:07.9265362Z   show-progress: true\r\n2026-10-04T17:03:07.9265770Z   lfs: false\r\n2026-10-04T17:03:07.9266149Z   submodules: false\r\n2026-10-04T17:03:07.9266568Z   set-safe-directory: true\r\n2026-10-04T17:03:07.9267044Z   allow-unsafe-pr-checkout: false\r\n2026-10-04T17:03:07.9267783Z env:\r\n2026-10-04T17:03:07.9268160Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:07.9268566Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:07.9269022Z ##[endgroup]\r\n2026-10-04T17:03:08.0895691Z Syncing repository: devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:08.0897500Z ##[group]Getting Git version info\r\n2026-10-04T17:03:08.0898230Z Working directory is 'D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch'\r\n2026-10-04T17:03:08.1990408Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" version\r\n2026-10-04T17:03:08.6221248Z git version 2.55.0.windows.5\r\n2026-10-04T17:03:08.6273369Z ##[endgroup]\r\n2026-10-04T17:03:08.6299282Z Temporarily overriding HOME='D:\\a\\_temp\\d14ab992-faf5-413d-80f2-237e289d65de' before making global git config changes\r\n2026-10-04T17:03:08.6301779Z Adding repository directory to the temporary git global config as a safe directory\r\n2026-10-04T17:03:08.6312455Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --global --add safe.directory D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:03:08.7111628Z Deleting the contents of 'D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch'\r\n2026-10-04T17:03:08.7118070Z ##[group]Initializing the repository\r\n2026-10-04T17:03:08.7127426Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" init D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:03:08.8082779Z Initialized empty Git repository in D:/a/al_MikhroTik_patch/al_MikhroTik_patch/.git/\r\n2026-10-04T17:03:08.8131347Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" remote add origin https://github.com/devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:08.8786512Z ##[endgroup]\r\n2026-10-04T17:03:08.8788186Z ##[group]Disabling automatic garbage collection\r\n2026-10-04T17:03:08.8795961Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local gc.auto 0\r\n2026-10-04T17:03:08.9110092Z ##[endgroup]\r\n2026-10-04T17:03:08.9111336Z ##[group]Setting up auth\r\n2026-10-04T17:03:08.9123395Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp core\\.sshCommand\r\n2026-10-04T17:03:08.9451126Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\\\"\"\r\n2026-10-04T17:03:10.6708658Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\r\n2026-10-04T17:03:10.7021700Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\\\"\"\r\n2026-10-04T17:03:11.2298545Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp ^includeIf\\.gitdir:\r\n2026-10-04T17:03:11.2610992Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"git config --local --show-origin --name-only --get-regexp remote.origin.url\"\r\n2026-10-04T17:03:11.8425497Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local http.https://github.com/.extraheader \"AUTHORIZATION: basic ***\"\r\n2026-10-04T17:03:11.8768201Z ##[endgroup]\r\n2026-10-04T17:03:11.8768780Z ##[group]Fetching the repository\r\n2026-10-04T17:03:11.8791304Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9b4d6f9054810bf5fc67226feccfecd5590baa64:refs/remotes/origin/main\r\n2026-10-04T17:03:13.1530327Z From https://github.com/devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:13.1531192Z  * [new ref]         9b4d6f9054810bf5fc67226feccfecd5590baa64 -> origin/main\r\n2026-10-04T17:03:13.1579159Z ##[endgroup]\r\n2026-10-04T17:03:13.1579810Z ##[group]Determining the checkout info\r\n2026-10-04T17:03:13.1582745Z ##[endgroup]\r\n2026-10-04T17:03:13.1594442Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" sparse-checkout disable\r\n2026-10-04T17:03:13.2099848Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --unset-all extensions.worktreeConfig\r\n2026-10-04T17:03:13.2428362Z ##[group]Checking out the ref\r\n2026-10-04T17:03:13.2443300Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" checkout --progress --force -B main refs/remotes/origin/main\r\n2026-10-04T17:03:13.3420663Z Switched to a new branch 'main'\r\n2026-10-04T17:03:13.3488944Z branch 'main' set up to track 'origin/main'.\r\n2026-10-04T17:03:13.3541972Z ##[endgroup]\r\n2026-10-04T17:03:13.3991869Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H\r\n2026-10-04T17:03:13.4278768Z 9b4d6f9054810bf5fc67226feccfecd5590baa64\r\n2026-10-04T17:03:13.4761340Z ##[group]Run actions/setup-python@v5\r\n2026-10-04T17:03:13.4761846Z with:\r\n2026-10-04T17:03:13.4762038Z   python-version: 3.14\r\n2026-10-04T17:03:13.4762255Z   check-latest: false\r\n2026-10-04T17:03:13.4764652Z   token: ***\r\n2026-10-04T17:03:13.4764859Z   update-environment: true\r\n2026-10-04T17:03:13.4765094Z   allow-prereleases: false\r\n2026-10-04T17:03:13.4765310Z   freethreaded: false\r\n2026-10-04T17:03:13.4765497Z env:\r\n2026-10-04T17:03:13.4765665Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:13.4765854Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:13.4766068Z ##[endgroup]\r\n2026-10-04T17:03:13.6451818Z ##[group]Installed versions\r\n2026-10-04T17:03:13.6710467Z (node:6012) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\r\n2026-10-04T17:03:13.6712804Z (Use `node --trace-deprecation ...` to show where the warning was created)\r\n2026-10-04T17:03:13.6713514Z Successfully set up CPython (3.14.7)\r\n2026-10-04T17:03:13.6715385Z ##[endgroup]\r\n2026-10-04T17:03:13.7011395Z ##[group]Run python -m pip install -r requirements-license.txt\r\n2026-10-04T17:03:13.7011987Z \u001b[36;1mpython -m pip install -r requirements-license.txt\u001b[0m\r\n2026-10-04T17:03:13.7727211Z shell: C:\\Program Files\\PowerShell\\7\\pwsh.EXE -command \". '{0}'\"\r\n2026-10-04T17:03:13.7727700Z env:\r\n2026-10-04T17:03:13.7727951Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:13.7728233Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:13.7728627Z   pythonLocation: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:13.7729518Z   PKG_CONFIG_PATH: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64/lib/pkgconfig\r\n2026-10-04T17:03:13.7789166Z   Python_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:13.7790343Z   Python2_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:13.7791009Z   Python3_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:13.7791571Z ##[endgroup]\r\n2026-10-04T17:03:19.1578981Z Collecting PyYAML==6.0.3 (from -r requirements-license.txt (line 2))\r\n2026-10-04T17:03:19.1930515Z   Downloading pyyaml-6.0.3-cp314-cp314-win_amd64.whl.metadata (2.4 kB)\r\n2026-10-04T17:03:19.2296086Z Downloading pyyaml-6.0.3-cp314-cp314-win_amd64.whl (156 kB)\r\n2026-10-04T17:03:19.4966771Z Installing collected packages: PyYAML\r\n2026-10-04T17:03:19.6345948Z Successfully installed PyYAML-6.0.3\r\n2026-10-04T17:03:19.8548863Z ##[group]Run python -B -m unittest tests.test_license_cli tests.test_windows_bat tests.test_license_util -v\r\n2026-10-04T17:03:19.8549723Z \u001b[36;1mpython -B -m unittest tests.test_license_cli tests.test_windows_bat tests.test_license_util -v\u001b[0m\r\n2026-10-04T17:03:19.8627675Z shell: C:\\Program Files\\PowerShell\\7\\pwsh.EXE -command \". '{0}'\"\r\n2026-10-04T17:03:19.8628043Z env:\r\n2026-10-04T17:03:19.8628215Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:19.8628409Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:19.8628713Z   pythonLocation: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:19.8629181Z   PKG_CONFIG_PATH: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64/lib/pkgconfig\r\n2026-10-04T17:03:19.8629641Z   Python_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:19.8630037Z   Python2_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:19.8630433Z   Python3_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.14.7\\x64\r\n2026-10-04T17:03:19.8630786Z ##[endgroup]\r\n2026-10-04T17:03:20.3908015Z D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\\toyecc\\ShortWeierstrassCurve.py:90: SyntaxWarning: \"\\p\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\p\"? A raw string is also an option.\r\n2026-10-04T17:03:20.3909592Z   \\phi in the field (i.e. that the curve is commonly known as a 'Koblitz\r\n2026-10-04T17:03:21.0286433Z test_argument_errors_do_not_echo_raw_input (tests.test_license_cli.LicenseCLITests.test_argument_errors_do_not_echo_raw_input) ... ok\r\n2026-10-04T17:03:24.9313191Z test_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd) ... ok\r\n2026-10-04T17:03:25.3615544Z test_corrupt_generated_signature_is_not_saved_or_printed (tests.test_license_cli.LicenseCLITests.test_corrupt_generated_signature_is_not_saved_or_printed) ... ok\r\n2026-10-04T17:03:27.8578852Z test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target) ... ok\r\n2026-10-04T17:03:30.1636972Z test_existing_output_file_is_refused_not_overwritten (tests.test_license_cli.LicenseCLITests.test_existing_output_file_is_refused_not_overwritten) ... ok\r\n2026-10-04T17:03:31.5970532Z test_existing_output_symlink_is_refused_with_target_preserved (tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved) ... ok\r\n2026-10-04T17:03:32.4454745Z test_explicit_bad_key_file_never_falls_back_or_leaks_contents (tests.test_license_cli.LicenseCLITests.test_explicit_bad_key_file_never_falls_back_or_leaks_contents) ... ok\r\n2026-10-04T17:03:34.5602934Z test_interactive_chr_menu_uses_python_input_and_default_repo_output (tests.test_license_cli.LicenseCLITests.test_interactive_chr_menu_uses_python_input_and_default_repo_output) ... ok\r\n2026-10-04T17:03:34.7737981Z test_interactive_eof_is_clean_nonzero_without_output (tests.test_license_cli.LicenseCLITests.test_interactive_eof_is_clean_nonzero_without_output) ... ok\r\n2026-10-04T17:03:39.7974311Z test_interactive_existing_file_is_refused (tests.test_license_cli.LicenseCLITests.test_interactive_existing_file_is_refused) ... ok\r\n2026-10-04T17:03:43.2182377Z test_interactive_invalid_output_path_is_sanitized (tests.test_license_cli.LicenseCLITests.test_interactive_invalid_output_path_is_sanitized) ... ok\r\n2026-10-04T17:03:47.5461499Z test_interactive_menu_loop_retries_on_invalid_kind_choice (tests.test_license_cli.LicenseCLITests.test_interactive_menu_loop_retries_on_invalid_kind_choice) ... ok\r\n2026-10-04T17:03:50.1256765Z test_interactive_ros_uses_unicode_output_path (tests.test_license_cli.LicenseCLITests.test_interactive_ros_uses_unicode_output_path) ... ok\r\n2026-10-04T17:03:51.4186626Z test_invalid_identifier_is_sanitized_and_never_writes (tests.test_license_cli.LicenseCLITests.test_invalid_identifier_is_sanitized_and_never_writes) ... ok\r\n2026-10-04T17:03:56.9202922Z test_key_priority_explicit_file_then_environment_then_default_file (tests.test_license_cli.LicenseCLITests.test_key_priority_explicit_file_then_environment_then_default_file) ... ok\r\n2026-10-04T17:03:56.9552657Z test_keyboard_interrupt_exits_130_without_file (tests.test_license_cli.LicenseCLITests.test_keyboard_interrupt_exits_130_without_file) ... ok\r\n2026-10-04T17:04:03.5336207Z test_malformed_workflow_is_sanitized_for_explicit_key (tests.test_license_cli.LicenseCLITests.test_malformed_workflow_is_sanitized_for_explicit_key) ... ok\r\n2026-10-04T17:04:07.8353931Z test_missing_optional_yaml_only_blocks_workflow_loading (tests.test_license_cli.LicenseCLITests.test_missing_optional_yaml_only_blocks_workflow_loading) ... ok\r\n2026-10-04T17:04:08.0949750Z test_missing_pair_config_fails_without_ambiguous_success (tests.test_license_cli.LicenseCLITests.test_missing_pair_config_fails_without_ambiguous_success) ... ok\r\n2026-10-04T17:04:12.5999891Z test_output_write_failure_is_nonzero_without_traceback (tests.test_license_cli.LicenseCLITests.test_output_write_failure_is_nonzero_without_traceback) ... ok\r\n2026-10-04T17:04:13.2830328Z test_partial_output_is_removed_on_write_error (tests.test_license_cli.LicenseCLITests.test_partial_output_is_removed_on_write_error) ... ok\r\n2026-10-04T17:04:15.6065328Z test_ros_flags_sign_verify_save (tests.test_license_cli.LicenseCLITests.test_ros_flags_sign_verify_save) ... ok\r\n2026-10-04T17:04:17.4806546Z test_selected_key_must_match_workflow_public_when_present (tests.test_license_cli.LicenseCLITests.test_selected_key_must_match_workflow_public_when_present) ... ok\r\n2026-10-04T17:04:17.4808605Z test_symlink_inserted_at_publication_does_not_create_target (tests.test_license_cli.LicenseCLITests.test_symlink_inserted_at_publication_does_not_create_target)\r\n2026-10-04T17:04:21.0549039Z Inject a symlink at the single publication syscall; no open on output. ... ok\r\n2026-10-04T17:04:21.2559376Z test_unsupported_python_exits_with_official_install_hint (tests.test_license_cli.LicenseCLITests.test_unsupported_python_exits_with_official_install_hint) ... ok\r\n2026-10-04T17:04:22.1838474Z test_workflow_fallback_rejects_mismatch_and_missing_pair (tests.test_license_cli.LicenseCLITests.test_workflow_fallback_rejects_mismatch_and_missing_pair) ... ok\r\n2026-10-04T17:04:25.0906090Z test_workflow_pair_is_last_fallback_and_real_signature_verifies (tests.test_license_cli.LicenseCLITests.test_workflow_pair_is_last_fallback_and_real_signature_verifies) ... ok\r\n2026-10-04T17:04:26.8021215Z test_wrong_payload_kind_is_rejected_before_save (tests.test_license_cli.LicenseCLITests.test_wrong_payload_kind_is_rejected_before_save) ... ok\r\n2026-10-04T17:04:31.6282179Z test_double_click_menu_generates_verifiable_license_file (tests.test_windows_bat.BatNativeCmdTests.test_double_click_menu_generates_verifiable_license_file) ... ok\r\n2026-10-04T17:04:31.9794568Z test_invalid_identifier_exits_nonzero_and_writes_no_file (tests.test_windows_bat.BatNativeCmdTests.test_invalid_identifier_exits_nonzero_and_writes_no_file) ... ok\r\n2026-10-04T17:04:32.0400585Z test_missing_interpreter_reports_python_org_and_exits_nonzero (tests.test_windows_bat.BatNativeCmdTests.test_missing_interpreter_reports_python_org_and_exits_nonzero) ... ok\r\n2026-10-04T17:04:33.6000252Z test_ros_choice_generates_ros_license (tests.test_windows_bat.BatNativeCmdTests.test_ros_choice_generates_ros_license) ... ok\r\n2026-10-04T17:04:33.6002118Z test_bat_is_ascii_with_crlf_lines (tests.test_windows_bat.BatStructureTests.test_bat_is_ascii_with_crlf_lines) ... ok\r\n2026-10-04T17:04:33.6062700Z test_echo_statements_are_fixed_literals_only (tests.test_windows_bat.BatStructureTests.test_echo_statements_are_fixed_literals_only) ... ok\r\n2026-10-04T17:04:33.6066325Z test_forbidden_constructs_absent (tests.test_windows_bat.BatStructureTests.test_forbidden_constructs_absent) ... ok\r\n2026-10-04T17:04:33.6068955Z test_no_delayed_expansion_variables (tests.test_windows_bat.BatStructureTests.test_no_delayed_expansion_variables) ... ok\r\n2026-10-04T17:04:33.6073576Z test_required_safety_and_flow_lines_present (tests.test_windows_bat.BatStructureTests.test_required_safety_and_flow_lines_present) ... ok\r\n2026-10-04T17:04:33.6972571Z test_chr_rejects_base64_id_that_overflows_64_bits (tests.test_license_util.LicenseUtilTests.test_chr_rejects_base64_id_that_overflows_64_bits) ... ok\r\n2026-10-04T17:04:36.0906796Z test_generate_accepts_surrounding_whitespace (tests.test_license_util.LicenseUtilTests.test_generate_accepts_surrounding_whitespace) ... ok\r\n2026-10-04T17:04:36.0908720Z test_generate_chr_rejects_malformed_system_id (tests.test_license_util.LicenseUtilTests.test_generate_chr_rejects_malformed_system_id) ... ok\r\n2026-10-04T17:04:39.8146839Z test_generate_chr_round_trips_against_public_key (tests.test_license_util.LicenseUtilTests.test_generate_chr_round_trips_against_public_key) ... ok\r\n2026-10-04T17:04:39.8149800Z test_generate_rejects_invalid_private_key (tests.test_license_util.LicenseUtilTests.test_generate_rejects_invalid_private_key) ... ok\r\n2026-10-04T17:04:39.8151676Z test_generate_rejects_non_string_identifier (tests.test_license_util.LicenseUtilTests.test_generate_rejects_non_string_identifier) ... ok\r\n2026-10-04T17:04:39.8153510Z test_generate_ros_rejects_malformed_software_id (tests.test_license_util.LicenseUtilTests.test_generate_ros_rejects_malformed_software_id) ... ok\r\n2026-10-04T17:04:41.9404863Z test_generate_ros_round_trips_against_public_key (tests.test_license_util.LicenseUtilTests.test_generate_ros_round_trips_against_public_key) ... ok\r\n2026-10-04T17:04:42.0482413Z test_importing_util_does_not_run_cli_or_print (tests.test_license_util.LicenseUtilTests.test_importing_util_does_not_run_cli_or_print) ... ok\r\n2026-10-04T17:04:42.0487250Z test_invalid_scalar_is_rejected_before_vendor_signing (tests.test_license_util.LicenseUtilTests.test_invalid_scalar_is_rejected_before_vendor_signing) ... ok\r\n2026-10-04T17:04:42.0488876Z test_parse_rejects_garbage_license (tests.test_license_util.LicenseUtilTests.test_parse_rejects_garbage_license) ... ok\r\n2026-10-04T17:04:45.8695591Z test_parse_rejects_invalid_public_key (tests.test_license_util.LicenseUtilTests.test_parse_rejects_invalid_public_key) ... ok\r\n2026-10-04T17:04:47.9043350Z test_parse_rejects_tampered_signature (tests.test_license_util.LicenseUtilTests.test_parse_rejects_tampered_signature) ... ok\r\n2026-10-04T17:04:49.7532791Z test_parse_rejects_wrong_verification_key (tests.test_license_util.LicenseUtilTests.test_parse_rejects_wrong_verification_key) ... ok\r\n2026-10-04T17:04:51.0950323Z test_repeated_generation_preserves_id_and_signature_validity (tests.test_license_util.LicenseUtilTests.test_repeated_generation_preserves_id_and_signature_validity) ... ok\r\n2026-10-04T17:04:51.0951799Z \r\n2026-10-04T17:04:51.0952057Z ----------------------------------------------------------------------\r\n2026-10-04T17:04:51.0952573Z Ran 52 tests in 90.678s\r\n2026-10-04T17:04:51.0952808Z \r\n2026-10-04T17:04:51.0952919Z OK\r\n2026-10-04T17:04:51.2346005Z Post job cleanup.\r\n2026-10-04T17:04:51.3811185Z (node:8696) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\r\n2026-10-04T17:04:51.3812157Z (Use `node --trace-deprecation ...` to show where the warning was created)\r\n2026-10-04T17:04:51.4138104Z Post job cleanup.\r\n2026-10-04T17:04:51.6353020Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" version\r\n2026-10-04T17:04:51.6697625Z git version 2.55.0.windows.5\r\n2026-10-04T17:04:51.6789407Z Temporarily overriding HOME='D:\\a\\_temp\\5e7d2a10-7138-4b86-a28f-9f900691c5f5' before making global git config changes\r\n2026-10-04T17:04:51.6792484Z Adding repository directory to the temporary git global config as a safe directory\r\n2026-10-04T17:04:51.6803367Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --global --add safe.directory D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:04:51.7151362Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp core\\.sshCommand\r\n2026-10-04T17:04:51.7492015Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\\\"\"\r\n2026-10-04T17:04:52.2874606Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\r\n2026-10-04T17:04:52.3161237Z http.https://github.com/.extraheader\r\n2026-10-04T17:04:52.3211586Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --unset-all http.https://github.com/.extraheader\r\n2026-10-04T17:04:52.3545926Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\\\"\"\r\n2026-10-04T17:04:52.8863874Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp ^includeIf\\.gitdir:\r\n2026-10-04T17:04:52.9177897Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"git config --local --show-origin --name-only --get-regexp remote.origin.url\"\r\n2026-10-04T17:04:53.4503750Z Cleaning up orphan processes\r\n2026-10-04T17:04:53.4899143Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\r\n",
+        "passed": 52,
+        "skipped": 0
+      },
+      {
+        "job_id": 111485420454,
+        "name": "Native cmd.exe / Python 3.10",
+        "conclusion": "success",
+        "tests_total": 52,
+        "seconds": 94.659,
+        "python_version": "3.10.11",
+        "overall_OK": true,
+        "test_records": [
+          {
+            "name": "test_argument_errors_do_not_echo_raw_input",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_argument_errors_do_not_echo_raw_input"
+          },
+          {
+            "name": "test_chr_flags_sign_verify_save_outside_repo_cwd",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_chr_flags_sign_verify_save_outside_repo_cwd"
+          },
+          {
+            "name": "test_corrupt_generated_signature_is_not_saved_or_printed",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_corrupt_generated_signature_is_not_saved_or_printed"
+          },
+          {
+            "name": "test_dangling_output_symlink_is_refused_without_creating_target",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_dangling_output_symlink_is_refused_without_creating_target"
+          },
+          {
+            "name": "test_existing_output_file_is_refused_not_overwritten",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_file_is_refused_not_overwritten"
+          },
+          {
+            "name": "test_existing_output_symlink_is_refused_with_target_preserved",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_existing_output_symlink_is_refused_with_target_preserved"
+          },
+          {
+            "name": "test_explicit_bad_key_file_never_falls_back_or_leaks_contents",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_explicit_bad_key_file_never_falls_back_or_leaks_contents"
+          },
+          {
+            "name": "test_interactive_chr_menu_uses_python_input_and_default_repo_output",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_chr_menu_uses_python_input_and_default_repo_output"
+          },
+          {
+            "name": "test_interactive_eof_is_clean_nonzero_without_output",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_eof_is_clean_nonzero_without_output"
+          },
+          {
+            "name": "test_interactive_existing_file_is_refused",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_existing_file_is_refused"
+          },
+          {
+            "name": "test_interactive_invalid_output_path_is_sanitized",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_invalid_output_path_is_sanitized"
+          },
+          {
+            "name": "test_interactive_menu_loop_retries_on_invalid_kind_choice",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_menu_loop_retries_on_invalid_kind_choice"
+          },
+          {
+            "name": "test_interactive_ros_uses_unicode_output_path",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_interactive_ros_uses_unicode_output_path"
+          },
+          {
+            "name": "test_invalid_identifier_is_sanitized_and_never_writes",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_invalid_identifier_is_sanitized_and_never_writes"
+          },
+          {
+            "name": "test_key_priority_explicit_file_then_environment_then_default_file",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_key_priority_explicit_file_then_environment_then_default_file"
+          },
+          {
+            "name": "test_keyboard_interrupt_exits_130_without_file",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_keyboard_interrupt_exits_130_without_file"
+          },
+          {
+            "name": "test_malformed_workflow_is_sanitized_for_explicit_key",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_malformed_workflow_is_sanitized_for_explicit_key"
+          },
+          {
+            "name": "test_missing_optional_yaml_only_blocks_workflow_loading",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_missing_optional_yaml_only_blocks_workflow_loading"
+          },
+          {
+            "name": "test_missing_pair_config_fails_without_ambiguous_success",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_missing_pair_config_fails_without_ambiguous_success"
+          },
+          {
+            "name": "test_output_write_failure_is_nonzero_without_traceback",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_output_write_failure_is_nonzero_without_traceback"
+          },
+          {
+            "name": "test_partial_output_is_removed_on_write_error",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_partial_output_is_removed_on_write_error"
+          },
+          {
+            "name": "test_ros_flags_sign_verify_save",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_ros_flags_sign_verify_save"
+          },
+          {
+            "name": "test_selected_key_must_match_workflow_public_when_present",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_selected_key_must_match_workflow_public_when_present"
+          },
+          {
+            "name": "test_symlink_inserted_at_publication_does_not_create_target",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_symlink_inserted_at_publication_does_not_create_target"
+          },
+          {
+            "name": "test_unsupported_python_exits_with_official_install_hint",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_unsupported_python_exits_with_official_install_hint"
+          },
+          {
+            "name": "test_workflow_fallback_rejects_mismatch_and_missing_pair",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_workflow_fallback_rejects_mismatch_and_missing_pair"
+          },
+          {
+            "name": "test_workflow_pair_is_last_fallback_and_real_signature_verifies",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_workflow_pair_is_last_fallback_and_real_signature_verifies"
+          },
+          {
+            "name": "test_wrong_payload_kind_is_rejected_before_save",
+            "selector": "tests.test_license_cli.LicenseCLITests",
+            "status": "ok",
+            "full_selector": "tests.test_license_cli.LicenseCLITests.test_wrong_payload_kind_is_rejected_before_save"
+          },
+          {
+            "name": "test_double_click_menu_generates_verifiable_license_file",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_double_click_menu_generates_verifiable_license_file"
+          },
+          {
+            "name": "test_invalid_identifier_exits_nonzero_and_writes_no_file",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_invalid_identifier_exits_nonzero_and_writes_no_file"
+          },
+          {
+            "name": "test_missing_interpreter_reports_python_org_and_exits_nonzero",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_missing_interpreter_reports_python_org_and_exits_nonzero"
+          },
+          {
+            "name": "test_ros_choice_generates_ros_license",
+            "selector": "tests.test_windows_bat.BatNativeCmdTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatNativeCmdTests.test_ros_choice_generates_ros_license"
+          },
+          {
+            "name": "test_bat_is_ascii_with_crlf_lines",
+            "selector": "tests.test_windows_bat.BatStructureTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_bat_is_ascii_with_crlf_lines"
+          },
+          {
+            "name": "test_echo_statements_are_fixed_literals_only",
+            "selector": "tests.test_windows_bat.BatStructureTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_echo_statements_are_fixed_literals_only"
+          },
+          {
+            "name": "test_forbidden_constructs_absent",
+            "selector": "tests.test_windows_bat.BatStructureTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_forbidden_constructs_absent"
+          },
+          {
+            "name": "test_no_delayed_expansion_variables",
+            "selector": "tests.test_windows_bat.BatStructureTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_no_delayed_expansion_variables"
+          },
+          {
+            "name": "test_required_safety_and_flow_lines_present",
+            "selector": "tests.test_windows_bat.BatStructureTests",
+            "status": "ok",
+            "full_selector": "tests.test_windows_bat.BatStructureTests.test_required_safety_and_flow_lines_present"
+          },
+          {
+            "name": "test_chr_rejects_base64_id_that_overflows_64_bits",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_chr_rejects_base64_id_that_overflows_64_bits"
+          },
+          {
+            "name": "test_generate_accepts_surrounding_whitespace",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_accepts_surrounding_whitespace"
+          },
+          {
+            "name": "test_generate_chr_rejects_malformed_system_id",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_rejects_malformed_system_id"
+          },
+          {
+            "name": "test_generate_chr_round_trips_against_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_chr_round_trips_against_public_key"
+          },
+          {
+            "name": "test_generate_rejects_invalid_private_key",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_invalid_private_key"
+          },
+          {
+            "name": "test_generate_rejects_non_string_identifier",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_rejects_non_string_identifier"
+          },
+          {
+            "name": "test_generate_ros_rejects_malformed_software_id",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_rejects_malformed_software_id"
+          },
+          {
+            "name": "test_generate_ros_round_trips_against_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_generate_ros_round_trips_against_public_key"
+          },
+          {
+            "name": "test_importing_util_does_not_run_cli_or_print",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_importing_util_does_not_run_cli_or_print"
+          },
+          {
+            "name": "test_invalid_scalar_is_rejected_before_vendor_signing",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_invalid_scalar_is_rejected_before_vendor_signing"
+          },
+          {
+            "name": "test_parse_rejects_garbage_license",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_garbage_license"
+          },
+          {
+            "name": "test_parse_rejects_invalid_public_key",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_invalid_public_key"
+          },
+          {
+            "name": "test_parse_rejects_tampered_signature",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_tampered_signature"
+          },
+          {
+            "name": "test_parse_rejects_wrong_verification_key",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_parse_rejects_wrong_verification_key"
+          },
+          {
+            "name": "test_repeated_generation_preserves_id_and_signature_validity",
+            "selector": "tests.test_license_util.LicenseUtilTests",
+            "status": "ok",
+            "full_selector": "tests.test_license_util.LicenseUtilTests.test_repeated_generation_preserves_id_and_signature_validity"
+          }
+        ],
+        "sanitized_log_sha256": "8db1b75481139960780fc11fe2c5969d6924bbd7437c3d04a3365f9bb41bb4e9",
+        "log_file": "native-111485420454.sanitized.log",
+        "sanitized_log": "﻿2026-10-04T17:03:07.4153030Z Current runner version: '2.337.0'\r\n2026-10-04T17:03:07.4185954Z ##[group]Runner Image Provisioner\r\n2026-10-04T17:03:07.4187229Z Hosted Compute Agent\r\n2026-10-04T17:03:07.4187993Z Version: 20260901.588\r\n2026-10-04T17:03:07.4188898Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b\r\n2026-10-04T17:03:07.4189656Z Build Date: 2026-09-01T19:56:44Z\r\n2026-10-04T17:03:07.4190350Z Worker ID: {788292d2-680d-4f88-b862-e685691a2fcd}\r\n2026-10-04T17:03:07.4191004Z Azure Region: centralus\r\n2026-10-04T17:03:07.4191522Z ##[endgroup]\r\n2026-10-04T17:03:07.4192942Z ##[group]Operating System\r\n2026-10-04T17:03:07.4193561Z Microsoft Windows Server 2025\r\n2026-10-04T17:03:07.4194138Z 10.0.26100\r\n2026-10-04T17:03:07.4194604Z Datacenter\r\n2026-10-04T17:03:07.4195094Z ##[endgroup]\r\n2026-10-04T17:03:07.4195567Z ##[group]Runner Image\r\n2026-10-04T17:03:07.4196110Z Image: windows-2025-vs2026\r\n2026-10-04T17:03:07.4196645Z Version: 20260925.250.1\r\n2026-10-04T17:03:07.4198022Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md\r\n2026-10-04T17:03:07.4199498Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260925.250\r\n2026-10-04T17:03:07.4200406Z ##[endgroup]\r\n2026-10-04T17:03:07.4201403Z ##[group]GITHUB_TOKEN Permissions\r\n2026-10-04T17:03:07.4203554Z Contents: read\r\n2026-10-04T17:03:07.4204331Z Metadata: read\r\n2026-10-04T17:03:07.4205059Z ##[endgroup]\r\n2026-10-04T17:03:07.4207340Z Secret source: Actions\r\n2026-10-04T17:03:07.4208206Z Cache mode: write\r\n2026-10-04T17:03:07.4208895Z Prepare workflow directory\r\n2026-10-04T17:03:07.4589445Z Prepare all required actions\r\n2026-10-04T17:03:07.4645582Z Getting action download info\r\n2026-10-04T17:03:07.6816990Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)\r\n2026-10-04T17:03:07.8121632Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)\r\n2026-10-04T17:03:08.0480580Z Complete job name: Native cmd.exe / Python 3.10\r\n2026-10-04T17:03:08.1794873Z ##[group]Run actions/checkout@v4\r\n2026-10-04T17:03:08.1796653Z with:\r\n2026-10-04T17:03:08.1797223Z   repository: devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:08.1801343Z   token: ***\r\n2026-10-04T17:03:08.1801786Z   ssh-strict: true\r\n2026-10-04T17:03:08.1802235Z   ssh-user: git\r\n2026-10-04T17:03:08.1802694Z   persist-credentials: true\r\n2026-10-04T17:03:08.1803189Z   clean: true\r\n2026-10-04T17:03:08.1803638Z   sparse-checkout-cone-mode: true\r\n2026-10-04T17:03:08.1804221Z   fetch-depth: 1\r\n2026-10-04T17:03:08.1804666Z   fetch-tags: false\r\n2026-10-04T17:03:08.1805134Z   show-progress: true\r\n2026-10-04T17:03:08.1805586Z   lfs: false\r\n2026-10-04T17:03:08.1805991Z   submodules: false\r\n2026-10-04T17:03:08.1806478Z   set-safe-directory: true\r\n2026-10-04T17:03:08.1806989Z   allow-unsafe-pr-checkout: false\r\n2026-10-04T17:03:08.1807846Z env:\r\n2026-10-04T17:03:08.1808284Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:08.1808742Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:08.1809254Z ##[endgroup]\r\n2026-10-04T17:03:08.3255506Z Syncing repository: devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:08.3257377Z ##[group]Getting Git version info\r\n2026-10-04T17:03:08.3258094Z Working directory is 'D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch'\r\n2026-10-04T17:03:08.4064083Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" version\r\n2026-10-04T17:03:08.7407886Z git version 2.55.0.windows.5\r\n2026-10-04T17:03:08.7464372Z ##[endgroup]\r\n2026-10-04T17:03:08.7484731Z Temporarily overriding HOME='D:\\a\\_temp\\1e06217e-9ea1-487d-893b-d507f4f91efc' before making global git config changes\r\n2026-10-04T17:03:08.7486925Z Adding repository directory to the temporary git global config as a safe directory\r\n2026-10-04T17:03:08.7496096Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --global --add safe.directory D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:03:08.8078470Z Deleting the contents of 'D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch'\r\n2026-10-04T17:03:08.8084620Z ##[group]Initializing the repository\r\n2026-10-04T17:03:08.8093837Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" init D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:03:08.8876060Z Initialized empty Git repository in D:/a/al_MikhroTik_patch/al_MikhroTik_patch/.git/\r\n2026-10-04T17:03:08.8924125Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" remote add origin https://github.com/devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:08.9531780Z ##[endgroup]\r\n2026-10-04T17:03:08.9532643Z ##[group]Disabling automatic garbage collection\r\n2026-10-04T17:03:08.9545139Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local gc.auto 0\r\n2026-10-04T17:03:08.9915222Z ##[endgroup]\r\n2026-10-04T17:03:08.9916536Z ##[group]Setting up auth\r\n2026-10-04T17:03:08.9929743Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp core\\.sshCommand\r\n2026-10-04T17:03:09.0232996Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\\\"\"\r\n2026-10-04T17:03:10.3073709Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\r\n2026-10-04T17:03:10.3372804Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\\\"\"\r\n2026-10-04T17:03:10.8898476Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp ^includeIf\\.gitdir:\r\n2026-10-04T17:03:10.9180546Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"git config --local --show-origin --name-only --get-regexp remote.origin.url\"\r\n2026-10-04T17:03:11.4332474Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local http.https://github.com/.extraheader \"AUTHORIZATION: basic ***\"\r\n2026-10-04T17:03:11.4628396Z ##[endgroup]\r\n2026-10-04T17:03:11.4629009Z ##[group]Fetching the repository\r\n2026-10-04T17:03:11.4642527Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9b4d6f9054810bf5fc67226feccfecd5590baa64:refs/remotes/origin/main\r\n2026-10-04T17:03:12.8022543Z From https://github.com/devlhi/al_MikhroTik_patch\r\n2026-10-04T17:03:12.8023824Z  * [new ref]         9b4d6f9054810bf5fc67226feccfecd5590baa64 -> origin/main\r\n2026-10-04T17:03:12.8078214Z ##[endgroup]\r\n2026-10-04T17:03:12.8078706Z ##[group]Determining the checkout info\r\n2026-10-04T17:03:12.8081759Z ##[endgroup]\r\n2026-10-04T17:03:12.8096250Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" sparse-checkout disable\r\n2026-10-04T17:03:12.8543167Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --unset-all extensions.worktreeConfig\r\n2026-10-04T17:03:12.8825687Z ##[group]Checking out the ref\r\n2026-10-04T17:03:12.8834311Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" checkout --progress --force -B main refs/remotes/origin/main\r\n2026-10-04T17:03:12.9656573Z Switched to a new branch 'main'\r\n2026-10-04T17:03:12.9716636Z branch 'main' set up to track 'origin/main'.\r\n2026-10-04T17:03:13.0170951Z ##[endgroup]\r\n2026-10-04T17:03:13.0182831Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H\r\n2026-10-04T17:03:13.0585370Z 9b4d6f9054810bf5fc67226feccfecd5590baa64\r\n2026-10-04T17:03:13.1088714Z ##[group]Run actions/setup-python@v5\r\n2026-10-04T17:03:13.1089160Z with:\r\n2026-10-04T17:03:13.1089450Z   python-version: 3.10\r\n2026-10-04T17:03:13.1089770Z   check-latest: false\r\n2026-10-04T17:03:13.1093343Z   token: ***\r\n2026-10-04T17:03:13.1093557Z   update-environment: true\r\n2026-10-04T17:03:13.1093786Z   allow-prereleases: false\r\n2026-10-04T17:03:13.1094008Z   freethreaded: false\r\n2026-10-04T17:03:13.1094199Z env:\r\n2026-10-04T17:03:13.1094366Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:13.1094556Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:13.1094760Z ##[endgroup]\r\n2026-10-04T17:03:13.2967054Z ##[group]Installed versions\r\n2026-10-04T17:03:13.3130926Z (node:1688) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\r\n2026-10-04T17:03:13.3133393Z (Use `node --trace-deprecation ...` to show where the warning was created)\r\n2026-10-04T17:03:13.3134007Z Successfully set up CPython (3.10.11)\r\n2026-10-04T17:03:13.3134715Z ##[endgroup]\r\n2026-10-04T17:03:13.3434859Z ##[group]Run python -m pip install -r requirements-license.txt\r\n2026-10-04T17:03:13.3435454Z \u001b[36;1mpython -m pip install -r requirements-license.txt\u001b[0m\r\n2026-10-04T17:03:13.3943015Z shell: C:\\Program Files\\PowerShell\\7\\pwsh.EXE -command \". '{0}'\"\r\n2026-10-04T17:03:13.3943383Z env:\r\n2026-10-04T17:03:13.3943579Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:13.3943773Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:13.3944058Z   pythonLocation: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:13.3944524Z   PKG_CONFIG_PATH: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64/lib/pkgconfig\r\n2026-10-04T17:03:13.3944951Z   Python_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:13.3945359Z   Python2_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:13.3945733Z   Python3_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:13.3946035Z ##[endgroup]\r\n2026-10-04T17:03:17.1426986Z Collecting PyYAML==6.0.3 (from -r requirements-license.txt (line 2))\r\n2026-10-04T17:03:17.1993835Z   Downloading pyyaml-6.0.3-cp310-cp310-win_amd64.whl.metadata (2.4 kB)\r\n2026-10-04T17:03:17.2337348Z Downloading pyyaml-6.0.3-cp310-cp310-win_amd64.whl (158 kB)\r\n2026-10-04T17:03:17.3905452Z Installing collected packages: PyYAML\r\n2026-10-04T17:03:17.4877977Z Successfully installed PyYAML-6.0.3\r\n2026-10-04T17:03:17.6728441Z ##[group]Run python -B -m unittest tests.test_license_cli tests.test_windows_bat tests.test_license_util -v\r\n2026-10-04T17:03:17.6729245Z \u001b[36;1mpython -B -m unittest tests.test_license_cli tests.test_windows_bat tests.test_license_util -v\u001b[0m\r\n2026-10-04T17:03:17.6802871Z shell: C:\\Program Files\\PowerShell\\7\\pwsh.EXE -command \". '{0}'\"\r\n2026-10-04T17:03:17.6803242Z env:\r\n2026-10-04T17:03:17.6803421Z   PYTHONUTF8: 1\r\n2026-10-04T17:03:17.6803633Z   ALI_LICENSE_NO_PAUSE: 1\r\n2026-10-04T17:03:17.6803932Z   pythonLocation: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:17.6804359Z   PKG_CONFIG_PATH: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64/lib/pkgconfig\r\n2026-10-04T17:03:17.6804786Z   Python_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:17.6805174Z   Python2_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:17.6805560Z   Python3_ROOT_DIR: C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\r\n2026-10-04T17:03:17.6805899Z ##[endgroup]\r\n2026-10-04T17:03:18.6048724Z test_argument_errors_do_not_echo_raw_input (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:21.3310095Z test_chr_flags_sign_verify_save_outside_repo_cwd (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:21.6126453Z test_corrupt_generated_signature_is_not_saved_or_printed (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:23.1877766Z test_dangling_output_symlink_is_refused_without_creating_target (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:26.3392363Z test_existing_output_file_is_refused_not_overwritten (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:27.8375885Z test_existing_output_symlink_is_refused_with_target_preserved (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:28.5493929Z test_explicit_bad_key_file_never_falls_back_or_leaks_contents (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:33.3620479Z test_interactive_chr_menu_uses_python_input_and_default_repo_output (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:33.5369559Z test_interactive_eof_is_clean_nonzero_without_output (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:40.9140899Z test_interactive_existing_file_is_refused (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:41.9656275Z test_interactive_invalid_output_path_is_sanitized (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:51.3781788Z test_interactive_menu_loop_retries_on_invalid_kind_choice (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:53.8341065Z test_interactive_ros_uses_unicode_output_path (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:03:54.8787337Z test_invalid_identifier_is_sanitized_and_never_writes (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:09.0790484Z test_key_priority_explicit_file_then_environment_then_default_file (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:09.1131124Z test_keyboard_interrupt_exits_130_without_file (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:11.7042091Z test_malformed_workflow_is_sanitized_for_explicit_key (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:17.6716992Z test_missing_optional_yaml_only_blocks_workflow_loading (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:17.8624407Z test_missing_pair_config_fails_without_ambiguous_success (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:19.1856879Z test_output_write_failure_is_nonzero_without_traceback (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:20.2892656Z test_partial_output_is_removed_on_write_error (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:24.8884727Z test_ros_flags_sign_verify_save (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:26.2243624Z test_selected_key_must_match_workflow_public_when_present (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:26.2247070Z test_symlink_inserted_at_publication_does_not_create_target (tests.test_license_cli.LicenseCLITests)\r\n2026-10-04T17:04:27.3571912Z Inject a symlink at the single publication syscall; no open on output. ... ok\r\n2026-10-04T17:04:27.3867957Z test_unsupported_python_exits_with_official_install_hint (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:28.1544120Z test_workflow_fallback_rejects_mismatch_and_missing_pair (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:30.5028640Z test_workflow_pair_is_last_fallback_and_real_signature_verifies (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:31.5619164Z test_wrong_payload_kind_is_rejected_before_save (tests.test_license_cli.LicenseCLITests) ... ok\r\n2026-10-04T17:04:36.7927927Z test_double_click_menu_generates_verifiable_license_file (tests.test_windows_bat.BatNativeCmdTests) ... ok\r\n2026-10-04T17:04:37.0727277Z test_invalid_identifier_exits_nonzero_and_writes_no_file (tests.test_windows_bat.BatNativeCmdTests) ... ok\r\n2026-10-04T17:04:37.1252964Z test_missing_interpreter_reports_python_org_and_exits_nonzero (tests.test_windows_bat.BatNativeCmdTests) ... ok\r\n2026-10-04T17:04:40.0677873Z test_ros_choice_generates_ros_license (tests.test_windows_bat.BatNativeCmdTests) ... ok\r\n2026-10-04T17:04:40.0679654Z test_bat_is_ascii_with_crlf_lines (tests.test_windows_bat.BatStructureTests) ... ok\r\n2026-10-04T17:04:40.0734150Z test_echo_statements_are_fixed_literals_only (tests.test_windows_bat.BatStructureTests) ... ok\r\n2026-10-04T17:04:40.0738651Z test_forbidden_constructs_absent (tests.test_windows_bat.BatStructureTests) ... ok\r\n2026-10-04T17:04:40.0741247Z test_no_delayed_expansion_variables (tests.test_windows_bat.BatStructureTests) ... ok\r\n2026-10-04T17:04:40.0745534Z test_required_safety_and_flow_lines_present (tests.test_windows_bat.BatStructureTests) ... ok\r\n2026-10-04T17:04:40.1693547Z test_chr_rejects_base64_id_that_overflows_64_bits (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.2773826Z test_generate_accepts_surrounding_whitespace (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.2774755Z test_generate_chr_rejects_malformed_system_id (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.8367475Z test_generate_chr_round_trips_against_public_key (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.8368849Z test_generate_rejects_invalid_private_key (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.8369578Z test_generate_rejects_non_string_identifier (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:45.8371366Z test_generate_ros_rejects_malformed_software_id (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:46.6618832Z test_generate_ros_round_trips_against_public_key (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:46.7567792Z test_importing_util_does_not_run_cli_or_print (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:46.7575524Z test_invalid_scalar_is_rejected_before_vendor_signing (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:46.7576804Z test_parse_rejects_garbage_license (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:47.3668742Z test_parse_rejects_invalid_public_key (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:49.3912003Z test_parse_rejects_tampered_signature (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:51.2086741Z test_parse_rejects_wrong_verification_key (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:52.7682817Z test_repeated_generation_preserves_id_and_signature_validity (tests.test_license_util.LicenseUtilTests) ... ok\r\n2026-10-04T17:04:52.7686481Z \r\n2026-10-04T17:04:52.7687153Z ----------------------------------------------------------------------\r\n2026-10-04T17:04:52.7687978Z Ran 52 tests in 94.659s\r\n2026-10-04T17:04:52.7688289Z \r\n2026-10-04T17:04:52.7688463Z OK\r\n2026-10-04T17:04:52.8964558Z Post job cleanup.\r\n2026-10-04T17:04:53.0499097Z (node:2424) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\r\n2026-10-04T17:04:53.0499785Z (Use `node --trace-deprecation ...` to show where the warning was created)\r\n2026-10-04T17:04:53.0831509Z Post job cleanup.\r\n2026-10-04T17:04:53.2890660Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" version\r\n2026-10-04T17:04:53.3168530Z git version 2.55.0.windows.5\r\n2026-10-04T17:04:53.3247441Z Temporarily overriding HOME='D:\\a\\_temp\\f4aee38e-6ffe-44ff-b76a-22749c67e232' before making global git config changes\r\n2026-10-04T17:04:53.3248630Z Adding repository directory to the temporary git global config as a safe directory\r\n2026-10-04T17:04:53.3259504Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --global --add safe.directory D:\\a\\al_MikhroTik_patch\\al_MikhroTik_patch\r\n2026-10-04T17:04:53.3678840Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp core\\.sshCommand\r\n2026-10-04T17:04:53.4032520Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\\\"\"\r\n2026-10-04T17:04:53.9548407Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\r\n2026-10-04T17:04:53.9818888Z http.https://github.com/.extraheader\r\n2026-10-04T17:04:53.9869005Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --unset-all http.https://github.com/.extraheader\r\n2026-10-04T17:04:54.0198072Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"sh -c \\\"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\\\"\"\r\n2026-10-04T17:04:54.5649098Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" config --local --name-only --get-regexp ^includeIf\\.gitdir:\r\n2026-10-04T17:04:54.5967691Z [command]\"C:\\Program Files\\Git\\bin\\git.exe\" submodule foreach --recursive \"git config --local --show-origin --name-only --get-regexp remote.origin.url\"\r\n2026-10-04T17:04:55.1817361Z Cleaning up orphan processes\r\n2026-10-04T17:04:55.2410586Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\r\n",
+        "passed": 52,
+        "skipped": 0
+      }
+    ],
+    "firmware_boot_or_activation_tested": false
+  },
+  "collector_notes": [
+    "Initial persistence validation stopped before writing: read_text normalized CRLF and changed hash, and Python 3.10 unittest parenthetical is class-only whereas 3.14 includes method. Corrected validation hashes decoded raw bytes and normalizes full selector using both class and test name; 52 unique test identities independently checked per job. Native runs were not repeated for this parser correction."
+  ],
+  "limitations": [
+    "Temporary synthetic keys and dependency-only fixtures; no deployment key generation or firmware/device access.",
+    "No boot/login/activation proven. Firmware binary download/hash remains incomplete.",
+    "Unsupported-filesystem and postpublication-cleanup permanent regressions are nonblocking review follow-ups; no claim those fault probes were executed."
+  ]
+}

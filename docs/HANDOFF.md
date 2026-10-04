@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-05 (WITA): build GitHub `37207497763` pada `c636fa6`: x86 sukses (18 aset), enam arsitektur gagal guard, rilis skipped. Boot/aktivasi belum terbukti. Launcher ter-push `f392288`; run Windows `37214834349` gagal symlink walaupun seluruh tes cmd.exe lulus. Kandidat precheck ditolak review karena race; pengganti publikasi hard-link lokal lulus 272 tes (268 pass, 4 native skip). Review delta `deleg_c6179945` lulus dan pin/log diverifikasi parent; fix siap push, rerun Windows masih pending (§13).**
+**Status diperbarui: 2026-10-05 (WITA): fix launcher Windows ter-push `9b4d6f9`, 5/5 file publik cocok. Run `37219037250` sukses: 52/52 tes per Python 3.10.11 dan 3.14.7, tanpa skip; cmd.exe dan symlink/race nyata lulus (§13). Build firmware `37207497763`: hanya x86 sukses (18 aset), enam arsitektur gagal guard, rilis skipped. Hash ulang biner, boot/login, dan aktivasi firmware tetap belum terbukti.**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -977,16 +977,38 @@ keseluruhan.[8] Tidak ada akses VM pemilik atau build/probe QEMU baru.
   ringkasan dan digest output dipertahankan di evidence. Strict sources dan
   actionlint kembali lulus. Pemilik menegaskan izin `push`. **Push fix dan
   Windows native belum dilakukan pada titik pra-commit ini.**
+- **Publikasi fix terverifikasi:** commit `9b4d6f9054810bf5fc67226feccfecd5590baa64`
+  (`[verified] fix: publish Windows lab licenses without following symlinks`)
+  dipush ke `main`. GET anonim mengonfirmasi SHA remote dan **5/5 file berubah
+  byte-identical**. Tidak ada perubahan tag, aset rilis, keypair, atau firmware.
+- **Windows native akhirnya GREEN:** run `37219037250` pada `9b4d6f9` sukses.
+  Python **3.10.11: 52/52 tes lulus, 0 skip, 94.659 detik**; Python
+  **3.14.7: 52/52 lulus, 0 skip, 90.678 detik**. Log diperiksa dan record tes
+  dihitung unik per job; semua tujuh target penting (empat cmd.exe asli,
+  existing/dangling symlink, race insertion) lulus, bukan skip.[10]
+  Bukti publikasi, 104 hasil tes dua job, serta kedua log tersanitasi dengan
+  SHA-256 dipertahankan di
+  [bukti native GREEN](evidence/windows-license-native-37219037250.json).
+  Validasi collector awal berhenti sebelum menulis akibat normalisasi CRLF
+  dan format unittest Python 3.10 yang hanya menaruh nama kelas di kurung;
+  validasi diperbaiki memakai raw bytes serta identitas kelas+nama tes.
+  Ini koreksi parser bukti, bukan pengulangan atau perubahan hasil CI.
+  Pengambilan log memakai credential in-memory hanya ke api.github.com;
+  redirect storage memakai request baru tanpa Authorization. Log/key/token
+  mentah tidak disimpan. Ini bukti launcher/generator di Windows, bukan
+  penerimaan lisensi firmware. Sesudah run tersebut hanya HANDOFF/evidence/
+  panduan diubah; suite kode tidak diulang untuk perubahan dokumentasi saja.
 - Batas bukti tetap: belum terbukti firmware x86 ini boot/login atau menerima
   lisensi setelah reboot. Generator/parser konsisten hanya menguji bentuk
   payload, ID, dan signature; jangan melabeli artifact siap produksi atau
   aktivasi pasti berhasil. Kunci deployment tidak diganti.
 
-**Titik lanjut:** commit/push fix hard-link yang telah diterima sesuai izin,
-lalu jalankan tes native Windows serta verifikasi source publik. Launcher
-awal sudah dipush; jangan mengulang publikasi itu sebagai pekerjaan baru.
-Verifikasi hash biner artifact masih terblokir unduhan. Jangan menyamakan
-empat tes cmd.exe yang lulus dengan suite Windows seluruhnya hijau.
+**Titik lanjut:** launcher dan suite Windows sudah lulus serta source fix
+ter-push. Pemakaian ada di [panduan Windows](windows-license.md); filesystem
+output perlu hard-link support (NTFS). Yang masih terbuka ialah hash ulang
+artifact firmware, enam arsitektur non-x86, boot/login dan aktivasi dengan ID
+sama setelah reboot. Keberhasilan launcher tidak menutup pekerjaan firmware
+itu. Tidak ada build/QEMU lokal atau akses VM baru tanpa arahan pemilik.
 
 ## Yang bisa / perlu dikerjakan selanjutnya
 
@@ -1093,4 +1115,5 @@ env -u PYTHONPATH TMPDIR="$HOME/.hermes/cache/scratch" \
 [6] https://download.mikrotik.com/routeros/7.24.4/chr-7.24.4.img.zip
 [7] https://api.github.com/repos/devlhi/al_MikhroTik_patch/releases/tags/7.24.4
 [8] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763 — GitHub Patch v7 c636fa6: x86 sukses, enam gagal
-[9] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37214834349 — Windows launcher f392288: cmd.exe native lulus, symlink gagal
+[9] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37214834349 — Windows launcher f392288: native menu passes, symlink tests fail
+[10] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37219037250 — Windows hard-link fix 9b4d6f9: 52 tests per Python, no skips

@@ -146,5 +146,8 @@ Workflow `.github/workflows/windows-license.yml` menjalankan tes generator dan
 **cmd.exe asli** pada Python 3.10 dan 3.14. Tes memakai keypair sintetis
 sementara dalam salinan terisolasi; tidak memakai kunci deployment dan tidak
 mengakses router. Pada macOS/Linux, tes native cmd.exe di-skip secara eksplisit.
-Status run Windows harus diperiksa sendiri; hadirnya workflow bukan bukti run
-sudah lulus.
+Run [`37219037250`](https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37219037250)
+pada commit `9b4d6f9` **lulus 52/52 tes per versi Python, tanpa skip**
+(3.10.11 dan 3.14.7), termasuk menu `.bat` melalui cmd.exe asli, no-overwrite,
+symlink dangling, dan race insertion. Ini tetap bukan tes boot/aktivasi firmware.
+Bukti tersanitasi: [hasil native Windows](evidence/windows-license-native-37219037250.json).
