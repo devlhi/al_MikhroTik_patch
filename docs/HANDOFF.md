@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6); salinan aset CHR rilis 7.24.4 mengenali blok kode lab dan meminta reboot, tetapi level tetap `free` sesudah reboot (§7); penyebab belum terbukti.**
+**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6). Verifier aset CHR x86 7.24.4 memakai anchor vendor dalam delapan immediate (§9). Engine immediate x86 kini ter-commit daf390f (Capstone + preflight overlap, review delta lulus; §11); aktivasi tetap belum terbukti, disk lab masih reboot-loop (§9).**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -37,11 +37,11 @@ juga tertulis di [AGENTS.md](../AGENTS.md) dan [CONTRIBUTING.md](../CONTRIBUTING
 | Hal | Status |
 |---|---|
 | Cabang kerja sesuai arahan pemilik | `main`; jangan membuat cabang lain tanpa persetujuan |
-| Commit fungsional acuan | `be9cd23` — guard cakupan patch NPK; commit setelahnya untuk dokumentasi |
+| Commit fungsional acuan | `daf390f` — matcher immediate x86 dua-round ter-review (Capstone, preflight overlap); sebelumnya `be9cd23` guard cakupan patch NPK |
 | Rilis 7.24.4 | release biasa + **Latest**; 40 aset; aset TIDAK dibangun ulang dengan guard |
 | Rilis 7.23.3 | **prerelease**; tag `7.23.3` + tag build lama; 40 aset; aset TIDAK dibangun ulang |
 | Instalasi & boot | **ISO: masalah “load system” masih terbuka (§5). VMDK CHR: VM aktif dan WebFig dapat diakses (§6); asal/hash image belum dikonfirmasi.** Salinan aset VMDK rilis 7.24.4 terbukti boot sampai login di QEMU terisolasi tanpa jaringan (§7) |
-| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Pada salinan terisolasi aset rilis 7.24.4: paste blok kode lab → console minta reboot → setelah reboot level tetap `free` (§7). Ini bukti aktivasi tidak terjadi pada uji tersebut, bukan bukti signature diterima atau akar sebab sudah ditemukan.** |
+| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Aset rilis: `free` → paste → reboot → `free` (§7); anchor vendor yang terlewat pola literal kini terkonfirmasi untuk satu aset (§9). Approval versi source lama ditahan oleh defect overlap (§10); round 2 kini lulus review delta dan diterima parent pada fingerprint tercatat untuk scope sintetis (§11). Lab belum login dan aktivasi belum terbukti.** |
 
 ## Apa yang sudah dikerjakan
 
@@ -467,17 +467,358 @@ atau penyimpanan/penerapan kode), perbaikan engine, dan rebuild. Titik lanjut:
 tentukan verifier serta format yang dipakai CHR versi ini dahulu; guard
 cakupan dan perbaikan finder/CPIO tidak otomatis menjadi fix aktivasi.
 
+### 8. Investigasi lanjut storage/verifier (2026-10-04) — selesai; bukti baru di §9
+
+Commit acuan `1918ae7`. Pemilik meminta lisensi lab benar-benar dapat dipakai;
+agent melanjutkan diagnosis, **bukan sekadar membuat kode baru**. Koreksi arahan
+chat: install ulang image yang sama **belum punya dasar sebagai fix**, tetapi
+hasil uji `free` juga tidak membuktikan secara pasti kunci tidak tertanam atau
+instalasi VM pemilik bebas masalah. Penyebab tetap terbuka saat bagian ini
+ditulis; kelanjutan dan bukti tersanitasi ada di §9.
+
+Saat analisis storage, tiga hipotesis dipisahkan: (1) blok tidak tersimpan/
+dipakai saat boot, (2) verifier tidak cocok dengan signature/layout payload,
+(3) transformasi patch menyasar key yang bukan dipakai untuk lisensi CHR.
+Review binari masih berjalan saat itu; hasilnya dan batas bukti baru ada di §9.
+
+**Yang benar-benar dikerjakan sekarang:** analisis offline salinan disk hasil
+probe §7; tidak menghubungi VM pemilik, tidak membuat kode/keypair baru,
+tidak boot ulang guest, tidak mengubah engine/tag/aset, tidak rebuild.
+
+- Konversi baca-saja overlay probe ke raw scratch; partisi GPT diperiksa,
+  lalu `debugfs` membaca partisi ext tanpa opsi write. Digest raw sumber
+  tetap cocok dengan fingerprint §7.
+- Mencari tujuh representasi kode yang sudah dibuat: body base64, dua baris
+  body, binary64, encoded payload16, signature48, decoded payload16.
+  **Semua nol hit** pada disk pristine, boot-only control, dan hasil apply
+  sesudah reboot (masing-masing 134.217.728 byte). Kontrol matcher positif/
+  negatif lulus. Ini **tidak membuktikan kode tak tersimpan** dalam encoding
+  lain, hidden storage, atau memori; tidak menetapkan lokasi verifier.
+- Snapshot percobaan pertama yang berhenti di prompt reboot juga nol hit,
+  tetapi guest belum sync/shutdown: bukti lemah, write tertunda bisa hilang.
+- Inventaris filesystem ext boot-only vs sesudah apply/reboot: partisi boot
+  6/6 entri identik; partisi sistem 12/16 entri identik. Empat path berubah:
+  `/rw/rosmode.msg`, `/rw/startcount`, `/rw/store/cchst2`,
+  `/rw/store/cfg.0000` (8482 → 8526 byte). Dua run punya System ID berbeda,
+  jam/boot count berbeda; ini **bukan matched control**. Tambahan netto
+  44 byte pada cfg **bukan bukti record lisensi** atau sebab aktivasi gagal.
+- Gate `assert_activation.py` atas `result.json` nyata §7 mengembalikan
+  **exit 1 / `activation_verified: false`** (`free` sebelum/sesudah).
+  Exit 0 helper terdahulu hanya menandakan probe selesai, bukan sukses aktivasi.
+- Semua file input/log/copy scratch dibuat/diatur 0600. Pemeriksaan host:
+  0 proses QEMU tersisa. Suite repo tidak diulang; helper diagnosis saja.
+
+Bukti disanitasi baru:
+[JSON investigasi persistence](evidence/chr-7.24.4-license-persistence.json).
+System ID dan isi kode tidak diekspor. Bukti §8 disertakan dalam paket
+serah-terima engine `daf390f` (§12). Review verifier sudah kembali (lihat §9); jangan
+mengubah signature checks, memperluas penggantian kernel, atau bypass guard
+untuk memaksa hasil tampak hijau tanpa hubungan sebab yang teruji.
+
+### 9. Verifier terkonfirmasi; kandidat fix ditolak review, boot lab belum berhasil (2026-10-04)
+
+Saat sesi itu berjalan, commit acuan `1918ae7`; perubahan engine sesi ini
+kemudian ter-commit `daf390f` (lihat §11). Bukti tahan lama tersanitasi:
+[JSON verifier/build/probe/review](evidence/chr-7.24.4-license-verifier-lab.json).
+Tidak ada kontak/penulisan VM pemilik, keypair baru, pemindahan tag atau
+penggantian aset rilis lama.
+
+**Verifier dan batas temuan:**
+
+- Subagent menelusuri verifier statik `nova/bin/keyman` (`0x804f4c6`), dispatch
+  command `0xfe000e` menuju handler `0x8051542`, dan emulasi byte ELF asli
+  memakai fixture negatif. Agent utama memeriksa ulang disassembly serta
+  membaca seluruh file `keyman`, `loader`, `mode` secara case-sensitive.
+- Ketiga biner rilis identik dengan pembanding vendor. Kunci lisensi ter-pin
+  vendor cocok **32/32 byte** setelah merekonstruksi delapan immediate dword
+  `MOV`; bukan string 32 byte kontigu. Anchor custom tidak cocok di aset lama.
+  Pencarian literal lama melewati bentuk tersebut. Ini menjelaskan penolakan
+  kriptografis kode custom-signed pada **satu aset CHR x86 7.24.4 yang diaudit**;
+  bukan kesimpulan untuk semua arsitektur/rilis atau “sejak dulu”.
+- Prompt reboot tidak membuktikan acceptance; jalur persistensi mensyaratkan
+  verifikasi sukses. Wording return-code pada F5 laporan subagent keliru;
+  koreksi parent dicatat di JSON, tidak disalin sebagai fakta.
+- Payload lengkap dan acceptance pascareboot dengan firmware baru tetap belum
+  terbukti; emulasi fixture negatif bukan uji aktivasi positif. Provenance
+  VMDK pemilik masih belum dikonfirmasi.
+
+**Kandidat engine/build sebelum hasil review:**
+
+- `patch.py` dan tes sintetis/integrasi ditambah untuk penggantian delapan
+  immediate sebagai satu kunci utuh, dengan offset pristine/guard yang sama.
+  Suite penuh sebelumnya menghasilkan **223 tes OK**; ini hasil sebelum
+  perbaikan review lanjutan, bukan sertifikasi source yang sedang berubah.
+- Build scratch dari NPK vendor pristine: mapping lisensi **3** replacements;
+  mapping NPK-sign **5**; guard dan signature custom lulus. Ketiga anchor lab
+  cocok custom. Input raw tetap dipin, tidak ada perubahan di luar partisi sistem.
+- Ekstraksi non-root macOS menghasilkan owner 501:20 dan mode berbeda. Adapter
+  scratch dinormalisasi terhadap **893 entri metadata** rilis; **582 file reguler**
+  dibandingkan: 579 identik, hanya keyman/loader/mode berbeda masing-masing 32
+  byte dengan ukuran tetap. Root/mode/mtime identik dengan acuan. Ini bukan
+  perbaikan repo/boot yang terbukti; sumber hasil build pra-review disimpan
+  versioned, tidak direkomendasikan dipakai pemilik.
+
+**Runtime dan koreksi laporan chat:**
+
+- Disk lab dinormalisasi (`6cd4fce4…`) tetap timeout sebelum serial login;
+  **tidak ada kode dikirim**. VGA pada 20–140 detik tetap `Starting services...`.
+  Guest cleanup dipaksa karena CLI tak tersedia; sumber digest tidak berubah.
+- Kontrol memakai jalur debugfs tulis ulang yang sama tetapi **NPK identik byte
+  dengan rilis**, raw `cd6c2165…`: **berhasil CLI**, versi `7.24.4`, level `free`,
+  shutdown guest bersih. Klaim chat bahwa kontrol gagal sama persis adalah
+  **salah dan ditarik kembali**. Kontrol ini tidak membuktikan metadata menjadi
+  akar sebab, atau penggantian kunci bebas dari masalah boot.
+- Marker `.asked` ada dan `nova`/`UPGRADED` tidak ada pada **lab maupun kontrol**
+  setelah boot. `UPGRADEBOOTER` ada di snapshot lab pendek, tetapi tidak ada
+  pada snapshot lab 420 detik. Marker ini tidak menetapkan jalur upgrade atau
+  penyebab boot berulang; klaim chat tentang "upgrade loop" ditarik kembali.
+- Long-watch 420 detik tuntas: lab disk **reboot berulang**, bukan hang diam
+  (30–120s `Starting services...` → `Rebooting...` → `failed to stop parser:
+  std failure: timeout (13)` → kernel baru → `Rebooting...` lagi; serial 0 byte,
+  tanpa input). Forensik tiga log lab: **5 rekaman signal=11** pada
+  `/nova/bin/sys2`, eip `0x0805bfd3`; kontrol jalur-tulis-sama dengan NPK rilis:
+  backtrace kosong, CLI tercapai, shutdown guest bersih. Bukti tersanitasi:
+  [JSON crash lab](evidence/chr-7.24.4-lab-sys2-crash.json).
+- Disassembly situs eip: penulisan nol ke alamat NULL lalu `ud2` — **situs fault
+  disengaja** yang dapat dicapai dari **dua cabang konsistensi** (`0x805aece`,
+  `0x805bfd1`). EIP tersimpan saja tidak menunjukkan cabang mana yang aktif;
+  situs disengaja juga tidak menutup kemungkinan korupsi memori di hulu.
+  Sumber nilai: storage satu-byte ber-guard `0x8053144` (pointer diteruskan
+  ke konstruktor `nv::Looper`) dan buffer statis `0x805840f` (diinisialisasi
+  dari byte rendah jumlah detik+mikrodetik `gettimeofday`). Dataflow setelah
+  konstruktor dan hubungan dengan image termodifikasi **belum dibuktikan**.
+- Yang sah saat ini: abort teramati pada run image termodifikasi, tidak pada
+  kontrol tulis-ulang NPK identik. NPK lab juga berbeda dalam **packing
+  SquashFS dan signature**, bukan hanya 3×32 byte program; penggantian anchor
+  belum diisolasi sebagai penyebab. Klaim chat "anti-tamper" dan "hampir pasti
+  memvalidasi anchor" terlalu jauh dan ditarik kembali. `sys2` sendiri
+  byte-identik dengan rilis. Watch tambahan 24 menit dibatalkan sebagai
+  redundan (bukan uji selesai); setelah cleanup, 0 proses QEMU/probe miliknya.
+  QMP quit/terminasi host **bukan shutdown guest bersih**.
+
+**Review engine `deleg_82ebe314`: `passed=false` (0 security concerns, 3 logic errors).**
+
+1. P1: scan C7 mentah tanpa boundary instruksi; prefix operand-size mengubah
+   semantik dan dapat menyebabkan byte instruksi lain ditulis/dihitung.
+2. P2: rentang executable section bisa alias metadata ELF; ukuran/version
+   header juga belum ketat. Kecocokan di metadata tidak boleh dianggap cakupan.
+3. P2: impor fixture tes gagal pada pemanggilan module integrasi, meskipun
+   discovery lulus. Saran tambahan: assert seluruh baris coverage, bukan total saja.
+
+Reviewer melaporkan 50 tes patch discovery lulus tetapi defect tetap ada;
+hijau bukan bukti matcher aman. Ia juga melaporkan sempat stash/restore file
+tes, melanggar mandat baca-saja. Parent memeriksa ulang status tree tetapi tidak
+punya byte snapshot sebelum review untuk menjamin seluruh restoration. Worker
+berikutnya dilarang stash/reset/checkout; baseline harus di copy scratch.
+Fix-agent terpisah ditugaskan TDD atas defect ini, tanpa build/VM/push; hasil fix
+dan verifikasi parent dicatat di §10. Target aktivasi tetap terbuka.
+
+### 10. Review ulang pass; approval ditahan oleh regresi overlap baru (2026-10-04)
+
+Perubahan bagian ini awalnya lokal; engine-nya kemudian ter-commit `daf390f`
+(§11) dengan dokumentasi terkait.
+
+- Fix-agent `deleg_7012a246` menyelesaikan TDD vertikal atas ketiga defect §9 plus
+  saran baris hardlink, tanpa commit/push/build/inspeksi kunci/akses VM, dan tanpa
+  menyentuh dokumentasi milik parent. Lima file berubah: `patch.py` (matcher
+  immediate berbasis decoding Capstone i386 dari batas section executable,
+  fail-closed tanpa decoder, tanpa scan mentah C7), `tests/test_patch_x86_immediates.py`
+  (baru, fixture sintetis), `tests/test_patch_coverage_integration.py` (impor
+  fixture dua mode invocation + assert baris replacement lengkap),
+  `requirements.txt` (`capstone>=5,<6`; 5.0.9 terpasang di venv), dan
+  `.github/workflows/patch6.yml` (tambah langkah instal requirements).
+- **Verifikasi independen parent** (fingerprint lima file identik dengan fingerprint
+  akhir fix-agent; sumber dicek tidak berubah selama eksekusi): suite penuh
+  **228 tes OK, 0 gagal/0 error/0 skip**; patch discovery mode `-O` **55 tes OK**;
+  integrasi **6+6 OK** pada mode module **dan** discovery; probe sintetis parent
+  **18/18 lulus** (prefix operand/address/segment/lock/mov/push ditolak tanpa
+  mutasi; alias section-table/program-table ditolak; field header malformed
+  ditolak; decoder absen fail-closed; penggantian asli tetap bekerja
+  pada empat basis disp32/disp8 dan layout program-header sebelum kode);
+  `pip check` OK; `git diff --check` bersih; actionlint 1.7.12 bersih pada
+  workflow saat ini **dan** baseline `HEAD` (salinan scratch terisolasi,
+  tanpa stash/reset tree).
+- Scan statis baris tambahan payload review: 0 temuan (secrets/injection/eval/
+  pickle/SQL/material hex-64).
+- Bukti tersanitasi tahan lama:
+  [JSON verifikasi engine](evidence/chr-7.24.4-engine-review-fix.json) — memuat
+  rekam fix-agent, verifikasi parent, sumber probe, digest payload review, scan
+  statis, dan batas interpretasi. Artefak aslinya (`evidence.json`,
+  `parent-verification.json`, probe, payload diff) tetap di scratch
+  `~/.hermes/cache/scratch/split-immediate-review/` untuk reproduksi.
+- **Review independen ulang `deleg_71bfd535`: `passed=true` (0 security, 0 logic,
+  4 saran; ketiga defect_checks true) — tetapi approval parent DITAHAN.** Verdict
+  dicatat sebagaimana dikembalikan, bukan approval akhir. Transkrip mencatat
+  pemanggilan suite penuh dan mode module, serta probe overlapping-section yang
+  ia anggap aman. Parent mereproduksi probe itu dan menemukan **defect sisa
+  kelas P1** (rincian di bawah); verdict pass tidak mengesampingkan defect
+  perilaku yang direproduksi.
+- **Defect sisa yang direproduksi parent (blocking):** `_x86_immediate_matches`
+  men-decode dari awal tiap section executable tanpa memvalidasi rentang section
+  yang tumpang-tindih. Dua rentang exec tumpang-tindih dapat menafsir ulang byte
+  yang sama dari boundary yang tidak kompatibel: outer section berawal prefix
+  `0x66` sebelum delapan MOV (ditolak benar bila sendirian), inner section
+  berawal satu byte kemudian — kehadiran inner menyebabkan delapan immediate
+  dword ditulis ulang dan dihitung satu kunci utuh. Disassembly stream outer
+  benar-benar berubah semantik (`mov word …, 0x100` → `0x2120`; `add al,[ebx]`
+  → `and ah,[ebx]`). Direproduksi juga untuk prefix `B8` dan undecodable `0F 04`,
+  pada kedua urutan section: **6/6 kasus penolakan gagal, exit 1**; dua kontrol
+  positif single-section dan duplicate-range lulus. Observasi, source probe,
+  dan digest disalin ke `post_verdict_parent_probe` pada JSON verifikasi engine
+  di repo; sumber scratch `split-immediate-review/verify_overlap_parent.py`/`.json`
+  bukan satu-satunya bukti. Ini defect fixture sintetis, **bukan penyebab boot
+  sys2 yang sudah dibuktikan**.
+- **Fix round 2 `deleg_e7b57afb` saat itu didispatch** untuk perbaikan ini (patch.py +
+  tes overlap saja, TDD RED→GREEN, dilarang stash/reset/commit/push/build/VM).
+  Kontrak: rentang exec tumpang-tindih non-identik fail-closed untuk pencocokan
+  instruksi; duplicate range identik boleh didedupe sekali; section disjoint
+  normal tetap boleh match. Saran reviewer tentang e_shoff==0/e_shnum==0 ikut
+  ditambahkan sebagai fixture penolakan. Hasil round 2 dan verifikasi parent
+  terbaru dicatat di §11; bagian §10 mempertahankan riwayat defect/source lama.
+- **Adjudikasi saran reviewer** (dicatat di
+  [JSON verifikasi engine](evidence/chr-7.24.4-engine-review-fix.json)):
+  perubahan `sudo pip` **ditunda**. Workflow mencampur setup-python dengan
+  `sudo -E python3`; interpreter install dan eksekusi harus diverifikasi
+  bersama pada runner Ubuntu. Klaim chat bahwa `sudo pip` pasti interpreter
+  yang benar **ditarik kembali**: resolusi PATH/sudo dan PEP 668 belum diuji
+  pada runner sebenarnya. Saran skip-note dan impor module-level ditunda;
+  memindahkan impor Capstone dapat mengubah perilaku saat decoder absen.
+  Saran tes overlap dieskalasi menjadi defect blocking di atas. Reviewer
+  melaporkan 228 tes OK dengan 2 skip; transkrip memuat pemanggilan suite penuh
+  tetapi output dipotong. Jangan menyebut run itu tidak ada. Hasil parent
+  tetap 228 OK 0 skip pada konfigurasi parent, bukan bukti jumlah skip reviewer.
+- Batas tetap: disk lab lama (`6cd4fce4…`) masih tercatat reboot-loop sys2 (§9);
+  belum ada build ulang memakai engine baru; diagnosis dataflow check sys2 belum
+  dikerjakan.
+
+### 11. Round 2 overlap diperbaiki; review delta diterima untuk scope sintetis (2026-10-04)
+
+Engine dan tesnya ter-commit `daf390f` pada `main` setelah gate pra-push
+lulus; **belum ada build firmware ulang, tidak ada akses VM pemilik**. Bukti tersanitasi tahan lama:
+[JSON perbaikan overlap round 2](evidence/chr-7.24.4-engine-overlap-fix.json).
+
+- Fix-agent `deleg_e7b57afb` hanya mengubah `patch.py` dan
+  `tests/test_patch_x86_immediates.py`. Patcher mengumpulkan rentang kandidat
+  executable yang valid/nonkosong, dedupe pasangan start/end identik, urutkan,
+  lalu sweep `furthest_end` **sebelum decoding apa pun**. Overlap non-identik
+  membatalkan seluruh pencocokan instruksi; section disjoint/adjacent tetap
+  boleh match, duplikat identik dihitung sekali. Jalur literal tidak berubah.
+- Rekam eksekusi fix-agent memuat RED asli pada source pra-fix: 1 tes dengan
+  **2 subtest gagal**, returncode 1; minimal GREEN 1 OK. Matriks lanjutan
+  mencakup prefix 66/B8/0F04 dua urutan, partial/containment/same-start,
+  duplicate, disjoint/adjacent, empty-range, enam permutasi tiga rentang,
+  ambiguity setelah lokasi valid, serta e_shoff==0/e_shnum==0. Ini bukan
+  bukti hubungan kausal dengan crash `sys2` pada disk lab lama.
+- **Verifikasi independen parent pada source akhir yang stabil:** suite penuh
+  **235 tes OK, 0 gagal/error/skip** (Caddy diaktifkan); patch discovery mode
+  `-O` **62 OK**; module x86 **20 OK**; integrasi module/discovery **6+6 OK**;
+  `pip check` dan `git diff --check` returncode 0. Fingerprint source cocok
+  dengan akhir fix-agent dan tidak berubah selama eksekusi.
+- Parent menjalankan probe overlap yang sama dengan source probe tak berubah:
+  **6/6 kasus yang dahulu RED sekarang GREEN**, byte tetap identik, stats/log
+  kosong; disassembly outer tidak berubah lagi. Dua kontrol positif genuine
+  dan exact-duplicate juga lulus. RED dan GREEN disimpan terpisah di bukti
+  repo; bukan hanya klaim subagent atau hitungan suite.
+- **Pelanggaran batas artefak fix-agent diungkap:** ia menjalankan skrip probe
+  parent sebelum edit, sehingga JSON pasangannya di scratch tertimpa. Identitas
+  byte JSON pra-insiden tidak bisa dijamin (hash awal tidak diambil). Parent
+  memeriksa observasi RED asli yang sudah tersimpan di bukti repo: enam kasus
+  gagal dan kedua kontrol positif tetap utuh. Setelah uji GREEN, parent
+  merekonstruksi JSON scratch dari observasi RED tahan lama; ini **bukan klaim
+  pemulihan byte-identik file scratch asli**. Jangan jalankan probe pekerja
+  lain yang mempunyai writer top-level; gunakan salinan/output sendiri.
+- Versi dependency dilaporkan terpisah: metadata distribusi Capstone **5.0.9**,
+  module runtime `__version__` **5.0.7**. Perbedaan sudah ada sebelum round 2;
+  dependency tidak diubah dan `pip check` lulus. Jangan menyamakan metadata
+  distribusi dengan versi module/native yang benar-benar diimpor.
+- **Review delta independen `deleg_4aa912a1` lulus dan diterima parent**
+  (`passed=true`, 0 security concerns, 0 logic errors), hanya untuk perubahan
+  matcher round 2 dan tes sintetis pada fingerprint tercatat. SHA-256 source
+  dua file/payload masih cocok; tidak ada edit source setelah review. Parent
+  memeriksa hash **13 rekaman eksekusi**, stdout/stderr lengkap beserta file
+  stream pasangannya, dan **56 berkas inventori reviewer**: semuanya cocok.
+  Scan statis delta 135 baris tambahan tetap 0 temuan; ini bukan audit keamanan
+  seluruh repo atau approval firmware untuk dipasang.
+- **Bukti reviewer dikonfirmasi parent, bukan hanya verdict:** reverse+replay
+  payload oleh parent menghasilkan baseline pra-fix dengan hash yang sama
+  dan mengembalikan source akhir persis. Audit reviewer membatasi perubahan
+  produksi pada `_x86_immediate_matches`; `_replace_keys` dan seluruh byte
+  sesudahnya identik dengan baseline round 1. Parent membaca lengkap probe
+  mandiri reviewer lalu menjalankannya: **13 tes OK, 0 gagal/error/skip**,
+  mencakup oracle interval **576 kasus**, spy decoder (0 decoding/konstruksi
+  untuk overlap ambigu, tepat 1 decode untuk duplikat identik), kontrol positif,
+  dan pemanggilan x86 module/discovery. Source tetap cocok dengan pin.
+- Reviewer menjalankan module x86+integrasi **26 OK** dan patch discovery `-O`
+  **62 OK**, 0 gagal/error/skip; output lengkapnya tersimpan di bukti repo.
+  **Suite penuh tidak diulang pada adjudikasi ini**; angka 235 OK di atas
+  adalah run parent sebelumnya pada source yang sama, bukan run baru.
+- Kegagalan harness tidak disembunyikan: **3 run eksplorasi reviewer rc=1**
+  (dua asumsi panjang fixture salah, satu trap decoder) serta **1 run unittest
+  awal: 9 tes, 1 error, rc=1** akibat trap `__path__` pada kontrol valid belum
+  tertangkap. Iterasi terkoreksi 9/10/13 OK; parent membaca traceback dan
+  memverifikasi ulang final 13 OK. Bukan empat kegagalan produk yang diabaikan.
+- Dua saran non-blocking ditunda tanpa mengubah source ter-review: promosi
+  decoder-spy menjadi regresi tetap di repo (kini probe/sumbernya ditahan di
+  bukti durabel), dan penamaan `entry_size` untuk keterbacaan (sudah divalidasi
+  ==40). Tinjau ketika matcher/tes berikutnya diubah; perubahan source baru
+  membutuhkan tes dan review sesuai versi baru.
+- Dua deviasi reviewer dicatat: penanda `.delta-review-r2-latest-path` ditulis
+  di root scratch tanpa memeriksa keberadaan/hash awal, sehingga preservasi
+  file yang mungkin sudah ada **tidak dijamin**; dua log eksplorasi awal
+  tertimpa di `probe.out` milik reviewer sebelum perekam terstruktur dibuat.
+  Batas baca-saja tidak dianggap sempurna hanya karena verdict lulus.
+  Verdict lengkap (path disanitasi), manifest, rekaman eksekusi, kegagalan,
+  source probe final, dan rerun parent kini disimpan di JSON bukti repo;
+  ringkasan penting tidak lagi bergantung pada scratch yang dapat dipangkas.
+- Batas tetap: disk lab terakhir pra-review mengalami reboot-loop (§9), belum
+  ada firmware baru yang di-boot, dan **aktivasi setelah reboot belum terbukti**.
+  Unit/integrasi hijau hanya membuktikan perilaku transformasi sintetis.
+
+### 12. Serah-terima source yang disetujui pemilik (2026-10-04)
+
+Pemilik memberikan izin **"ok push"** untuk source, tes dan bukti sesi ini ke
+`main`. Commit engine yang sudah dibuat: `daf390f14263448a9e8e38667cd2d02b9665a5ae`.
+Commit dokumentasi yang memuat bagian ini dicatat oleh riwayat Git, bukan
+hash yang ditebak terlebih dahulu. Saat catatan ini disiapkan push belum
+selesai; ketersediaan publik harus diperiksa lewat SHA branch remote dan
+kesamaan byte seluruh file perubahan setelah push.
+
+- Verifikasi pra-push **dijalankan ulang tanpa pipeline yang menyembunyikan
+  returncode**, dengan stdout/stderr lengkap disimpan: suite penuh **235 OK,
+  0 gagal/error/skip** (77.099 detik, Caddy aktif); patch discovery `-O`
+  **62 OK**, 0 gagal/error/skip. Fingerprint lima file source ter-review
+  tidak berubah sebelum/sesudah run. `pip check`, actionlint `patch6.yml`,
+  dan `git diff --check` seluruhnya exit 0. Remote `main` diperbarui dengan
+  fetch dan sama dengan `1918ae7` sebelum commit engine (0 ahead/0 behind).
+- Scan konten baru tidak menemukan material kunci/token/password baru.
+  **Bukan klaim repo bebas secret:** `patch6.yml` sudah mengandung empat
+  konfigurasi kunci hardcoded dari HEAD sebelumnya, termasuk satu privat
+  legacy; semuanya identik, tidak ditambahkan/diubah pada delta ini.
+  Nilainya tidak ditampilkan atau disalin ke bukti. Kunci legacy bukan
+  untuk produksi; jangan menyamakan pengabaian temuan historis dengan audit
+  keamanan seluruh repo yang lulus.
+- Paket source ini tidak membangun firmware, menggeser tag, mengganti aset
+  rilis, menjalankan workflow build manual, mengubah keypair, atau menyentuh
+  VM pemilik. Tidak ada bukti runtime baru: **boot/login build kandidat dan
+  aktivasi lisensi setelah reboot tetap belum terbukti**. Persetujuan matcher
+  terbatas pada versi source dan fixture sintetis yang dijelaskan di §11.
+
 ## Yang bisa / perlu dikerjakan selanjutnya
 
 1. **Lanjutkan investigasi laporan boot VMware** (lihat §5): identifikasi ISO dan
    konfigurasi dulu, lalu bandingkan dengan ISO vendor versi/arsitektur yang sama
    pada VM terpisah dengan konfigurasi setara. Simpan bukti dan batas kesimpulan.
-2. **Pisahkan bukti aktivasi dari bukti boot/signature** — gunakan mekanisme lisensi
-   resmi yang berlaku. Panel custom-lab dan tes `tests/test_license_*.py` tidak
-   membuktikan lisensi diterima firmware 7.23.3/7.24.4. Temuan §7 tidak menentukan
-   penyebab runtime. Lengkapi provenance VMDK pemilik dan mekanisme penerimaan
-   resmi/terverifikasi sebelum memberi prosedur tulis; jangan mengganti keypair
-   atau menerbitkan ulang rilis untuk menutupi pengujian yang belum selesai.
+2. **Lanjutkan diagnosis boot/runtime di lab terisolasi sesuai izin** — fix
+   overlap round 2 lulus review dan diterima untuk scope sintetis (§11), bukan
+   bukti image aman dipakai. Sebelum build/probe berikutnya, pin source dan
+   input, gunakan kontrol yang benar, lalu telusuri dataflow check `sys2`;
+   marker upgrade saja bukan akar sebab dan check tidak boleh dimatikan untuk
+   sekadar mencapai login. Tidak ada build/akses VM baru pada adjudikasi ini.
+   Pisahkan bukti
+   boot/signature dari aktivasi dengan ID sama setelah reboot. Panel custom-lab
+   dan tes `tests/test_license_*.py` tidak membuktikan penerimaan firmware.
+   Lengkapi provenance VMDK pemilik sebelum mengatribusikan hasil ke VM itu;
+   jangan mengganti keypair atau menerbitkan ulang aset untuk menutupi uji.
 3. **Build baru memakai guard, bila disetujui** — workflow manual `patch7.yml` di `main`.
    Kalau satu mapping wajib tetap tidak ditemukan, build **harus gagal**. Catat log
    tersanitasi dan jangan bypass guard. Jangan pindahkan tag/aset terbit untuk menyamarkan
@@ -515,7 +856,7 @@ env -u PYTHONPATH venv/bin/python -O -B -m unittest discover -s tests -p 'test_p
 
 Prasyarat agar cakupan tes tidak diam-diam berkurang:
 
-- `unsquashfs` dan `mksquashfs` harus ada di `PATH`; empat tes integrasi di-skip
+- `unsquashfs` dan `mksquashfs` harus ada di `PATH`; enam tes integrasi di-skip
   jika tidak tersedia. Sesi guard menggunakan SquashFS **4.7.5**.
 - Node.js harus ada di `PATH` untuk tes kontrak frontend; tanpa Node tes itu di-skip.
 - Dua tes Caddy nyata hanya aktif jika `CADDY_TEST_BINARY` menunjuk binary Caddy

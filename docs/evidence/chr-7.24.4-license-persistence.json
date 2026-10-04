@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-04",
+  "source_commit": "1918ae72b58ac81721da57294a74bafd0b6f0a44",
+  "release_raw_sha256": "5ad08494fb0144ec98298169c5477733fc91babe461abee17d191cca1a6781de",
+  "method": {
+    "disk_size_bytes": 134217728,
+    "source_write": false,
+    "owner_vm_contacted": false,
+    "scan": "Exact byte representations of already-generated input on raw scratch snapshots",
+    "matcher_positive_and_negative_controls_passed": true,
+    "new_license_generated": false,
+    "new_guest_test_performed": false
+  },
+  "representation_counts": {
+    "pristine": {
+      "body_base64": 0,
+      "body_line1": 0,
+      "body_line2": 0,
+      "binary64": 0,
+      "encoded_payload16": 0,
+      "signature48": 0,
+      "decoded_payload16": 0
+    },
+    "booted_noapply": {
+      "body_base64": 0,
+      "body_line1": 0,
+      "body_line2": 0,
+      "binary64": 0,
+      "encoded_payload16": 0,
+      "signature48": 0,
+      "decoded_payload16": 0
+    },
+    "post_apply_reboot": {
+      "body_base64": 0,
+      "body_line1": 0,
+      "body_line2": 0,
+      "binary64": 0,
+      "encoded_payload16": 0,
+      "signature48": 0,
+      "decoded_payload16": 0
+    }
+  },
+  "first_attempt_prompt_snapshot": {
+    "counts": {
+      "body_base64": 0,
+      "body_line1": 0,
+      "body_line2": 0,
+      "binary64": 0,
+      "encoded_payload16": 0,
+      "signature48": 0,
+      "decoded_payload16": 0
+    },
+    "consistency": "Guest not synced; host terminated at reboot prompt; pending writes can be missing"
+  },
+  "file_inventory": [
+    {
+      "index": 1,
+      "before_entries": 6,
+      "after_entries": 6,
+      "unchanged": 6,
+      "differences": []
+    },
+    {
+      "index": 2,
+      "before_entries": 16,
+      "after_entries": 16,
+      "unchanged": 12,
+      "differences": [
+        {
+          "path": "/rw/rosmode.msg",
+          "before": {
+            "inode": 27,
+            "mode": "0o100666",
+            "size": 158,
+            "kind": "file",
+            "sha256": "5ba090326864390c9192fdc4f7584490f5c613b59ff84e59bd8c113d4850dba1"
+          },
+          "after": {
+            "inode": 27,
+            "mode": "0o100666",
+            "size": 158,
+            "kind": "file",
+            "sha256": "63adb07eecb1bca9215363a3bad56b16abe2d6ba506e0c0784318039e02b0461"
+          }
+        },
+        {
+          "path": "/rw/startcount",
+          "before": {
+            "inode": 36,
+            "mode": "0o100666",
+            "size": 8,
+            "kind": "file",
+            "sha256": "7c9fa136d4413fa6173637e883b6998d32e1d675f88cddff9dcbcf331820f4b8"
+          },
+          "after": {
+            "inode": 36,
+            "mode": "0o100666",
+            "size": 8,
+            "kind": "file",
+            "sha256": "d86e8112f3c4c4442126f8e9f44f16867da487f29052bf91b810457db34209a4"
+          }
+        },
+        {
+          "path": "/rw/store/cchst2",
+          "before": {
+            "inode": 40,
+            "mode": "0o100640",
+            "size": 65536,
+            "kind": "file",
+            "sha256": "c03d04d27ac32d83ebfb355e8b2156d5548e8555962bbe90af610f20fd2b7ef4"
+          },
+          "after": {
+            "inode": 40,
+            "mode": "0o100640",
+            "size": 65536,
+            "kind": "file",
+            "sha256": "b7fc974a813489aa2783c51a450b579070550dd712554e989b6dc0290b1e04a3"
+          }
+        },
+        {
+          "path": "/rw/store/cfg.0000",
+          "before": {
+            "inode": 35,
+            "mode": "0o100600",
+            "size": 8482,
+            "kind": "file",
+            "sha256": "5f602901bfcf56cb0cc124427230d3b92887ac6fb2afe34fd14a58c9de84b8d2"
+          },
+          "after": {
+            "inode": 35,
+            "mode": "0o100600",
+            "size": 8526,
+            "kind": "file",
+            "sha256": "10a6692dacd89c0a8198323a279d3660a1fa0765298eff717504e754a26b2c5d"
+          }
+        }
+      ]
+    }
+  ],
+  "control_and_completed_probe_system_ids_equal": false,
+  "activation_gate": {
+    "result": {
+      "activation_verified": false,
+      "level_before": "free",
+      "level_after": "free",
+      "error_recorded": false
+    },
+    "exit_code": 1,
+    "predicate": "Requires a non-free paid level observed after reboot, stable System ID, valid local input and isolation"
+  },
+  "processes_remaining": 0,
+  "interpretation": {
+    "persistence_established": false,
+    "persistence_absence_established": false,
+    "file_change_caused_by_license_established": false,
+    "root_cause_established": false
+  },
+  "limitations": [
+    "Zero matches cover only the searched representations, not other encodings, hidden storage, or live memory.",
+    "The no-apply and apply disks are independent boots with different System IDs, clocks and boot counts; not a matched control.",
+    "The 44-byte net increase of cfg.0000 does not identify a license record.",
+    "This work is analysis of existing evidence; no new activation attempt or firmware fix occurred."
+  ]
+}

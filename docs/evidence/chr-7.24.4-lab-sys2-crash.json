@@ -1,0 +1,212 @@
+{
+  "date": "2026-10-04",
+  "kind": "Read-only analysis of already completed disposable QEMU probes",
+  "source_raw_sha256": "6cd4fce4c9b2f0874bfd508d016983b1a0a273e46022362422decf8854efdad3",
+  "artifact_dir_reference": "~/.hermes/cache/scratch/chr-7244-check/w-n4_zaoji",
+  "isolation": {
+    "network_devices": 0,
+    "input_sent_to_guest": 0,
+    "owner_vm_contacted": false,
+    "original_disk_digest_unchanged": true
+  },
+  "watch_420_seconds": {
+    "sample_count": 14,
+    "timeline": [
+      {
+        "seconds": 30,
+        "serial_bytes": 0,
+        "last_vga_line": "Starting services...",
+        "reboot_message_seen": false,
+        "login_seen": false
+      },
+      {
+        "seconds": 60,
+        "serial_bytes": 0,
+        "last_vga_line": "Starting services...",
+        "reboot_message_seen": false,
+        "login_seen": false
+      },
+      {
+        "seconds": 90,
+        "serial_bytes": 0,
+        "last_vga_line": "Starting services...",
+        "reboot_message_seen": false,
+        "login_seen": false
+      },
+      {
+        "seconds": 120,
+        "serial_bytes": 0,
+        "last_vga_line": "Starting services...",
+        "reboot_message_seen": false,
+        "login_seen": false
+      },
+      {
+        "seconds": 150,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 180,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 210,
+        "serial_bytes": 0,
+        "last_vga_line": "failed to stop parser: std failure: timeout (13)",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 240,
+        "serial_bytes": 0,
+        "last_vga_line": "failed to stop parser: std failure: timeout (13)",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 270,
+        "serial_bytes": 0,
+        "last_vga_line": "[    1.003309][    T1] kvm: no hardware support",
+        "reboot_message_seen": false,
+        "login_seen": false
+      },
+      {
+        "seconds": 300,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 330,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 360,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 390,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      },
+      {
+        "seconds": 420,
+        "serial_bytes": 0,
+        "last_vga_line": "Rebooting...",
+        "reboot_message_seen": true,
+        "login_seen": false
+      }
+    ],
+    "qemu_exit": "host QMP quit, not clean guest shutdown",
+    "qemu_stopped": true
+  },
+  "offline_log_evidence": {
+    "fresh_pristine_release_and_lab_disks": "/rw/logs absent before boot, checked with debugfs; no inherited crash log",
+    "completed_lab_logs": [
+      {
+        "guest_path": "/rw/logs/backtrace.log",
+        "bytes": 12757,
+        "sha256": "cee4cbc39fc90036ad8ef9dc13583daf4a5f86f1ff94e3caeb051b5939b6ffc4",
+        "signal_11_records": 2,
+        "instruction_pointers": [
+          "0x0805bfd3"
+        ]
+      },
+      {
+        "guest_path": "/rw/logs/backtrace.log.2",
+        "bytes": 6994,
+        "sha256": "6769959f83dc4931711bc6af20137b33d7dfdf83c2ff9c2600fa2c13aa4dfeb2",
+        "signal_11_records": 1,
+        "instruction_pointers": [
+          "0x0805bfd3"
+        ]
+      },
+      {
+        "guest_path": "/rw/logs/backtrace.log.3",
+        "bytes": 12578,
+        "sha256": "b92fe43e9b5da2e50df080f3c3f2f8ff2cbe439d11a02f2513045544b7e8ae2b",
+        "signal_11_records": 2,
+        "instruction_pointers": [
+          "0x0805bfd3"
+        ]
+      }
+    ],
+    "signal_11_records_total": 5,
+    "control_after_clean_guest_shutdown": {
+      "guest_cli_reached": true,
+      "license_level": "free",
+      "backtrace_bytes": 0,
+      "critical_program_crash_marker_present": false
+    },
+    "limits": "Different durations and shutdown stages; empty control log is only an observation on this control run. Lab logs may be unsynced at host termination."
+  },
+  "root_marker_comparison": {
+    "nova_absent_after_both_boots": true,
+    "upgraded_absent_after_both_boots": true,
+    "asked_present_after_both_boots": true,
+    "upgradebooter_present": {
+      "lab_short": true,
+      "control_clean_shutdown": false,
+      "lab_420s": false
+    },
+    "conclusion": "These markers do not establish an upgrade loop; UPGRADEBOOTER is absent in the completed 420-second lab snapshot too."
+  },
+  "fault_localization": {
+    "binary": "/nova/bin/sys2",
+    "virtual_address": "0x0805bfd3",
+    "file_offset": "0x13fd3",
+    "fault_instruction": "mov byte ptr [0], 0",
+    "following_instruction": "ud2",
+    "incoming_checks": [
+      {
+        "branch": "0x805aece",
+        "condition": "jne to 0x805bfd3",
+        "sources": [
+          "0x805840f",
+          "0x8053144"
+        ]
+      },
+      {
+        "branch": "0x805bfd1",
+        "condition": "je skips 0x805bfd3",
+        "sources": [
+          "0x8053144",
+          "0x805840f"
+        ]
+      }
+    ],
+    "limitation": "Both checks can reach the same fault; the saved EIP alone does not identify which branch fired. A deliberate fault site does not rule out preceding memory corruption.",
+    "source_tracing": {
+      "0x805840f": "returns address of one-byte buffer; static initializer at 0x80820a4 writes low byte of sum of gettimeofday seconds+microseconds",
+      "0x8053144": "returns lazily allocated one-byte storage; pointer is passed into nv::Looper constructor at 0x805a99e",
+      "unresolved": "Where the constructor writes the first buffer, and how the mismatch relates to the modified image, are not yet proved."
+    },
+    "sys2_file_bytes": "identical between audited release and metadata-corrected lab",
+    "classification": "Repeated deliberate consistency-abort site observed. Exact root cause and anti-tamper or upgrade semantics remain unproven."
+  },
+  "extended_24_minute_watch": {
+    "requested_seconds": 1440,
+    "result": "cancelled as redundant after completed-run logs localized the fault",
+    "second_QMP_client_shutdown_attempt": "timed out; primary watcher already held QMP",
+    "process_cleanup": "process_manage kill proc_55a9808bc2eb; subsequent ps showed no owned QEMU/watch_long2 process",
+    "not_a_completed_test": true
+  },
+  "activation_verified": false,
+  "firmware_modified_during_this_analysis": false,
+  "guard_bypass_performed": false,
+  "sensitive_values_exported": false
+}
