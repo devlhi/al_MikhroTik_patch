@@ -1,7 +1,8 @@
 # Notice
 
-**Developer berikutnya:** mulai dari [memori proyek / HANDOFF](docs/HANDOFF.md) untuk
-status pekerjaan, batas bukti, cara menjalankan tes, dan langkah lanjut.
+**Developer/agent berikutnya:** baca [memori proyek / HANDOFF](docs/HANDOFF.md)
+sebelum bekerja dan **perbarui sebelum menyerahkan pekerjaan**. Ikuti
+[panduan kontributor](CONTRIBUTING.md) dan [aturan agent](AGENTS.md).
 
 ## Historical reports (not verified for the current target):
 - **X86 (ROS & CHR working)**

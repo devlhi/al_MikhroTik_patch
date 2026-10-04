@@ -1,13 +1,36 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA).** Dokumen awal masuk lewat commit `3e2a73b`
+**Status diperbarui: 2026-10-04 (WITA), termasuk laporan percobaan boot pemilik — lihat §5.**
+Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
 
 Mulai dari dokumen ini, lalu baca kontrak [guard cakupan](patch-coverage.md).
 Kalau melanjutkan kerja, **perbarui dokumen ini** di akhir sesi: commit yang diubah,
 tes yang benar-benar dijalankan (termasuk skip/gagal), batas bukti, dan tugas berikutnya.
+
+## Protokol pembaruan memori proyek
+
+Dokumen ini adalah memori proyek bersama (developer manusia dan agent, termasuk
+Hermes) yang diwariskan lewat Git, bukan memori pribadi. Aturan pemakaiannya
+juga tertulis di [AGENTS.md](../AGENTS.md) dan [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+- **Baca dulu** dokumen ini sebelum bekerja; jangan menganggap ringkasan percakapan
+  atau ingatan pribadi sebagai status terbaru.
+- **Perbarui setiap sesi** yang menghasilkan perubahan, temuan, keputusan, atau
+  status pengujian baru—sebelum commit/push atau penyerahan. Sesi yang hanya membaca
+  dan tidak menambah informasi tidak perlu commit kosong.
+- Format pembaruan: apa yang berubah (file/commit acuan yang sudah ada), apa yang
+  benar-benar diverifikasi dan bagaimana (perintah, mode, jumlah tes, skip/gagal),
+  kendala yang tersisa, langkah berikutnya, dan tanggal.
+- Bedakan sumber: hasil eksekusi tool, laporan pemilik, dan hipotesis. Jangan
+  menyalin hasil tes lama sebagai hasil baru, dan jangan mengubah laporan kegagalan
+  menjadi sukses tanpa bukti uji baru.
+- Riwayat Git (commit message + diff) mencatat kapan pembaruan HANDOFF dibuat;
+  dokumen ini tidak perlu mencatat commit pembaruannya sendiri.
+- Ini kewajiban dokumentasi kontributor, **belum dipaksakan hook/CI**. Reviewer
+  perlu memeriksa pembaruan HANDOFF; agent lain harus membaca aturan repo tersebut.
 
 ## Status singkat
 
@@ -17,7 +40,8 @@ tes yang benar-benar dijalankan (termasuk skip/gagal), batas bukti, dan tugas be
 | Commit fungsional acuan | `be9cd23` — guard cakupan patch NPK; commit setelahnya untuk dokumentasi |
 | Rilis 7.24.4 | release biasa + **Latest**; 40 aset; aset TIDAK dibangun ulang dengan guard |
 | Rilis 7.23.3 | **prerelease**; tag `7.23.3` + tag build lama; 40 aset; aset TIDAK dibangun ulang |
-| Boot / instalasi / upgrade / aktivasi | **Belum ada bukti uji runtime dari pekerjaan ini.** Jangan klaim berhasil |
+| Instalasi & boot | **Pemilik mencoba ISO di VMware: installer menampilkan selesai; sesudahnya dilaporkan “muncul load system terus”. Belum ada boot sukses yang dilaporkan; versi ISO dan penyebab belum diketahui — lihat §5** |
+| Aktivasi lisensi / upgrade | **Belum ada bukti uji runtime.** Jangan klaim berhasil |
 
 ## Apa yang sudah dikerjakan
 
@@ -94,12 +118,96 @@ Perbaikan di `patch.py` (jalur `patch.py npk` / `patch_npk_file`):
 | Diagnostik SFP | [panduan SFP](sfp-power.md), `scripts/sfp_diagnostics.py` | Parser offline/read-only single-lane; bukan driver atau dukungan NIC/SFP universal |
 | Build dan aset rilis | `.github/workflows/patch7.yml`, `scripts/release_assets.py`, `tests/test_release_assets.py` | Build, manifest, signature, dan boot adalah pemeriksaan yang berbeda |
 
+### 5. Laporan percobaan boot VMware (2026-10-04) — masalah masih terbuka
+
+Ini percobaan instalasi/boot yang **dilaporkan pemilik**, bukan reproduksi agent.
+ISO belum teridentifikasi, sehingga hasil ini **belum dapat diatribusikan ke tag
+7.23.3 atau 7.24.4 tertentu**. Tidak ada perbaikan firmware yang dilakukan pada sesi ini.
+Pemilik memilih menyerahkan investigasi ke developer lain.
+
+#### Bukti yang tersedia
+
+- Pemilik mengatakan mencoba instalasi ISO di **VMware Workstation**. Versi VMware
+  dan sistem operasi host tidak disebutkan; UI VMware tidak tampak di foto.
+- Foto installer menunjukkan disk `/dev/sda`, ukuran yang dilaporkan `18397 MB`,
+  pembuatan partisi, dan progress format `RouterOS` / `RouterOS Boot` hingga 100%.
+  Salah satu baris format bertumpuk; jangan menganggap transkripnya log lengkap.
+- Tiga baris penting yang terbaca pada foto, berurutan:
+
+  ```text
+  open /dev/panics failed
+  Software installed.
+  Press ENTER to reboot
+  ```
+
+  Ini membuktikan **installer menampilkan pesan selesai**, bukan bahwa instalasi
+  telah terverifikasi atau sistem hasil instalasi dapat boot.
+- Laporan lanjutan pemilik, verbatim: **“muncul load system terus”**. Dalam percakapan
+  ini dipahami sebagai tertahan di tahap `Loading system…`, tetapi **belum ada foto
+  layar pascareboot atau log** untuk memastikan ejaan pesan, durasi, hang diam,
+  maupun reboot berulang. Belum ada login/boot sukses yang dilaporkan.
+- Foto installer ada dalam percakapan pemilik, **tidak disalin ke repo**; ringkasan
+  dan cuplikan teks di atas disimpan di Git agar tidak bergantung pada scratch.
+
+#### Data yang masih perlu diminta developer berikutnya
+
+- Nama ISO lengkap, asal unduhan, versi/arsitektur, ukuran, SHA-256, dan kecocokan
+  dengan manifest rilis. Jangan mengasumsikan 7.24.4 hanya karena berlabel Latest.
+- Versi VMware/host, firmware BIOS atau UEFI, status Secure Boot bila relevan,
+  controller disk, tipe NIC, RAM, vCPU, dan urutan boot.
+- Apakah ISO masih tersambung, serta apakah boot berikutnya berasal dari disk
+  terpasang atau kembali ke installer CD/DVD.
+- Foto/video setelah reboot, durasi menunggu, dan apakah VM restart sendiri.
+  Pengaturan dan hasil uji ISO vendor belum diberikan; reproduksi terkontrol belum ada.
+
+#### Koreksi arahan percakapan sebelumnya
+
+- Klaim bahwa `open /dev/panics failed` pasti normal/tidak berbahaya di VM atau
+  pasti bukan efek patch **belum dibuktikan untuk percobaan ini**. Pesan yang mirip
+  di forum tidak menetapkan penyebab. Hubungannya dengan gejala boot belum diketahui.
+- Saran langsung mengganti BIOS/UEFI, controller disk, atau NIC **bukan fix teruji**.
+  Klaim umum bahwa RouterOS tidak memiliki driver VMXNET3/VirtIO tidak dijadikan
+  dasar diagnosis; dukungan harus diperiksa untuk produk, versi, dan arsitektur
+  yang tepat. Jangan mengubah beberapa setting sekaligus atau install ulang
+  sebelum mencatat konfigurasi awal dan mengamankan disk percobaan.
+- `Software installed`, signature valid, dan tes Python hijau **bukan bukti boot
+  atau aktivasi sukses**. Jangan ubah metadata `boot_tested` menjadi sukses.
+
+#### Titik lanjut investigasi (belum dijalankan)
+
+1. Lengkapi identitas ISO, konfigurasi, dan bukti gejala di atas. Buat snapshot/backup;
+   jangan menimpa disk VM yang menyimpan satu-satunya bukti percobaan.
+2. Siapkan pembanding ISO vendor **dengan versi dan arsitektur yang sama**, di VM
+   lab terpisah dengan konfigurasi setara dan disk baru. Verifikasi checksum kedua
+   media. Tidak ada instalasi ulang atau pergantian firmware VM yang dilakukan di sesi ini.
+3. Bandingkan sampai tahap boot dari disk hasil instalasi, bukan hanya boot installer:
+   - keduanya gagal: telusuri faktor bersama (media, konfigurasi, kompatibilitas
+     versi/hypervisor); ini **tidak membuktikan** patch bebas masalah;
+   - vendor berhasil, patched gagal: memperkuat dugaan masalah artefak/proses patch,
+     tetapi belum menentukan loader/kernel atau komponen tertentu sebagai akar sebab.
+4. Setelah ada reproduksi, ubah satu variabel per uji dan simpan konfigurasi, hash,
+   log tersanitasi serta hasil aktual. Pisahkan bukti boot, login, dan aktivasi.
+
+#### Cakupan sesi penyerahan ini
+
+- Hanya dokumentasi yang diperbarui: HANDOFF memuat laporan VMware dan protokol
+  memori bersama; `AGENTS.md` serta `CONTRIBUTING.md` menegaskan kewajiban membaca/
+  memperbaruinya; README mengarahkan kontributor ke ketiga dokumen itu. Tidak ada
+  edit engine/workflow, build firmware, perubahan kunci/tag/aset, atau uji VM oleh agent.
+- Hasil regresi terakhir sebelum penambahan aturan dokumentasi: **213 tes penuh
+  normal** dan **26 tes cakupan mode `-O`** pada source `f65ab0f`, semuanya exit 0
+  dan **0 skip**. Itu bukan reproduksi atau perbaikan masalah VMware. Suite tidak
+  diulang khusus untuk penambahan aturan dokumentasi ini; kode tidak berubah.
+- Validasi dokumentasi: 20 link relatif valid, `git diff --check` dan pemeriksaan
+  sitasi lulus; pemindaian pola kredensial pada dokumen baru/HANDOFF serta baris
+  README yang ditambahkan tidak menemukan temuan baru. Bukan audit keamanan seluruh repo.
+- Status saat diserahkan: **masalah boot terbuka; penyebab dan solusi belum terkonfirmasi**.
+
 ## Yang bisa / perlu dikerjakan selanjutnya
 
-1. **Uji boot terisolasi, dengan persetujuan pemilik** — mulai dari image CHR/installer
-   yang sesuai untuk VM x86, bukan NPK sebagai disk boot. Verifikasi checksum, buat
-   snapshot dan rencana pemulihan; simpan versi, arsitektur, hash, serta log boot.
-   Belum ada hasil uji ini dalam pekerjaan yang dicatat di sini.
+1. **Lanjutkan investigasi laporan boot VMware** (lihat §5): identifikasi ISO dan
+   konfigurasi dulu, lalu bandingkan dengan ISO vendor versi/arsitektur yang sama
+   pada VM terpisah dengan konfigurasi setara. Simpan bukti dan batas kesimpulan.
 2. **Pisahkan bukti aktivasi dari bukti boot/signature** — gunakan mekanisme lisensi
    resmi yang berlaku. Panel custom-lab dan tes `tests/test_license_*.py` tidak
    membuktikan lisensi diterima firmware 7.23.3/7.24.4.
