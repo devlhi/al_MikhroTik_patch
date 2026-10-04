@@ -17,6 +17,12 @@ from unittest import mock
 import patch as patcher
 from npk import NovaPackage, NpkPartID, NpkNameInfo, NpkFileContainer
 
+# unittest supports both package-module and discover -s tests entry points.
+if __package__:
+    from .test_patch_x86_immediates import elf32, instructions, OLD, NEW
+else:
+    from test_patch_x86_immediates import elf32, instructions, OLD, NEW
+
 OLD_A, NEW_A = b'A' * 32, b'B' * 32
 OLD_B, NEW_B = b'C' * 32, b'D' * 32
 KEYS = {OLD_A: NEW_A, OLD_B: NEW_B}
@@ -129,6 +135,34 @@ class RealSquashfsCoverageTests(unittest.TestCase):
         self.run_tool(['unsquashfs', '-d', str(extracted), str(repacked)])
         self.assertEqual((extracted / 'synthetic.bin').read_bytes(), b'filesystem' + NEW_B)
         self.assertEqual((extracted / 'unrelated.txt').read_text(), 'not a replacement target')
+
+    def test_immediate_coverage_is_counted_once_per_hardlinked_inode(self):
+        source = self.source(b'unrelated kernel', elf32(instructions(OLD)) + OLD_B,
+                             hardlink=True)
+        destination = self.root / 'immediate output.npk'
+        with mock.patch.object(NovaPackage, 'sign', autospec=True) as sign:
+            reports = patcher.patch_npk_file({OLD: NEW, OLD_B: NEW_B},
+                                            b'test-only', b'test-only', source, destination)
+        sign.assert_called_once()
+        self.assertEqual(reports[0]['replacements'], [
+            {'mapping_index': 1, 'kernel': 0, 'squashfs': 1, 'total': 1},
+            {'mapping_index': 2, 'kernel': 0, 'squashfs': 1, 'total': 1},
+        ])
+        self.assert_hardlink_pair(self.extract_npk_filesystem(destination, 'split-verified'),
+                                  elf32(instructions(NEW)) + NEW_B)
+
+    def test_partial_immediate_cannot_satisfy_required_coverage(self):
+        source = self.source(b'unrelated kernel', elf32(instructions(OLD)[:-1]) + OLD_B)
+        before = source.read_bytes()
+        destination = self.root / 'partial immediate output.npk'
+        destination.write_bytes(b'must survive')
+        with mock.patch.object(NovaPackage, 'sign', autospec=True) as sign:
+            with self.assertRaisesRegex(ValueError, 'no replacement.*1'):
+                patcher.patch_npk_file({OLD: NEW, OLD_B: NEW_B},
+                                      b'test-only', b'test-only', source, destination)
+        sign.assert_not_called()
+        self.assertEqual(source.read_bytes(), before)
+        self.assertEqual(destination.read_bytes(), b'must survive')
 
     def test_partial_coverage_preserves_input_and_existing_output(self):
         source = self.source(b'kernel without target A', b'filesystem' + OLD_B)

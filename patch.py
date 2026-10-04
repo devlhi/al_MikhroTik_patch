@@ -7,20 +7,125 @@ from pathlib import Path
 from npk import NovaPackage, NpkPartID, NpkFileContainer
 
 
+def _x86_immediate_matches(data: bytes, old: bytes, new: bytes):
+    """Match one 32-byte value in eight adjacent i386 stack MOVs.
+
+    Limit instruction matching to executable PROGBITS sections of ELF32/i386.
+    Each C7 /0 writes one dword to [ebp + displacement]; the destinations must
+    cover one consecutive 32-byte buffer. Never match independent key words.
+    """
+    if (len(old) != 32 or len(new) != 32 or len(data) < 52
+            or data[:7] != b'\x7fELF\x01\x01\x01'
+            or struct.unpack_from('<H', data, 18)[0] != 3):
+        return []
+    (_, elf_type, _, version, _, program_offset, section_offset, _, header_size,
+     program_entry_size, program_count, entry_size, section_count,
+     string_index) = struct.unpack_from('<16sHHIIIIIHHHHHH', data)
+    section_end = section_offset + entry_size * section_count
+    if (elf_type not in (1, 2, 3) or version != 1 or header_size != 52
+            or entry_size != 40 or not 0 < section_count < 0xff00
+            or section_offset < header_size or section_end > len(data)
+            or string_index >= section_count or program_count == 0xffff):
+        return []  # Extended numbering and unsupported headers fail closed.
+    metadata = [(0, header_size), (section_offset, section_end)]
+    if program_count:
+        program_end = program_offset + program_entry_size * program_count
+        if (program_entry_size != 32 or program_offset < header_size
+                or program_end > len(data)
+                or (program_offset < section_end and section_offset < program_end)):
+            return []
+        metadata.append((program_offset, program_end))
+    elif program_offset or program_entry_size not in (0, 32):
+        return []
+    code_ranges = set()
+    for index in range(section_count):
+        section = struct.unpack_from('<10I', data, section_offset + index * entry_size)
+        _, kind, flags, _, start, size, *_ = section
+        end = start + size
+        # A code range must never alias ELF header or table metadata.
+        if (kind != 1 or not flags & 4 or not size
+                or start < header_size or end > len(data)
+                or any(start < reserved_end and end > reserved_start
+                       for reserved_start, reserved_end in metadata)):
+            continue
+        code_ranges.add((start, end))
+    code_ranges = sorted(code_ranges)
+    # Identical ranges share a boundary and are decoded once. Any other
+    # overlap is ambiguous: validate all ranges before decoding any of them.
+    furthest_end = 0
+    for start, end in code_ranges:
+        if start < furthest_end:
+            return []
+        furthest_end = max(furthest_end, end)
+    # Decode from the section start, never resynchronize by scanning for C7:
+    # prefixes, immediates and displacements are not instruction boundaries.
+    try:
+        from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+        from capstone.x86_const import X86_INS_MOV
+    except (ImportError, OSError):
+        return []  # No decoder means no instruction matches, not a raw fallback.
+    from collections import deque
+    decoder = Cs(CS_ARCH_X86, CS_MODE_32)
+    decoder.detail = True
+    decoder.skipdata = False
+    matches = []
+    seen = set()
+    for start, end in code_ranges:
+        pending = deque(maxlen=8)
+        for instruction in decoder.disasm(data[start:end], start):
+            displacement_size = {b'\xc7\x45': 1, b'\xc7\x85': 4}.get(
+                bytes(instruction.bytes[:2]))
+            # These exact unprefixed ModR/M encodings name [ebp+disp], not
+            # another segment/register/address size. The decoder validates
+            # both the instruction boundary and the operand/immediate sizes.
+            if (instruction.id != X86_INS_MOV or displacement_size is None
+                    or any(instruction.prefix) or instruction.addr_size != 4
+                    or instruction.imm_size != 4
+                    or instruction.imm_offset != 2 + displacement_size
+                    or instruction.size != 6 + displacement_size):
+                pending.clear()
+                continue
+            immediate = instruction.address + instruction.imm_offset
+            displacement = int.from_bytes(
+                instruction.bytes[2:instruction.imm_offset], 'little', signed=True)
+            pending.append((instruction.address, immediate + 4, displacement, immediate))
+            if len(pending) != 8:
+                continue
+            begin, _, base, _ = pending[0]
+            position = pending[-1][1]
+            if (any(current[0] != previous[1]
+                    for previous, current in zip(pending, list(pending)[1:]))
+                    or any(displacement != base + word * 4
+                           or data[immediate:immediate + 4] != old[word * 4:word * 4 + 4]
+                           for word, (_, _, displacement, immediate) in enumerate(pending))
+                    or (begin, position) in seen):
+                continue
+            replacement = bytearray(data[begin:position])
+            for word, (_, _, _, immediate) in enumerate(pending):
+                offset = immediate - begin
+                replacement[offset:offset + 4] = new[word * 4:word * 4 + 4]
+            matches.append((begin, position, bytes(replacement)))
+            seen.add((begin, position))
+    return matches
+
+
 def _replace_keys(data: bytes, key_dict: dict, label, stats: dict | None = None) -> bytes:
-    """Replace original nonoverlapping matches; reject ambiguous original spans."""
+    """Replace original nonoverlapping literal/instruction matches atomically."""
     matches = []
     counts = []
     for index, (old_public_key, new_public_key) in enumerate(key_dict.items(), 1):
-        count = data.count(old_public_key)
+        literal_count = data.count(old_public_key)
+        offset = 0
+        for _ in range(literal_count):
+            start = data.find(old_public_key, offset)
+            end = start + len(old_public_key)
+            matches.append((start, end, new_public_key))
+            offset = end
+        instruction_matches = _x86_immediate_matches(data, old_public_key, new_public_key)
+        matches.extend(instruction_matches)
+        count = literal_count + len(instruction_matches)
         if count:
             counts.append((index, old_public_key, count))
-            offset = 0
-            for _ in range(count):
-                start = data.find(old_public_key, offset)
-                end = start + len(old_public_key)
-                matches.append((start, end, new_public_key))
-                offset = start + max(1, len(old_public_key))
     matches.sort(key=lambda match: match[0])
     for previous, current in zip(matches, matches[1:]):
         if current[0] < previous[1]:
