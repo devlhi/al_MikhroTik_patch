@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6); audit aset CHR rilis dan boot salinan terisolasi selesai, aktivasi belum diuji (§7).**
+**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6); audit aset CHR rilis selesai; **uji aktivasi terkontrol pada salinan terisolasi aset rilis 7.24.4: kode lab diterima pasting namun level tetap `free` setelah reboot (§7).**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -41,7 +41,7 @@ juga tertulis di [AGENTS.md](../AGENTS.md) dan [CONTRIBUTING.md](../CONTRIBUTING
 | Rilis 7.24.4 | release biasa + **Latest**; 40 aset; aset TIDAK dibangun ulang dengan guard |
 | Rilis 7.23.3 | **prerelease**; tag `7.23.3` + tag build lama; 40 aset; aset TIDAK dibangun ulang |
 | Instalasi & boot | **ISO: masalah “load system” masih terbuka (§5). VMDK CHR: VM aktif dan WebFig dapat diakses (§6); asal/hash image belum dikonfirmasi.** Salinan aset VMDK rilis 7.24.4 terbukti boot sampai login di QEMU terisolasi tanpa jaringan (§7) |
-| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6); penyebab belum dibuktikan.** Pada satu aset CHR x86 7.24.4, perubahan file sistem reguler/kernel teramati hanya berupa key NPK sign (§7); bukan bukti penerimaan kode lisensi |
+| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Pada salinan terisolasi aset rilis 7.24.4: paste kode lab → firmware minta reboot → setelah reboot level tetap `free` (§7) — kegagalan aktivasi direproduksi terkontrol; konsisten dengan absennya kunci lisensi custom pada firmware** |
 
 ## Apa yang sudah dikerjakan
 
@@ -419,9 +419,32 @@ Percobaan helper boot tambahan tidak berjalan karena `timeout` tidak tersedia
 `/system license print` dari helper itu; ini bukan uji lisensi. Proses QEMU
 utama telah dikonfirmasi `exited`, sumber raw tetap cocok dengan fingerprint.
 
-**Belum dilakukan:** uji penerimaan kode lisensi pada salinan QEMU (System ID
-salinan belum dibaca), rebuild, dan perubahan engine. Tidak ada kode lab yang
-dikirim ke salinan. Semua tindakan lanjutan tersebut menunggu keputusan pemilik.
+**Uji aktivasi terkontrol pada salinan terisolasi (baru, 2026-10-04):**
+
+Probe `probe_license_runtime.py` (scratch): overlay qcow2 segar di atas raw aset
+rilis (digest dicek sebelum/sesudah), QEMU tanpa NIC, login default salinan,
+lalu paste satu blok kode lab untuk System ID salinan itu (dibuat dengan keypair
+ter-pin workflow; `license_util.parse` lulus lokal). Hasil berurutan:
+
+1. `level: free` sebelum paste; versi/build-time sama dengan VM pemilik.
+2. Paste blok → **konsole global menangani paste** (ada jalur impor; koreksi §6
+   konsisten): tampil `line 1 of 2/3/4>` lalu
+   **`You must reboot before new key takes effect. Reboot? [y/N]:`**
+3. Jawab `y` → guest reboot bersih → login ulang →
+   **`level: free` tetap; System ID tidak berubah; filter log kosong.**
+
+Jadi pada aset rilis 7.24.4 (build pra-guard `bd2dc61`): kode diterima masuk
+secara mekanis, reboot dijalankan, tapi aktivasi gagal — bukan karena jalur
+impor tidak ada. Ini **direproduksi agent secara terkontrol**, terpisah dari
+laporan pemilik (VMDK pemilik belum terkonfirmasi asalnya). Konsisten dengan
+temuan scan: kunci lisensi custom tidak tertanam pada firmware; hanya kunci
+NPK-sign yang diganti. Bukti tersanitasi: `result.json` + serial log 0600 di
+scratch `chr-7244-check/q-_kr4ifpc/` (raw log tidak masuk Git); ringkasan ini
+adalah catatan tahan lama.
+
+**Belum dilakukan:** perbaikan pipeline penanaman kunci lisensi (jalur kernel),
+rebuild dengan guard, dan uji ulang probe ini pada hasil rebuild. Semua
+menunggu keputusan pemilik.
 
 ## Yang bisa / perlu dikerjakan selanjutnya
 
