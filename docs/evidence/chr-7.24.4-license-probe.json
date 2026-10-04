@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-04",
+  "project": "Ali Patch Code",
+  "probe_source_commit": "6f07a03515b185a4f10f84b2aacb3505227a011f",
+  "artifact": {
+    "release_tag": "7.24.4",
+    "asset_id": 604788961,
+    "name": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+    "archive_sha256": "b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a",
+    "raw_sha256": "5ad08494fb0144ec98298169c5477733fc91babe461abee17d191cca1a6781de"
+  },
+  "isolation": {
+    "network_devices": 0,
+    "owner_vm_contacted": false,
+    "source_digest_before_matches": true,
+    "source_digest_after_matches": true,
+    "qemu_stopped": true,
+    "guest_shutdown_qemu_exited": true
+  },
+  "environment": {
+    "hypervisor": "QEMU",
+    "machine": "pc,accel=tcg",
+    "memory_mib": 512,
+    "vcpus": 2,
+    "write_target": "fresh qcow2 overlay",
+    "console": "Unix-domain serial socket",
+    "password_changed": false,
+    "network_devices": 0
+  },
+  "observations": {
+    "version": "7.24.4 (stable)",
+    "architecture": "x86_64",
+    "build_time": "2026-09-16 11:32:21",
+    "level_before": "free",
+    "local_signature_valid": true,
+    "local_system_id_matches": true,
+    "paste_response": "[LICENSE_BLOCK_REDACTED]\nYou must reboot before new key takes effect. Reboot? [y/N]: ",
+    "reboot_confirmation_answer": "y",
+    "guest_rebooted": true,
+    "system_id_unchanged": true,
+    "level_after": "free",
+    "log_filter": "/log print without-paging where message~\"license|key|error|failure\"",
+    "log_filter_matching_entries": 0,
+    "before": "/system license print[admin@CHR] > /system license print\n  system-id: [SYSTEM_ID_REDACTED]\n      level: free       \n[admin@CHR] > ",
+    "after": " /system license print[admin@CHR] > /system license print\n  system-id: [SYSTEM_ID_REDACTED]\n      level: free       \n[admin@CHR] > "
+  },
+  "interpretation": {
+    "activation_observed": false,
+    "console_recognized_block": true,
+    "cryptographic_acceptance_established": false,
+    "key_storage_established": false,
+    "root_cause_established": false,
+    "owner_vmdk_provenance_established": false
+  },
+  "limitations": [
+    "One release CHR x86 image, one completed paste/reboot probe; not all architectures.",
+    "Reboot confirmation is not evidence of signature acceptance, persistence, or activation.",
+    "An empty filtered log does not establish why the level remained free.",
+    "Local generator verification does not prove compatibility with the firmware verifier."
+  ],
+  "probe_failures_before_completed_run": [
+    {
+      "stage": "interactive PTY",
+      "outcome": "Ctrl-C reached host QEMU rather than guest; no code sent"
+    },
+    {
+      "stage": "first socket apply",
+      "outcome": "Prompt requested reboot; helper stopped before answering; overlay discarded"
+    },
+    {
+      "stage": "helper edit",
+      "outcome": "Syntax error before QEMU startup; corrected before completed run"
+    }
+  ]
+}

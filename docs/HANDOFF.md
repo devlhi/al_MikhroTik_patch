@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6); audit aset CHR rilis selesai; **uji aktivasi terkontrol pada salinan terisolasi aset rilis 7.24.4: kode lab diterima pasting namun level tetap `free` setelah reboot (§7).**
+**Status diperbarui: 2026-10-04 (WITA): ISO belum terdiagnosis (§5); VM pemilik tetap free (§6); salinan aset CHR rilis 7.24.4 mengenali blok kode lab dan meminta reboot, tetapi level tetap `free` sesudah reboot (§7); penyebab belum terbukti.**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -41,7 +41,7 @@ juga tertulis di [AGENTS.md](../AGENTS.md) dan [CONTRIBUTING.md](../CONTRIBUTING
 | Rilis 7.24.4 | release biasa + **Latest**; 40 aset; aset TIDAK dibangun ulang dengan guard |
 | Rilis 7.23.3 | **prerelease**; tag `7.23.3` + tag build lama; 40 aset; aset TIDAK dibangun ulang |
 | Instalasi & boot | **ISO: masalah “load system” masih terbuka (§5). VMDK CHR: VM aktif dan WebFig dapat diakses (§6); asal/hash image belum dikonfirmasi.** Salinan aset VMDK rilis 7.24.4 terbukti boot sampai login di QEMU terisolasi tanpa jaringan (§7) |
-| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Pada salinan terisolasi aset rilis 7.24.4: paste kode lab → firmware minta reboot → setelah reboot level tetap `free` (§7) — kegagalan aktivasi direproduksi terkontrol; konsisten dengan absennya kunci lisensi custom pada firmware** |
+| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Pada salinan terisolasi aset rilis 7.24.4: paste blok kode lab → console minta reboot → setelah reboot level tetap `free` (§7). Ini bukti aktivasi tidak terjadi pada uji tersebut, bukan bukti signature diterima atau akar sebab sudah ditemukan.** |
 
 ## Apa yang sudah dikerjakan
 
@@ -294,7 +294,7 @@ Tindakan agent sesi ini:
   dan memperbarui dokumentasi; suite tidak diulang, tidak ada build/perubahan engine
   atau konfigurasi VM.
 
-### 7. Audit aset CHR 7.24.4 dan boot salinan terisolasi (2026-10-04) — aktivasi belum terbukti
+### 7. Audit aset CHR 7.24.4, boot dan uji kode pada salinan terisolasi (2026-10-04) — level tetap free
 
 Audit statis membaca salinan unduhan; uji boot hanya menulis overlay disposable.
 Engine, keypair, tag, aset rilis, dan VM pemilik tidak diubah; dokumentasi ini
@@ -367,8 +367,8 @@ sebagai catatan tahan lama.
   asal VMDK pemilik masih belum dikonfirmasi, jadi atribusi tetap terbuka.
 - Hasil negatif pemindaian berlaku untuk representasi dan cakupan yang diuji;
   **bukan bukti mutlak** verifier 7.24.4 tidak memakai kunci tersebut dalam
-  bentuk lain, dan bukan bukti firmware pasti menolak kode lab (belum ada uji
-  aktivasi terkontrol).
+  bentuk lain. Saat audit statis belum ada uji aktivasi; uji runtime lanjutan
+  di bawah mengonfirmasi level tetap `free`, tetapi tidak menetapkan penyebabnya.
 
 **Review independen jalur pipeline (subagent, diverifikasi ulang oleh agent):**
 
@@ -394,7 +394,7 @@ sebagai catatan tahan lama.
   berarti 1963-11-25 UTC. Makna field/layout payload terhadap verifier 7.24.4
   belum dibuktikan; byte tunggal 244 bukan tanggal tersendiri.
 
-**Uji boot salinan rilis (bukti baru, terpisah dari §5 ISO):**
+**Uji boot awal salinan rilis (sebelum uji aktivasi berikut; terpisah dari §5 ISO):**
 
 - Salinan raw aset rilis di-boot di QEMU lokal terisolasi (TCG, 512 MB, **tanpa
   perangkat jaringan**, overlay qcow2 — sumber tidak diubah, digest diverifikasi
@@ -433,18 +433,39 @@ ter-pin workflow; `license_util.parse` lulus lokal). Hasil berurutan:
 3. Jawab `y` → guest reboot bersih → login ulang →
    **`level: free` tetap; System ID tidak berubah; filter log kosong.**
 
-Jadi pada aset rilis 7.24.4 (build pra-guard `bd2dc61`): kode diterima masuk
-secara mekanis, reboot dijalankan, tapi aktivasi gagal — bukan karena jalur
-impor tidak ada. Ini **direproduksi agent secara terkontrol**, terpisah dari
-laporan pemilik (VMDK pemilik belum terkonfirmasi asalnya). Konsisten dengan
-temuan scan: kunci lisensi custom tidak tertanam pada firmware; hanya kunci
-NPK-sign yang diganti. Bukti tersanitasi: `result.json` + serial log 0600 di
-scratch `chr-7244-check/q-_kr4ifpc/` (raw log tidak masuk Git); ringkasan ini
-adalah catatan tahan lama.
+Pada aset rilis 7.24.4 (build pra-guard `bd2dc61`), console mengenali blok
+kode dan meminta reboot; sesudah reboot **aktivasi tidak terjadi**. Pesan itu
+**bukan bukti signature diterima secara kriptografis atau kode tersimpan**.
+Ketiadaan jalur paste bukan penjelasan untuk uji ini. Hasil ini direproduksi
+agent secara terkontrol, terpisah dari laporan pemilik (asal VMDK pemilik belum
+terkonfirmasi). Hasil scan menunjukkan hanya penggantian byte key NPK-sign
+yang teramati; lokasi/representasi verifier lisensi tetap belum diketahui.
+Jadi **penyebab level tetap `free` belum dibuktikan**; jangan mengubah hipotesis
+kunci tak tertanam menjadi kesimpulan, atau menjanjikan bahwa memperluas
+patch kernel/CPIO pasti memperbaikinya.
 
-**Belum dilakukan:** perbaikan pipeline penanaman kunci lisensi (jalur kernel),
-rebuild dengan guard, dan uji ulang probe ini pada hasil rebuild. Semua
-menunggu keputusan pemilik.
+Bukti ringkas yang disanitasi disimpan tahan lama di
+[JSON hasil probe](evidence/chr-7.24.4-license-probe.json): identitas image,
+isolasi, respons reboot, hasil sebelum/sesudah, dan batas interpretasi.
+System ID serta isi kode dihapus. Log mentah dan kode lokal (0600) hanya di
+scratch `chr-7244-check/q-_kr4ifpc/`, **bukan bukti tersanitasi dan tidak masuk Git**.
+QEMU selesai melalui shutdown guest; pengecekan host tidak menemukan proses
+QEMU tersisa. Digest sumber sebelum/sesudah tetap cocok.
+
+Probe baca-saja awal lulus (exit 0). Percobaan apply pertama berhenti di
+konfirmasi reboot (exit 1), belum ada hasil sesudah reboot; overlay itu tidak
+dipakai ulang. Edit helper sempat menghasilkan SyntaxError sebelum QEMU
+start, lalu diperbaiki. Probe apply lengkap berikutnya lulus (exit 0): satu
+paste, reboot, login ulang, baca level, shutdown. Uji redaction sintetis
+menemukan kebocoran fragmen saat console redraw (1 gagal), diperbaiki dan
+uji ulang 1 OK. Pada salinan baru, prompt ganti password dilewati dengan
+byte Ctrl-C via socket; **tidak ada password yang diubah**. Suite repo tidak
+diulang sesi probe ini; engine, workflow, keypair, tag, dan aset tidak berubah.
+
+**Belum dilakukan:** penetapan akar sebab (trust/signature, layout payload,
+atau penyimpanan/penerapan kode), perbaikan engine, dan rebuild. Titik lanjut:
+tentukan verifier serta format yang dipakai CHR versi ini dahulu; guard
+cakupan dan perbaikan finder/CPIO tidak otomatis menjadi fix aktivasi.
 
 ## Yang bisa / perlu dikerjakan selanjutnya
 
