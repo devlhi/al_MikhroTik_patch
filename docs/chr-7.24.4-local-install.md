@@ -29,7 +29,9 @@ ad5e18d81144f17d948e67b26cf495ccc9703e6686c8437190ba95230d8c7dd5
 ```
 
 Jangan menggunakan aset GitHub lama sebagai pengganti file lokal ini. Source
-belum di-commit/push dan firmware ini belum dipublikasikan sebagai rilis GitHub.
+sudah dipush pada commit `140b94a`. Build CI all menghasilkan artifact
+x86 tetapi enam arsitektur lain gagal guard cakupan. Firmware ini belum
+dipublikasikan sebagai rilis GitHub; hasil runtime panduan ini khusus file lokal.
 
 ## Instalasi percobaan di VMware
 

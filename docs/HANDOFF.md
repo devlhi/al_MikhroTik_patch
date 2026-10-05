@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-05: perubahan masih lokal/belum commit di atas `6071aea`. VMDK final lokal sudah dibangun lewat jalur produksi dan diuji langsung: boot/login, `free` menjadi `p-unlimited`, dua reboot serta shutdown/cold restart, semuanya dengan System ID sama (§17). Signature custom, coverage aktual 2 LICENSE/5 signing, metadata SquashFS dan integritas ZIP/VMDK lulus. Suite Linux final: 333 tes, 326 lulus, 7 skip, 0 gagal/error. File final ada di `dist/chr-x86-7.24.4-runtime-fix`; belum ada firmware baru diterbitkan di GitHub. Bukti runtime hanya QEMU tanpa jaringan, bukan VMware/upgrade/throughput. Jangan install ulang kandidat CI lama sebagai solusi lisensi.**
+**Status diperbarui: 2026-10-05: source sudah dipush sebagai `140b94a`. Build all run37277711016 selesai: x86 sukses; arm, arm64, mipsbe, mmips, smips, ppc gagal guard LICENSE mapping1; release gabungan di-skip (§18). VMDK final lokal sudah dibangun lewat jalur produksi dan diuji langsung: boot/login, `free` menjadi `p-unlimited`, dua reboot serta shutdown/cold restart, semuanya dengan System ID sama (§17). Signature custom, coverage aktual 2 LICENSE/5 signing, metadata SquashFS dan integritas ZIP/VMDK lulus. Suite Linux final: 333 tes, 326 lulus, 7 skip, 0 gagal/error. File final ada di `dist/chr-x86-7.24.4-runtime-fix`; belum ada firmware baru diterbitkan di GitHub. Bukti runtime hanya QEMU tanpa jaringan, bukan VMware/upgrade/throughput. Jangan install ulang kandidat CI lama sebagai solusi lisensi.**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -1403,3 +1403,28 @@ Acuan sebelum commit6071aea; main dan live remote sama. Push diizinkan pemilik
 untuk sesi ini. Source/evidence akan dipush tanpa dist,overlay atau kunci baru.
 GH CLI ditemukan tetapi belum authenticated pada environment default; git push
 --dry-run berhasil. Build all belum dijalankan pada checkpoint ini.
+
+
+Hasil akhir push/build all: commit source140b94a049798b2c1e58eceb13af64e7281f2ecf
+berhasil dipush ke origin/main. Run37277711016 pada commit itu selesai failure:
+x86 success (ISO,install-image,CHR,NetInstall,stage,validator dan upload), enam
+lainnya failure. Semua enam log gagal yang dibaca menunjukkan ValueError:
+no replacement for required mapping(s) 1 in system package; signing blocked.
+ARM64 berhenti pada ISO; ARM/MIPSBE/MMIPS/SMIPS/PPC pada standalone NPK.
+Tidak ada bypass. Build success x86 tidak membuktikan runtime ISO/install-image/
+NetInstall; hasil boot/aktivasi lokal hanya CHR VMDK §17. Hasil CI belum diuji boot.
+
+Artifact x86 baru ID11330614951,1017398869byte, digest API GitHub
+13ffb69e306daf179db056562850fb3dd8054b75377643d657b923b814690ba2;
+metadata API saja, bukan unduh/hash ulang1GB. release job skipped; dispatch
+create_draft_release=false, tidak ada draft/publikasi/tag/aset lama diganti.
+Bukti tahan lama: [build semua arsitektur](evidence/all-profile-build-2026-10-05.json).
+Autentikasi GH berhasil memakai credential Git yang sudah tersimpan, hanya
+in-memory child environment, tanpa mencetak nilai atau menulis konfigurasi login.
+
+Blokir tersisa: representasi verifier LICENSE non-x86 belum didukung/terverifikasi;
+perlu investigasi per arsitektur dan perangkat/emulasi yang sesuai untuk bukti
+boot/aktivasi. Jangan menganggap semua siap karena workflow matrix lengkap.
+Tes terbaru sesi ini27workflow+20matcher, tidak mengulang full333 karena kode
+produksi tidak diubah setelah suite final sebelumnya; hanya dokumentasi/evidence
+hasil build diperbarui setelah commit source.

@@ -1,0 +1,96 @@
+{
+  "conclusion": "failure",
+  "headSha": "140b94a049798b2c1e58eceb13af64e7281f2ecf",
+  "status": "completed",
+  "url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37277711016",
+  "build_profile": "all",
+  "jobs": [
+    {
+      "name": "patch (arm64)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch mikrotik-7.24.4-arm64.iso"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "patch (arm)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch routeros-7.24.4-arm.npk & all_packages-arm-7.24.4.zip"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "patch (mipsbe)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch routeros-7.24.4-mipsbe.npk & all_packages-mipsbe-7.24.4.zip"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "patch (mmips)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch routeros-7.24.4-mmips.npk & all_packages-mmips-7.24.4.zip"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "patch (x86)",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "name": "patch (ppc)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch routeros-7.24.4-ppc.npk & all_packages-ppc-7.24.4.zip"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "patch (smips)",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Patch routeros-7.24.4-smips.npk & all_packages-smips-7.24.4.zip"
+      ],
+      "coverage_guard_errors": [
+        "ValueError: no replacement for required mapping(s) 1 in system package; signing blocked"
+      ],
+      "log_read_exit": 0
+    },
+    {
+      "name": "release",
+      "conclusion": "skipped",
+      "failed_steps": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11330614951,
+      "name": "ali-patch-code-x86-7.24.4",
+      "size_in_bytes": 1017398869,
+      "expired": false,
+      "digest": "sha256:13ffb69e306daf179db056562850fb3dd8054b75377643d657b923b814690ba2"
+    }
+  ],
+  "runtime_scope": "This run proves build status only; local final CHR VMDK has separate runtime evidence. CI outputs not boot-tested.",
+  "published_release": false
+}
