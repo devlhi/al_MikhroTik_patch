@@ -7,6 +7,8 @@ import re
 import stat as stat_module
 from pathlib import Path
 from npk import NovaPackage, NpkPartID, NpkFileContainer
+from terminal_banner import (POLICY as TERMINAL_BANNER_POLICY, plan_terminal_banner,
+                             write_terminal_banner)
 
 
 def _x86_immediate_matches(data: bytes, old: bytes, new: bytes):
@@ -424,7 +426,9 @@ def patch_kernel(data: bytes, key_dict, stats: dict | None = None):
 
 
 def patch_squashfs(path, key_dict, stats: dict | None = None,
-                   runtime_policy=None, license_public_key=None):
+                   runtime_policy=None, license_public_key=None, *, terminal_banner=None):
+    banner_plan = (plan_terminal_banner(path, terminal_banner)
+                   if terminal_banner is not None else None)
     required = {'nova/bin/loader', 'nova/bin/keyman', 'nova/bin/mode'}
     if runtime_policy:
         for relative in required:
@@ -468,6 +472,10 @@ def patch_squashfs(path, key_dict, stats: dict | None = None,
     if runtime_policy and any(license_counts.get(relative, 0) < 1
                               for relative in ('nova/bin/keyman', 'nova/bin/mode')):
         raise ValueError('runtime policy requires LICENSE replacement in keyman and mode')
+    if banner_plan is not None:
+        # Generic mappings must not invalidate the pinned rendering consumer.
+        plan_terminal_banner(path, terminal_banner)
+        return write_terminal_banner(banner_plan)
 
 
 def run_shell_command(command):
@@ -592,7 +600,28 @@ def _tree_metadata(root):
     return entries, links
 
 
-def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key=None):
+def _validate_terminal_banner_package(package, policy):
+    if policy != TERMINAL_BANNER_POLICY or getattr(package, '_packages', []):
+        raise ValueError('terminal banner requires supported single-package policy')
+    info = _part(package, NpkPartID.NAME_INFO).data
+    if info.name != 'system' or info.version != '7.24.4.final':
+        raise ValueError('terminal banner requires system 7.24.4.final')
+    parts = list(package)
+    signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
+    archs = [(i, part.data) for i, part in enumerate(parts)
+             if part.id == NpkPartID.ARCHITECTURE]
+    if (not archs or archs[0][1] != b'i386' or archs[0][0] >= signature_index
+            or (len(archs) != 1 and not (len(archs) == 2 and archs[1][1] == b'I'
+                                       and archs[1][0] > signature_index))):
+        raise ValueError('terminal banner requires unambiguous i386 architecture')
+    _part(package, NpkPartID.FILE_CONTAINER)
+    _part(package, NpkPartID.SQUASHFS)
+
+
+def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key=None,
+                      *, terminal_banner=None):
+    if terminal_banner is not None:
+        _validate_terminal_banner_package(package, terminal_banner)
     if runtime_policy is not None:
         _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key)
     name = package[NpkPartID.NAME_INFO].data.name
@@ -618,20 +647,32 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
         repacked_file = work_dir / 'repacked.sfs'
         source_squashfs = package[NpkPartID.SQUASHFS].data
         squashfs_file.write_bytes(source_squashfs)
-        if runtime_policy:
+        preserve_metadata = bool(runtime_policy or terminal_banner)
+        if preserve_metadata:
             mkfs_time = _squashfs_time(source_squashfs)
             source_metadata = _squashfs_metadata(squashfs_file, work_dir)
         extract_args = ['unsquashfs', '-d', str(extract_dir), str(squashfs_file)]
-        if runtime_policy:
+        if preserve_metadata:
             _run_tools(extract_args, work_dir, preserve_modes=True)
             tree_metadata = _tree_metadata(extract_dir)
-            patch_squashfs(extract_dir, key_dict, squashfs_stats,
-                           runtime_policy, license_public_key)
+            banner_options = {'terminal_banner': terminal_banner} if terminal_banner else {}
+            banner_report = patch_squashfs(extract_dir, key_dict, squashfs_stats,
+                                          runtime_policy, license_public_key, **banner_options)
+            if terminal_banner:
+                report['terminal_banner'] = banner_report
+                # Only the exact validated text resource may grow; all other
+                # on-image sizes and metadata remain subject to strict parity.
+                logo_path = 'squashfs-root/' + banner_report['target']
+                mode, uid, gid, size, mtime = source_metadata[logo_path]
+                if mode[0] != '-' or size != str(banner_report['size']):
+                    raise ValueError('terminal banner source size metadata mismatch')
+                source_metadata[logo_path] = (
+                    mode, uid, gid, str(banner_report['output_size']), mtime)
         else:
             _run_tools(extract_args, work_dir)
             patch_squashfs(extract_dir, key_dict, squashfs_stats)
-        if runtime_policy and _tree_metadata(extract_dir) != tree_metadata:
-            raise ValueError('metadata changed during runtime policy patch')
+        if preserve_metadata and _tree_metadata(extract_dir) != tree_metadata:
+            raise ValueError('metadata changed during scoped patch')
         report['replacements'] = [
             {'mapping_index': index, 'kernel': kernel_stats[key],
              'squashfs': squashfs_stats[key],
@@ -644,13 +685,13 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                              + ' in system package; signing blocked')
         repack_args = ['mksquashfs', str(extract_dir), str(repacked_file),
                        '-quiet', '-noappend', '-comp', 'xz', '-no-xattrs', '-b', '256k']
-        if runtime_policy:
+        if preserve_metadata:
             repack_args += ['-all-root', '-mkfs-time', str(mkfs_time)]
         _run_tools(repack_args, work_dir)
         new_squashfs = repacked_file.read_bytes()
         if not new_squashfs:
             raise ValueError('empty repacked SquashFS; signing blocked')
-        if runtime_policy:
+        if preserve_metadata:
             if (_squashfs_time(new_squashfs) != mkfs_time
                     or _squashfs_metadata(repacked_file, work_dir) != source_metadata):
                 raise ValueError('repacked SquashFS metadata mismatch; signing blocked')
@@ -659,6 +700,7 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                        preserve_modes=True)
             if _tree_metadata(verify_dir) != tree_metadata:
                 raise ValueError('repacked SquashFS inode/link metadata mismatch; signing blocked')
+        if runtime_policy:
             report['runtime_policy'] = runtime_policy
             report['preserved_anchors'] = [{'path': 'nova/bin/loader', 'role': 'LICENSE',
                                             'count': 1, 'counted_as_coverage': False}]
@@ -670,16 +712,20 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 
 
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
-                   runtime_policy=None, license_public_key=None):
+                   runtime_policy=None, license_public_key=None, *, terminal_banner=None):
     npk = NovaPackage.load(input_file)
+    if terminal_banner is not None:
+        _validate_terminal_banner_package(npk, terminal_banner)
     if runtime_policy is not None:
         _validate_runtime_policy(npk, key_dict, runtime_policy, license_public_key)
     reports = []
     if len(npk._packages) > 0:
         for package in npk._packages:
-            reports.append(patch_npk_package(package, key_dict, runtime_policy, license_public_key))
+            reports.append(patch_npk_package(package, key_dict, runtime_policy, license_public_key,
+                                            terminal_banner=terminal_banner))
     else:
-        reports.append(patch_npk_package(npk, key_dict, runtime_policy, license_public_key))
+        reports.append(patch_npk_package(npk, key_dict, runtime_policy, license_public_key,
+                                         terminal_banner=terminal_banner))
     for report in reports:
         print(f"package {report['package']}: {report['status']}")
     npk.sign(kcdsa_private_key, eddsa_private_key)
@@ -697,6 +743,14 @@ if __name__ == '__main__':
     npk_parser.add_argument('-O', '--output', type=str, help='Output file')
     npk_parser.add_argument('--runtime-policy', choices=[_CHR_RUNTIME_POLICY],
                             help='Explicit version-scoped CHR runtime policy')
+    npk_parser.add_argument('--terminal-banner', choices=[TERMINAL_BANNER_POLICY],
+                            help='Opt-in actual terminal logo resource patch (not system note)')
+    banner_parser = subparsers.add_parser('terminal-banner',
+                                         help='Validate extracted tree and write logo copy; no keys')
+    banner_parser.add_argument('root', help='Extracted SquashFS root (read-only)')
+    banner_parser.add_argument('--policy', required=True, choices=[TERMINAL_BANNER_POLICY])
+    banner_parser.add_argument('-O', '--output', required=True,
+                               help='New logo output file; existing files are never overwritten')
     kernel_parser = subparsers.add_parser('kernel', help='patch kernel file')
     kernel_parser.add_argument('input', type=str, help='Input file')
     kernel_parser.add_argument('-O', '--output', type=str, help='Output file')
@@ -709,6 +763,13 @@ if __name__ == '__main__':
     netinstall_parser.add_argument(
         '-O', '--output', type=str, help='Output file')
     args = parser.parse_args()
+    if args.command == 'terminal-banner':
+        import json
+        _, _, replacement, report = plan_terminal_banner(args.root, args.policy)
+        with open(args.output, 'xb') as output:
+            output.write(replacement)
+        print(json.dumps(report, sort_keys=True))
+        parser.exit()
     license_public_key = bytes.fromhex(os.environ['MIKRO_LICENSE_PUBLIC_KEY'])
     key_dict = {
         license_public_key: bytes.fromhex(os.environ['CUSTOM_LICENSE_PUBLIC_KEY']),
@@ -721,7 +782,8 @@ if __name__ == '__main__':
         print(f'patching {args.input} ...')
         patch_npk_file(key_dict, kcdsa_private_key,
                        eddsa_private_key, args.input, args.output,
-                       runtime_policy=args.runtime_policy, license_public_key=license_public_key)
+                       runtime_policy=args.runtime_policy, license_public_key=license_public_key,
+                       terminal_banner=args.terminal_banner)
     elif args.command == 'kernel':
         print(f'patching {args.input} ...')
         data = patch_kernel(open(args.input, 'rb').read(), key_dict)

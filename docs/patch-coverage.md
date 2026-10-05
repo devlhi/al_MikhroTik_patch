@@ -147,3 +147,89 @@ Kebijakan ini mengikuti hasil diagnostik runtime yang dilaporkan parent;
 tes sintetis tidak membuktikan firmware produksi boot atau menerima lisensi.
 Build final, verifikasi signature nyata, boot/login dan persistensi aktivasi
 harus diuji terpisah. Kebijakan tidak menyatakan dukungan versi/produk lain.
+
+## Opt-in caption di bawah logo ASCII terminal — CHR x86 7.24.4
+
+**Koreksi permintaan pemilik:** keenam baris ASCII MikroTik asli tetap utuh;
+plain text `Ali Media Patch` berada tepat di bawahnya, dengan dua spasi indentasi.
+Tidak mengklaim kecocokan screenshot referensi karena gambar tidak tersedia untuk
+inspeksi. Interpretasi sebelumnya yang mengganti art menjadi block `ALI MEDIA
+PATCH` sudah superseded; bukti build/runtime lama tetap historis di HANDOFF §19.
+
+**Temuan offline:** ASCII art versi ini bukan string inline di ELF. `nova/bin/login`
+membaca resource `nova/lib/console/logo.txt`. Fitur ini mengubah byte resource logo
+firmware yang sebenarnya, **bukan `/system note`**, dan tidak memodifikasi instruksi
+ELF, kunci, atau perilaku lisensi. Jangan mengklaim ada offset ASCII art di ELF;
+offset ELF yang dilaporkan adalah referensi path resource, bukan art itu sendiri.
+
+API `patch_npk_file`, `patch_npk_package`, dan `patch_squashfs` menerima keyword-only
+`terminal_banner='chr-x86-7.24.4-ali-media-patch'`. Default `None` tidak mengubah
+logo. Opsi CLI NPK berikut tetap melewati guard cakupan dan signing yang sudah ada;
+konfigurasi kunci yang sah harus tersedia seperti build sebelumnya (jangan cetak
+nilai). Gunakan sumber pristine dan output baru di lab:
+
+```sh
+python -B patch.py npk /path/to/pristine/system.npk \
+  --runtime-policy chr-x86-7.24.4 \
+  --terminal-banner chr-x86-7.24.4-ali-media-patch \
+  -O /path/to/new/banner-system.npk
+```
+
+Untuk verifikasi byte **tanpa membaca kunci atau membangun/sign firmware**, CLI
+terpisah hanya membaca extracted tree dan membuat satu salinan logo baru:
+
+```sh
+python -B patch.py terminal-banner /path/to/extracted-root \
+  --policy chr-x86-7.24.4-ali-media-patch -O /path/to/new/logo.txt
+```
+
+Output harus belum ada (`xb`); tidak ada overwrite/in-place pada CLI ini. Output
+logo saja **bukan firmware siap boot**. API bytes murni tersedia sebagai
+`terminal_banner.patch_terminal_banner(data, consumer, policy=POLICY)` dan
+mengembalikan `(replacement_bytes, report)`; `consumer` adalah byte login ELF.
+
+Kontrak fail-closed:
+
+- Allowlist NPK tunggal `system`, `7.24.4.final`, authoritative `i386`; hanya marker
+  `I` sesudah SIGNATURE boleh menjadi part arsitektur kedua. Part hilang/duplikat,
+  arsitektur/versi/policy lain dan multi-package ditolak.
+- Target persis `nova/lib/console/logo.txt`; logo dan consumer wajib file reguler
+  tanpa hardlink/symlink dan ancestor direktori tidak boleh symlink.
+- Anchor logo adalah **seluruh file original 510 byte atau caption output 527 byte**,
+  bukan pencarian substring longgar. Hasil block-art lama, partial/duplikat/trailing
+  bytes/format baru ditolak; gunakan original pristine untuk rebuild. ELF consumer
+  wajib ET_EXEC ELF32 little-endian i386,
+  fingerprint pinned, satu anchor `/nova/lib/console/logo.txt\0` seluruhnya di
+  tepat satu PT_LOAD read-only non-executable. Missing/ambiguous/out-of-bounds
+  segment ditolak. Tidak ada offset patch hard-coded atau fallback spekulatif.
+- Consumer pinned membaca delapan baris (index 0..7). Baris kosong index7 diganti
+  `b'  Ali Media Patch'`, tepat setelah enam baris MikroTik index1..6 yang tetap
+  byte-identical. Leading blank index0 dan footer historis index8 tetap utuh.
+  Resource teks tumbuh **510 → 527 byte (+17)**; tidak memerlukan same-length
+  patch ELF karena ELF consumer tidak diubah. Jumlah newline tetap9; offset
+  sebelum caption tetap, dua newline terakhir bergeser17. Tidak ada NUL/format
+  placeholder/control baru. Footer bukan klaim versi runtime OS.
+  Output SHA-256 `c320009b2c6fabc9c025b245a4396ef6563c43a6e11cb6cade10a3b97d6abf0c`.
+- Laporan logo terpisah di `report['terminal_banner']`; tidak menambah hitungan
+  `replacements` mapping/coverage LICENSE. Logo saja tidak bisa meloloskan guard.
+  `size` adalah ukuran input; `output_size=527` dan `size_delta=17` saat patch
+  original. Exact output memberi `status=already-patched`, `replacements=0`,
+  `size_delta=0` (idempoten untuk logo, bukan seluruh proses patch NPK).
+- Repack opt-in tetap memeriksa metadata/mtime/mode/uid/gid/link/SquashFS time.
+  Hanya ukuran target logo yang sudah tervalidasi di expected inventory berubah
+  sesuai report; ukuran source harus cocok, semua field lain tetap. Ukuran logo
+  salah ataupun ukuran file lain berubah tetap gagal sebelum signing/output.
+  POSIX/SquashFS tools diperlukan. Xattrs tetap
+  di luar kontrak. Build dari pristine tanpa flag membatalkan pilihan branding;
+  jangan menimpa hasil build/publikasi lama. Workflow tidak di-wire otomatis.
+
+Tes `tests/test_terminal_banner.py` mencakup ELF sintetis (fingerprint test-only),
+validasi positif/negatif, CLI no-key, idempotensi, default unchanged, hardlink dan
+symlink, metadata, pemisahan statistik, real SquashFS/NPK roundtrip dan guard gagal
+sebelum signing/output. Inspeksi vendor read-only opsional di-skip bila scratch
+bukan tersedia; hasil tes bukan bukti boot atau tampilan terminal runtime.
+
+```sh
+python -B -m unittest discover -s tests -p test_terminal_banner.py -v
+python -O -B -m unittest discover -s tests -p test_terminal_banner.py -v
+```

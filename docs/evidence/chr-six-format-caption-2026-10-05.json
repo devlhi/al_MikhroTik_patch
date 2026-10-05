@@ -1,0 +1,471 @@
+{
+  "schema_version": 1,
+  "status": "six_chr_container_integrities_verified",
+  "profile": "chr-x86",
+  "routeros_version": "7.24.4",
+  "architecture": "x86",
+  "source_vmdk": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-ali-media-caption/chr-7.24.4-patched.vmdk",
+  "source_vmdk_sha256": "690506a2d0fba6ed3a6117873d2dec1a6ebcd4a6f4377dde5faea46819ec8d02",
+  "source_unchanged": true,
+  "assets": [
+    {
+      "extension": "img",
+      "qemu_format": "raw",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.img",
+      "image_sha256": "b9d5abb9b417ca95a2eb5ad6c38fd1ace958621cad556399b830d1a7ba9d93df",
+      "image_bytes": 134217728,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+      "archive_sha256": "2b37a772d486509a8f1409e14e4ef0547bcd0589801a9ab4b9ffae6329d742fb",
+      "archive_bytes": 53270031,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 134217728,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.img",
+              "format": "file",
+              "actual-size": 53809152,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.img",
+        "format": "raw",
+        "actual-size": 53809152,
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "unsupported",
+        "exit_code": 63,
+        "reason": "format driver does not support consistency checks"
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+        "archive_sha256": "2b37a772d486509a8f1409e14e4ef0547bcd0589801a9ab4b9ffae6329d742fb",
+        "image": "chr-7.24.4-patched.img",
+        "image_sha256": "b9d5abb9b417ca95a2eb5ad6c38fd1ace958621cad556399b830d1a7ba9d93df",
+        "image_size": 134217728,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "img",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    },
+    {
+      "extension": "qcow2",
+      "qemu_format": "qcow2",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.qcow2",
+      "image_sha256": "ea6b72f1e9124a07256a38ba3e914ec6f9a0b4a857c86dbeb762fe46ab55d8d1",
+      "image_bytes": 54853632,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+      "archive_sha256": "181bf0116eaa4ed45cd8b6dd523631e4d8fe98f8df50de9539489576e9d8e5b1",
+      "archive_bytes": 53192825,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 54853632,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.qcow2",
+              "format": "file",
+              "actual-size": 54796288,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.qcow2",
+        "cluster-size": 65536,
+        "format": "qcow2",
+        "actual-size": 54796288,
+        "format-specific": {
+          "type": "qcow2",
+          "data": {
+            "compat": "1.1",
+            "compression-type": "zlib",
+            "lazy-refcounts": false,
+            "refcount-bits": 16,
+            "corrupt": false,
+            "extended-l2": false
+          }
+        },
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "passed",
+        "exit_code": 0,
+        "details": {
+          "image-end-offset": 54853632,
+          "total-clusters": 2048,
+          "check-errors": 0,
+          "allocated-clusters": 832,
+          "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.qcow2",
+          "format": "qcow2"
+        }
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+        "archive_sha256": "181bf0116eaa4ed45cd8b6dd523631e4d8fe98f8df50de9539489576e9d8e5b1",
+        "image": "chr-7.24.4-patched.qcow2",
+        "image_sha256": "ea6b72f1e9124a07256a38ba3e914ec6f9a0b4a857c86dbeb762fe46ab55d8d1",
+        "image_size": 54853632,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "qcow2",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    },
+    {
+      "extension": "vmdk",
+      "qemu_format": "vmdk",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vmdk",
+      "image_sha256": "5b9c9d6cc805063e759d39457393832d36e516eb1a8ce9d3815e405b6d2fadc2",
+      "image_bytes": 54591488,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+      "archive_sha256": "724ffaa5ebbff39b3f56e462e6006e4f526d900581a7b6a55bdc92a280599a15",
+      "archive_bytes": 53190685,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 54591488,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vmdk",
+              "format": "file",
+              "actual-size": 54558720,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vmdk",
+        "cluster-size": 65536,
+        "format": "vmdk",
+        "actual-size": 54558720,
+        "format-specific": {
+          "type": "vmdk",
+          "data": {
+            "cid": 2970933955,
+            "parent-cid": 4294967295,
+            "create-type": "monolithicSparse",
+            "extents": [
+              {
+                "virtual-size": 134217728,
+                "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vmdk",
+                "cluster-size": 65536,
+                "format": ""
+              }
+            ]
+          }
+        },
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "passed",
+        "exit_code": 0,
+        "details": {
+          "check-errors": 0,
+          "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vmdk",
+          "format": "vmdk"
+        }
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+        "archive_sha256": "724ffaa5ebbff39b3f56e462e6006e4f526d900581a7b6a55bdc92a280599a15",
+        "image": "chr-7.24.4-patched.vmdk",
+        "image_sha256": "5b9c9d6cc805063e759d39457393832d36e516eb1a8ce9d3815e405b6d2fadc2",
+        "image_size": 54591488,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "vmdk",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    },
+    {
+      "extension": "vhd",
+      "qemu_format": "vpc",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhd",
+      "image_sha256": "b179867184ea565f6d846e6c939cc8cd93727a145b064503b62203faad5ae9f3",
+      "image_bytes": 65030144,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+      "archive_sha256": "53f549e48809592e3895f4ca74f1e1c109ac91c6f29fc1e9b69eb8757b9ec7b5",
+      "archive_bytes": 53205343,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 65030144,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhd",
+              "format": "file",
+              "actual-size": 53899264,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhd",
+        "cluster-size": 2097152,
+        "format": "vpc",
+        "actual-size": 53899264,
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "unsupported",
+        "exit_code": 63,
+        "reason": "format driver does not support consistency checks"
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+        "archive_sha256": "53f549e48809592e3895f4ca74f1e1c109ac91c6f29fc1e9b69eb8757b9ec7b5",
+        "image": "chr-7.24.4-patched.vhd",
+        "image_sha256": "b179867184ea565f6d846e6c939cc8cd93727a145b064503b62203faad5ae9f3",
+        "image_size": 65030144,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "vhd",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    },
+    {
+      "extension": "vhdx",
+      "qemu_format": "vhdx",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhdx",
+      "image_sha256": "e45e9a5f0760d194197e5327828a9a9c79c39afccddec93f8fb4b73df322b1c4",
+      "image_bytes": 92274688,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+      "archive_sha256": "7cd641c7b666ec729e83ca02b80e89c4d0338ed3a6190d8d3c969de3a2b576e2",
+      "archive_bytes": 53231375,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 92274688,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhdx",
+              "format": "file",
+              "actual-size": 55152640,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhdx",
+        "cluster-size": 8388608,
+        "format": "vhdx",
+        "actual-size": 55152640,
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "passed",
+        "exit_code": 0,
+        "details": {
+          "check-errors": 0,
+          "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vhdx",
+          "format": "vhdx"
+        }
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+        "archive_sha256": "7cd641c7b666ec729e83ca02b80e89c4d0338ed3a6190d8d3c969de3a2b576e2",
+        "image": "chr-7.24.4-patched.vhdx",
+        "image_sha256": "e45e9a5f0760d194197e5327828a9a9c79c39afccddec93f8fb4b73df322b1c4",
+        "image_size": 92274688,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "vhdx",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    },
+    {
+      "extension": "vdi",
+      "qemu_format": "vdi",
+      "image_path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vdi",
+      "image_sha256": "6bc68e6609ff400bde4c4156296a24723bd7c68b124ee8f56c21c231769f3c30",
+      "image_bytes": 60818432,
+      "delivery_archive": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats/ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+      "archive_sha256": "a3d9c6d21a6a048fae9c28b7481a7d3b8658fb8b6df814ee56bd600944f36249",
+      "archive_bytes": 53197783,
+      "virtual_bytes": 134217728,
+      "qemu_info": {
+        "children": [
+          {
+            "name": "file",
+            "info": {
+              "children": [],
+              "virtual-size": 60818432,
+              "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vdi",
+              "format": "file",
+              "actual-size": 60821504,
+              "format-specific": {
+                "type": "file",
+                "data": {}
+              },
+              "dirty-flag": false
+            }
+          }
+        ],
+        "virtual-size": 134217728,
+        "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vdi",
+        "cluster-size": 1048576,
+        "format": "vdi",
+        "actual-size": 60821504,
+        "dirty-flag": false
+      },
+      "guest_sector_compare": {
+        "status": "identical",
+        "exit_code": 0
+      },
+      "qemu_check": {
+        "status": "passed",
+        "exit_code": 0,
+        "details": {
+          "check-errors": 0,
+          "filename": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.vdi",
+          "format": "vdi"
+        }
+      },
+      "validator": {
+        "archive": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+        "archive_sha256": "a3d9c6d21a6a048fae9c28b7481a7d3b8658fb8b6df814ee56bd600944f36249",
+        "image": "chr-7.24.4-patched.vdi",
+        "image_sha256": "6bc68e6609ff400bde4c4156296a24723bd7c68b124ee8f56c21c231769f3c30",
+        "image_size": 60818432,
+        "zip_crc_verified": true,
+        "header_checked": true,
+        "format": "vdi",
+        "boot_tested": false,
+        "activation_tested": false,
+        "scope": "build-only byte integrity, ZIP structure and format header"
+      },
+      "zip_single_expected_image": true,
+      "zip_crc_verified": true,
+      "zip_payload_hash_verified": true,
+      "boot_tested": false,
+      "activation_tested": false
+    }
+  ],
+  "asset_count": 6,
+  "delivery": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-caption-all-formats",
+  "work": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel",
+  "harness_sha256": "7b41a925fe1fafae3b46d99f60a9454d4be50b26570ee057a72d2248757c158c",
+  "validator_sha256": "c422b8a9be69f3165066476849b3d7aafff48996652b2511b5562739cb9517f4",
+  "release_assets_sha256": "029d07d977858f5469157719aebc4ea255701232ade859efdbdf98795c097a5e",
+  "qemu_img_sha256": "634320b91165669917123e8e79cce1c4d00cee0a4aa4d662d7c0a8186479b3fb",
+  "qemu_version": "qemu-img version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "prior_delivery_files_unchanged_during_final_validation": 18,
+  "conversion_options": {
+    "vhd": "subformat=dynamic,force_size=on; preserves exact134217728 virtual bytes",
+    "other_formats": "qemu-img convert defaults; explicit source vmdk and destination format"
+  },
+  "scope": "CHR x86 six container formats only, not ISO/install-image/NetInstall/other architectures and not six-hypervisor compatibility.",
+  "caption_preservation_basis": "Guest-sector identity to pinned caption VMDK, whose six original MikroTik ASCII rows plus plain Ali Media Patch caption were previously runtime-verified.",
+  "source_runtime_evidence": "docs/evidence/chr-7.24.4-ali-media-caption-runtime-2026-10-05.json",
+  "new_boot_tests": false,
+  "activation_tested": false,
+  "owner_vm_contacted": false,
+  "key_material_accessed": false,
+  "network_devices_created": 0,
+  "publication_performed": false,
+  "all_six_zip_validators_passed": true,
+  "packaging": "Unmodified release_assets stage chr-x86 on native WSL ext4; exclusive new delivery directory copy and every file hash verified. Existing Ali Patch Code archive names retained; in-image caption Ali Media Patch. Manifest boot_tested=false.",
+  "interim_failures": [
+    {
+      "stage": "initial release_assets stage on /mnt/c",
+      "failure": "errno22 renameat2 RENAME_NOREPLACE on DrvFS",
+      "resolution": "unmodified staging on native ext4, then exclusive copy and verification"
+    },
+    {
+      "stage": "first finalized conversion source fingerprint guard",
+      "failure": "validator source changed concurrently by authorized validation agent; no evidence/success published",
+      "resolution": "all existing containers and delivered ZIPs reverified read-only against final approved validator hash; no output image or ZIP overwritten"
+    }
+  ]
+}

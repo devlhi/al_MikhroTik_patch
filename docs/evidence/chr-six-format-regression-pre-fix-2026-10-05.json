@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "new_actual_combined_WSL_unittest_pre_fix_non_frozen_snapshot",
+  "requested_evidence_date": "2026-10-05",
+  "started_at_utc": "2026-10-05T09:13:08.084093+00:00",
+  "finished_at_utc": "2026-10-05T09:15:54.397583+00:00",
+  "repository": {
+    "path": "/mnt/c/laragon/www/mikpatch",
+    "branch": "main",
+    "head_before": "bb010811bd1443334ed32b0d3168ef09b77bc111",
+    "head_after": "bb010811bd1443334ed32b0d3168ef09b77bc111",
+    "cached_upstream_ahead_behind": [
+      "0",
+      "0"
+    ],
+    "live_remote_main_checked_before_run": "bb010811bd1443334ed32b0d3168ef09b77bc111",
+    "existing_worktree_changes_preserved": true
+  },
+  "execution": {
+    "wsl_distribution": "Ubuntu",
+    "user": "djundev",
+    "python_version": "3.12.3",
+    "cwd": "/mnt/c/laragon/www/mikpatch",
+    "umask": "077",
+    "argv": [
+      "env",
+      "-u",
+      "PYTHONPATH",
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "LD_LIBRARY_PATH=/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu",
+      "CHR_TEST_QEMU_IMG=/home/djundev/.cache/mikpatch-audit/tools/usr/bin/qemu-img",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "TMPDIR=/home/djundev/.cache/mikpatch-audit/chr-six-format-regression-jm0gw_y4/tmp",
+      "/home/djundev/.cache/mikpatch-audit/venv/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "shell_equivalent": "umask 077; cd /mnt/c/laragon/www/mikpatch; env -u PYTHONPATH PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin LD_LIBRARY_PATH=/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu CHR_TEST_QEMU_IMG=/home/djundev/.cache/mikpatch-audit/tools/usr/bin/qemu-img PYTHONDONTWRITEBYTECODE=1 TMPDIR=/home/djundev/.cache/mikpatch-audit/chr-six-format-regression-jm0gw_y4/tmp /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s tests -v",
+    "environment_overrides": {
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "LD_LIBRARY_PATH": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu",
+      "CHR_TEST_QEMU_IMG": "/home/djundev/.cache/mikpatch-audit/tools/usr/bin/qemu-img",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "TMPDIR": "/home/djundev/.cache/mikpatch-audit/chr-six-format-regression-jm0gw_y4/tmp"
+    },
+    "environment_removed": [
+      "PYTHONPATH"
+    ],
+    "optional_CADDY_TEST_BINARY_configured": false,
+    "resolved_prerequisites": {
+      "node": "/usr/bin/node",
+      "mksquashfs": "/usr/bin/mksquashfs",
+      "unsquashfs": "/usr/bin/unsquashfs"
+    },
+    "raw_output_storage": {
+      "directory": "/home/djundev/.cache/mikpatch-audit/chr-six-format-regression-jm0gw_y4",
+      "stdout": "stdout.raw",
+      "stderr": "stderr.raw",
+      "directory_mode": "0o700",
+      "raw_files_mode": "0600",
+      "published": false
+    }
+  },
+  "result": {
+    "status": "failed",
+    "exit_code": 1,
+    "counts": {
+      "total": 365,
+      "passed": 357,
+      "skipped": 7,
+      "failures": 0,
+      "errors": 1,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "unittest_duration_seconds": 165.539,
+    "wall_duration_seconds": 166.313,
+    "skips": [
+      {
+        "test": "test_release_assets.ProfileTests.test_windows_publication_refuses_destination_created_after_precheck",
+        "reason": "requires native Windows rename semantics"
+      },
+      {
+        "test": "test_vps_deploy.DeploymentTests.test_real_caddy_auth_gates_all_routes_and_strips_upstream_credentials",
+        "reason": "optional real Caddy binary not selected"
+      },
+      {
+        "test": "test_vps_deploy.DeploymentTests.test_real_caddy_validates_and_adapts_auth_before_proxy",
+        "reason": "optional real Caddy binary not selected"
+      },
+      {
+        "test": "test_windows_bat.BatNativeCmdTests.test_double_click_menu_generates_verifiable_license_file",
+        "reason": "native cmd.exe execution requires Windows; this host ran only text checks"
+      },
+      {
+        "test": "test_windows_bat.BatNativeCmdTests.test_invalid_identifier_exits_nonzero_and_writes_no_file",
+        "reason": "native cmd.exe execution requires Windows; this host ran only text checks"
+      },
+      {
+        "test": "test_windows_bat.BatNativeCmdTests.test_missing_interpreter_reports_python_org_and_exits_nonzero",
+        "reason": "native cmd.exe execution requires Windows; this host ran only text checks"
+      },
+      {
+        "test": "test_windows_bat.BatNativeCmdTests.test_ros_choice_generates_ros_license",
+        "reason": "native cmd.exe execution requires Windows; this host ran only text checks"
+      }
+    ],
+    "failure_or_error_tests": [
+      {
+        "status": "ERROR",
+        "test": "test_validate_chr_image.AllChrImagesTests.test_opt_in_qemu_info_check_compare_and_cleanup",
+        "details": "Raw diagnostic withheld to avoid exposing sensitive values.",
+        "exception_type": "ValueError",
+        "sanitized_reason": "qemu-img standalone container validation failed"
+      }
+    ],
+    "real_qemu_six_conversions_and_guest_mismatch": "passed"
+  },
+  "integrity": {
+    "relevant_source_sha256_final": {
+      ".github/workflows/patch6.yml": "a39939097f5191b1c79ed60d092dd194d5fd83e20824108b8f20267dc9a58429",
+      ".github/workflows/patch7.yml": "27976fb08b6ec11f170e58fc72532b4342167ac3990d6ebde8d7be60e2a28975",
+      ".github/workflows/windows-license.yml": "4bbd2ea8ff0af7b9d55cb3fe9e4a7485a984b034c6cad8de98a4a66fc32d73f8",
+      "deploy/install-panel.sh": "5c3a508b6c4fcef1c0174fae1ff56751d0530daebb0a54f9c194b51acf64f66f",
+      "deploy/render_panel_config.py": "b47091768228d09318eee37942d28dc399e11a95c4ab0be8c12168eee2b0f63f",
+      "generate-license.bat": "0e6f5195ada978647abdb0759e815258001e4f4942c810e684710a14f3ad6b78",
+      "license.py": "6c5df49e12decc006a5e13d5e09b49aec68ed60591370105aeacbbc4fa2688f6",
+      "mikro.py": "07c6ec0fc3d0b52794b177aa8c1f7b7fa88dcc86043320a115a10a4fadd4a817",
+      "npk.py": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274",
+      "patch.py": "710619aa9f72f71de80fed593689d4c86739d8ec568ec218846b202782dcf3ea",
+      "requirements-license.txt": "4df37249f5f30c3a4a941b7333679ce6df9ce218a90d9e3f859f5b1724d8873b",
+      "requirements.txt": "fd132fa71a5a13db49d0144f6a90b930cf4a157807b55d9382c241b7ac1496f3",
+      "scripts/license_cli.py": "68229c7f9d4638ff40810b1afb1d23027765ab6b18f29e7c4ac72a7cc1fe879b",
+      "scripts/license_server.py": "67b2d191bbdb7b22e97027862ebb58919750e81a41ebb054e406b5dac880e8a9",
+      "scripts/license_util.py": "b9d7d5a3cb2b5045c6275ecd0176cc390333042d423958c6cd4a21db78098254",
+      "scripts/release_assets.py": "029d07d977858f5469157719aebc4ea255701232ade859efdbdf98795c097a5e",
+      "scripts/sfp_diagnostics.py": "eacb47fb1d2adbbd9899d925da05d5e205de6b989973cd13bd704facbb40071b",
+      "scripts/validate_chr_image.py": "186d752328b4867f756ed3b870a2e41326ad4d232276b6dacd610dd30c0b6e2d",
+      "sha256.py": "3dda603db9fb65d63eb26d6a9edad6587df324bb6869ac22c95ccdee55c292df",
+      "terminal_banner.py": "ebaafd1d42a9e1f3e0cda3325ef57db1ac0451833db9752f5529098bcd3e4e83",
+      "tests/test_chr_runtime_policy.py": "2b8548b78578df5d5db1e694a13ca82c6d91a039dfd94f66612852882ecb1e32",
+      "tests/test_license_cli.py": "c0b4d0d38444eecd365cf2f833bb85835d1c5c45e90ce074602f3412221ea0c4",
+      "tests/test_license_frontend.py": "e71647c9e5ff1438e0e8045d83b5213b3619bc01f496f0625126b05f27fba69a",
+      "tests/test_license_server.py": "e68ae6724af311ffe110de31e18ad367a5c6c1e58be39d0ec91cd0eac8fad419",
+      "tests/test_license_util.py": "e5e5293b1ddeb04001fefd985b8835c7e8179d8eb5fce50f360c28e48b3337ce",
+      "tests/test_patch7_branding.py": "2b0fde28ffda52530fb43d7dce45dafb1c7103d0cab9519104558931a839c868",
+      "tests/test_patch_coverage.py": "f164d068c0a2b7fb0f3ce2defdcf99e959a445752c4f9c6e101898122a030d56",
+      "tests/test_patch_coverage_integration.py": "17f1645e3f2cbe76ee7315e72febfe4845ccbdf05b22701a54b4f9fc08845034",
+      "tests/test_patch_x86_immediates.py": "ffd8373600ecedb69787af930b2cec274572e9f657c3935ef4c6f7018394098d",
+      "tests/test_release_assets.py": "de978e0c2bcb7c3d98c9e32a13bb42090c45d99e70b3271dbe0187bc0a7c8a9a",
+      "tests/test_sfp_diagnostics.py": "73ab454459819f7bea3cff9f5c99456bf2799a1970a9014a3f031ff6d0d75a7b",
+      "tests/test_terminal_banner.py": "4bc6ddc41deb94a4db7f7c3b53129f331831bdb0ad919920b08d174a530a0608",
+      "tests/test_validate_chr_image.py": "7cd9adf7d870ca287daabdea13adb62cb41af8cb36ce6ee350a460077bdc2cad",
+      "tests/test_vps_deploy.py": "1821fcb2555c2a63ab76dd25be0e844601ef456fc7a5866b01b91facc1939fe0",
+      "tests/test_windows_bat.py": "a6be0e028f96e0700e6fe4cf8b119c8ea2cbebe6d61cec9fb98e7bea2e859363",
+      "toyecc/ASN1.py": "8d1e62030c91e99ac303b362b3e4dc2665478aaae174da10dd79b3f7263a947d",
+      "toyecc/AffineCurvePoint.py": "957c10db7f92207a17ab0924e99307a68a73399c9d14f38c0c14496a01953ff5",
+      "toyecc/CRT.py": "c1401dd488f7d28f718793314754086bcee8a8fccda364e9ad0dbe21b0ba3c3b",
+      "toyecc/CurveDB.py": "456c1170226242421ea0b264b040b99e7083a4cb1cbdaf92b3bde65544dac6d9",
+      "toyecc/CurveOps.py": "b560473547d81974f37b5b248168310d361030e8a21509d1cad3d3b1a9a17f8b",
+      "toyecc/CurveQuirks.py": "9212a4832c85ff221ee0ba5eb0c5b764490d1bcc8f586823f02abe1ebffcc36c",
+      "toyecc/DivisionPolynomial.py": "7b4a9adb38828a955027b29f059f79bf8a7fc6fc2c7c097acf7fd1b0fead10a9",
+      "toyecc/DocInherit.py": "b44129ffc1089cf8986324f3407165bc850581077aab6f5aea8e6218ec42cb1f",
+      "toyecc/ECPrivateKey.py": "ff2173edfc1a3d4d190c12363e2a022415a89ec0519c2ceed66ba2f52566e154",
+      "toyecc/ECPublicKey.py": "50fc8a9374f337fdf71da9c00e61b6834db917339ccb89593d4947ab7cf583b3",
+      "toyecc/EllipticCurve.py": "7f22641d3f0e069ca16a8fdd5511839b24cf198d84b6633666f602125334ac8d",
+      "toyecc/Exceptions.py": "cd200dfbbd8f22362f91a00672c6d25a2188bb6b2df92f285cfd2e50869ff619",
+      "toyecc/FieldElement.py": "56fcc7785063aab123c2a06d7ef99e5568582949dac958823324752cd9a52a0d",
+      "toyecc/MontgomeryCurve.py": "9721851547678b3f918cf8acb27bea4140e537e30b3cdf67547a327ebab39243",
+      "toyecc/PointOps.py": "3468375fdef08b10b1c1b5f8aaf6e305d871725f61bb1c442edcd0fc8aa88d7c",
+      "toyecc/Polynomial.py": "8e8e7e17481ee314190f8f8a045b2e1ef91a3758bf733c1f73bc7fe819c1d0f7",
+      "toyecc/PrivKeyOps.py": "61e831760e99facecea853498ab3af63ff8cca645f94c50f8ae76d8ec6cf7ca3",
+      "toyecc/PubKeyOps.py": "171d24229454f1c84d9bb8f6d1823e0c4d7029e756d2768e930d6e4327579d62",
+      "toyecc/Random.py": "b41df3ea63a78e5e7945b190332a25b384ade9d2f64667737c0a2277041907ef",
+      "toyecc/ShortWeierstrassCurve.py": "20b3014b79a5f486c8e2da10f2ac8e2224286171d93d94975dea7d7c89d65bfa",
+      "toyecc/Singleton.py": "8957be8f4ec790301da287f0fce5386fabc2f3d77776087e5579eb1f8895d48d",
+      "toyecc/Tools.py": "437b022d7f052f15606dcc37c7002eaa64510ec72e8daba16e03544746a6c049",
+      "toyecc/TwistedEdwardsCurve.py": "91318c611fffb82edd57785dc1c552726e5d537a8edba5614975fc25221d85d1",
+      "toyecc/__init__.py": "854030a23ef9068add4aa43e875f580e6e2b27251de4ce78f93904c3e7a008f0",
+      "web/license/app.css": "f570fd49e5777b6b8edaf656416547d8106f6981bc29c6789b8deba6fc8085e5",
+      "web/license/app.js": "0fbe158afba53f5b8bf970d30feb970d75a8a5afc931137c96e9ba7e49036d82",
+      "web/license/index.html": "62ef030006fcdf7faf7cc717bc205c8db21aa7b738fcfb642a9ecf21284e8bb8"
+    },
+    "relevant_source_files_changed_during_run": [
+      "scripts/validate_chr_image.py",
+      "tests/test_validate_chr_image.py"
+    ],
+    "handoff_sha256_before": "24f28a0627d0aef0acde028269fd7de75a7881d90f9ffe8b92da18ca9dd4c55e",
+    "handoff_sha256_after": "cc1d2eddc31520b17668108accd3cb7cf4e326e818c60ca637f08b04040d4352",
+    "worktree_status_unchanged_before_evidence_write": true,
+    "handoff_note": "HANDOFF changed concurrently by another agent; this test agent made no HANDOFF edits."
+  },
+  "scope_limits": [
+    "Only this run is new evidence; historical test counts were not reused.",
+    "Unittest results are not proof of firmware boot, login, activation, VMware compatibility, upgrade, or throughput.",
+    "This test agent performed no source fixes, HANDOFF edits, commit, push, or publication; other agents edited files concurrently.",
+    "Raw stdout, stderr, exception details, key material, licenses and system identifiers are not included."
+  ],
+  "snapshot_warning": "Validator and test files were edited concurrently by another agent during execution. This run is not evidence for final frozen source; final hashes describe end-of-run files, not necessarily modules loaded by unittest."
+}

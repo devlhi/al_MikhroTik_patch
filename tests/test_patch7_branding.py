@@ -85,7 +85,7 @@ class WorkflowTests(unittest.TestCase):
                             selected.append(step["name"])
                     with self.subTest(profile=profile, arch=arch, cache_hit=cache_hit):
                         self.assertTrue(shared.issubset(selected))
-                        validator = "Validate CHR x86 VMDK archive integrity"
+                        validator = "Validate all six CHR x86 archives (build only)"
                         self.assertEqual(validator in selected, arch == "x86")
                         products = [name for name in selected if name not in shared and name != validator]
                         self.assertTrue(products)
@@ -116,7 +116,7 @@ class WorkflowTests(unittest.TestCase):
         # other versions if the workflow pin is changed in a future release.
         expected = '''sudo mount /dev/nbd0p2 chr/routeros/
 if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.4" ]; then
-  sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 chr/routeros/var/pdb/system/image
+  sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
 else
   sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
 fi
@@ -134,12 +134,17 @@ sudo umount /dev/nbd0p2'''
         self.assertEqual(flagged, [(
             "patch", "Patch chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img",
             "sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 "
-            "chr/routeros/var/pdb/system/image",
+            "--terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image",
         )])
         # Also reject policy injection through env or elsewhere outside run blocks.
         serialized = yaml.safe_dump(config)
         self.assertEqual(serialized.count("--runtime-policy"), 1)
-        self.assertEqual(serialized.count("chr-x86-7.24.4"), 1)
+        self.assertEqual(serialized.count("chr-x86-7.24.4"), 2)
+        self.assertEqual(serialized.count("--terminal-banner"), 1)
+        self.assertEqual(serialized.count("chr-x86-7.24.4-ali-media-patch"), 1)
+        run = next(s['run'] for s in config['jobs']['patch']['steps']
+                   if s['name'].startswith('Patch chr-'))
+        self.assertLess(run.index('--terminal-banner'), run.index('qemu-img convert'))
 
     def test_both_profiles_select_the_same_x86_chr_policy_step(self):
         config = workflow()
@@ -216,8 +221,9 @@ sudo umount /dev/nbd0p2'''
         self.assertLess(steps.index(validation), steps.index(upload))
         self.assertEqual(shlex.split(validation["run"].replace("\\\n", " ")), [
             "python3", "scripts/validate_chr_image.py",
-            "--archive", "dist/x86/ali-patch-code-x86-chr-$LATEST_VERSION-patched.vmdk.zip",
+            "--directory", "dist/x86", "--version", "$LATEST_VERSION",
             "--manifest", "dist/x86/manifest.json", "--checksums", "dist/x86/SHA256SUMS",
+            "--qemu-img", "qemu-img",
         ])
 
     def test_profile_and_changelog_are_separate_cli_arguments(self):

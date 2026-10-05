@@ -261,7 +261,7 @@ jobs:
         sudo umount /dev/nbd0p1
         sudo mount /dev/nbd0p2 chr/routeros/
         if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.4" ]; then
-          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 chr/routeros/var/pdb/system/image
+          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
         else
           sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
         fi
@@ -365,14 +365,14 @@ jobs:
           --profile "${{ inputs.build_profile }}" \
           --changelog CHANGELOG
 
-    - name: Validate CHR x86 VMDK archive integrity
+    - name: Validate all six CHR x86 archives (build only)
       id: validate_chr_image
       if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       run: |
         python3 scripts/validate_chr_image.py \
-          --archive "dist/x86/ali-patch-code-x86-chr-$LATEST_VERSION-patched.vmdk.zip" \
+          --directory dist/x86 --version "$LATEST_VERSION" \
           --manifest dist/x86/manifest.json \
-          --checksums dist/x86/SHA256SUMS
+          --checksums dist/x86/SHA256SUMS --qemu-img qemu-img
 
     - name: Upload branded artifacts
       if: steps.get_latest.outputs.has_new_version == 'true'

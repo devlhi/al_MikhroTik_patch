@@ -1,5 +1,24 @@
 # HANDOFF — Ali Patch Code
 
+**Tambahan terbaru 2026-10-05 (§21): enam format CHR x86 caption tersedia lokal,
+integritas ZIP dan kesetaraan sektor guest terverifikasi. Celah QCOW2 external-data
+pada validator awal sudah diperbaiki dan lolos review ulang. Full WSL final368tes:
+361pass7skip0failure/error; semua6arsip lulus validasi ulang pasca-fix.
+Investigasi driver aktual tidak membenarkan
+patch SFP universal; tidak ada parameter kernel disisipkan. Representasi anchor
+non-x86 ditemukan pada18/18 target, tetapi matcher/firmware non-x86 belum dibuat.
+Tetap tanpa commit/push/dispatch/publikasi baru.**
+
+**Tambahan 2026-10-05 (§20): koreksi visual pemilik telah diimplementasikan:
+logo ASCII MikroTik asli tetap utuh, plain `Ali Media Patch` tepat di bawahnya.
+Resource tumbuh510→527; ELF consumer tidak berubah. Full WSL356total349pass7skip;
+probe paralel QEMU0NIC membuktikan original art+caption saat boot/login, bukan
+aktivasi image caption. Interpretasi penggantian art
+beserta build/runtime §19 adalah historis dan superseded, bukan hasil caption
+terbaru. Tidak mengklaim sama dengan screenshot yang tidak tersedia. Source lokal
+di `main`, tanpa commit/push/publikasi; dist lama tidak ditimpa. Hasil tes baru dan
+batas bukti caption dicatat di §20; kegagalan full Windows §19 tetap historis.**
+
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
 **Status diperbarui: 2026-10-05: source sudah dipush sebagai `140b94a`. Build all run37277711016 selesai: x86 sukses; arm, arm64, mipsbe, mmips, smips, ppc gagal guard LICENSE mapping1; release gabungan di-skip (§18). VMDK final lokal sudah dibangun lewat jalur produksi dan diuji langsung: boot/login, `free` menjadi `p-unlimited`, dua reboot serta shutdown/cold restart, semuanya dengan System ID sama (§17). Signature custom, coverage aktual 2 LICENSE/5 signing, metadata SquashFS dan integritas ZIP/VMDK lulus. Suite Linux final: 333 tes, 326 lulus, 7 skip, 0 gagal/error. File final ada di `dist/chr-x86-7.24.4-runtime-fix`; belum ada firmware baru diterbitkan di GitHub. Bukti runtime hanya QEMU tanpa jaringan, bukan VMware/upgrade/throughput. Jangan install ulang kandidat CI lama sebagai solusi lisensi.**
 Dokumen awal masuk lewat commit `3e2a73b`
@@ -1428,3 +1447,382 @@ boot/aktivasi. Jangan menganggap semua siap karena workflow matrix lengkap.
 Tes terbaru sesi ini27workflow+20matcher, tidak mengulang full333 karena kode
 produksi tidak diubah setelah suite final sebelumnya; hanya dokumentasi/evidence
 hasil build diperbarui setelah commit source.
+
+### 19. Opt-in ASCII logo terminal sebenarnya (2026-10-05; historis, superseded)
+
+**Interpretasi visual di bagian ini sudah superseded oleh koreksi pemilik §20.**
+Source/hash/resource 510-byte block-art, tes dan runtime berikut adalah rekaman
+sesi sebelumnya; bukti lama tidak dihapus/ditulis ulang dan tidak membuktikan
+caption di bawah logo MikroTik asli. Untuk kontrak/source terbaru lihat §20.
+
+Permintaan pemilik: tambahkan fungsi penggantian ASCII logo menjadi `Ali Media
+Patch`, **bukan `/system note`**, tanpa perubahan kunci/lisensi/guard atau publikasi.
+Acuan awal `main` HEAD `bb010811bd1443334ed32b0d3168ef09b77bc111`; working tree
+bersih, HEAD vs cached `origin/main` 0/0. Tidak fetch remote baru dalam sesi ini.
+Tidak membuat branch, commit, push, release, atau menimpa dist lama.
+
+**Temuan aktual read-only sebelum implementasi:** ASCII art tidak inline di ELF.
+Pada extracted vendor CHR, file `nova/lib/console/logo.txt` berisi 510 byte, art
+mulai offset 1. ELF `nova/bin/login` membaca file itu (referensi path dan alur
+pembacaan dikonfirmasi disassembly offline). Art tidak ditemukan pada ELF yang
+terpindai. Ini alasan implementasi mengganti byte resource firmware sebenarnya,
+bukan mengarang offset penggantian art di executable.
+
+Identitas bukti aktual:
+
+- Root vendor: `/home/djundev/.cache/mikpatch-audit/final-production-7m5_vbt0/vendor-root`.
+- Binary `/nova/bin/login`, ukuran 162380, SHA-256
+  `4d43156092a5aa52f6e3f14a68fba818405fe1f1db13132721919784eb72c626`.
+  String `/nova/lib/console/logo.txt\0` pada offset file **154472 (`0x25b68`)**,
+  VA `0x806db68`, PT_LOAD read-only flags4 offset147456 size11444. Instruksi
+  VA `0x806398a` mereferensikan path; helper pembaca dipanggil pada `0x8063a09`.
+  Binary consumer pada extraction produksi lama memiliki hash identik.
+- Resource original SHA-256
+  `438e1067bdc90044f90f18f1d90895403757d1b8ea0084e83cbcd558563a56f7`;
+  output SHA-256
+  `42625283101162d7fcf7af78519e5a8e2e151eb0a2341c3913c9871f051b9d4e`.
+  Tes CLI nyata menghasilkan scratch
+  `/home/djundev/.cache/mikpatch-audit/banner-offline-FlFGVB/logo.txt`.
+  Ukuran tetap510,263byte berbeda pada offset3..441, semua posisi newline tetap;
+  hanya enam art rows berubah. Consumer ELF tetap identik, bukan dipatch.
+  Scratch bisa hilang; fingerprint/ukuran/offset di sini adalah bukti tahan lama.
+
+Perubahan implementasi:
+
+- `terminal_banner.py`: exact original/replacement, block art `ALI MEDIA PATCH`
+  plus exact text `Ali Media Patch`; pad tiap row, newline/NUL/layout/footer
+  dipertahankan. Allowlist target, policy, fingerprint ELF consumer + validasi
+  ELF32/i386/ET_EXEC dan unique read-only PT_LOAD anchor. Menolak file/ancestor
+  symlink, hardlink, missing/ambiguous/unsupported input. Exact output idempoten
+  (`already-patched`,0replacement); partial result ditolak.
+- `patch.py`: keyword-only `terminal_banner='chr-x86-7.24.4-ali-media-patch'`
+  pada API NPK/tree, opsi `npk --terminal-banner`, dan CLI no-key terpisah
+  `terminal-banner ROOT --policy ... -O NEW_FILE` (root read-only, output `xb`).
+  Statistik `terminal_banner` terpisah dari mapping coverage LICENSE; guard tetap
+  wajib. NPK scope/version/architecture fail-closed; metadata parity dipakai ulang.
+  Default tanpa opsi tetap; workflow **tidak** otomatis memakai branding baru.
+- `tests/test_terminal_banner.py`:23tes, termasuk ELF sintetis (pin hash hanya di
+  test), negatif, CLI no-key, idempotensi, tree safety, statistik, real SquashFS
+  roundtrip/coverage fail-before-sign/output serta vendor read-only bila tersedia.
+- Cara pakai/kontrak/batas ada di [patch-coverage.md](patch-coverage.md).
+- Fingerprint source produksi yang dibekukan untuk probe parent:
+  `patch.py` SHA-256 `45316d883db23a276c37c9ef71a64c77bec2d7c522f466baf01d4efe39fe5ec5`;
+  `terminal_banner.py` SHA-256 `9ad8058331ffad03a47f37f7b09bf82a8137561b9898915e5854fbbbc5c77a43`.
+
+Tes yang benar-benar dijalankan sesi implementasi:
+
+- WSL `/home/djundev/.cache/mikpatch-audit/venv/bin/python`, `env -u PYTHONPATH`,
+  suite penuh `-B -m unittest discover -s tests -v`, caller umask077:
+  **356total349pass7skip0failure/error**,179.277s,exit0. Skip4cmd.exe,
+  1Windows rename,2optional Caddy. Ini tes baru, bukan menyalin suite333 lama.
+- Banner23/23 WSL normal dan `-O`; real SquashFS/NPK roundtrip dan real consumer
+  berhasil. Guard `test_patch_coverage*.py`28/28 normal dan `-O`.
+- Windows `C:\laragon\www\mikpatch\venv\Scripts\python.exe`: banner23total21pass2skip
+  normal dan `-O` (vendor WSL path dan POSIX SquashFS unavailable); patch suites
+  `test_patch*.py`75total69pass6skip. Runtime-policy tests dalam suite penuh tidak
+  gagal,14integration skip karena SquashFS native tidak tersedia.
+- **Full Windows suite bukan hijau**:356total,failures15,errors13,skipped25,
+  318.687s,exit1. Semua failure/error berada di `test_vps_deploy`, antara lain
+  path Windows dimakan bash (`C:laragon...`), mode600 POSIX vs Windows, helper
+  bash/pty/operations. Tidak ada failure banner/patch; masalah platform deploy
+  tidak diperbaiki atau di-skip diam-diam dalam pekerjaan logo ini. Angka
+  failure/error termasuk subtests; tidak diubah menjadi jumlah pass spekulatif.
+
+Hasil offline di atas sendiri bukan bukti boot. **Probe paralel terpisah telah
+selesai dan diperiksa parent** (hasil tool agent runtime, bukan eksekusi ulang
+implementer): build lewat jalur produksi dengan dua opsi lolos custom signature,
+coverage LICENSE2/signing5 serta logo1 yang terpisah. Resource exact replacement
+terverifikasi, source lama/base tidak berubah. Output baru (bukan overwrite dist
+lama) di `C:\laragon\www\mikpatch\dist\chr-x86-7.24.4-ali-media-banner`;
+VMDK SHA-256 `776f882b10a4fad341e91d3b984f97ac771eb214633ec6fda8e982ec381d6501`.
+
+Runtime agent memakai fresh disposable overlay QEMU/TCG, SeaBIOS, IDE,512MiB,
+1vCPU,**0NIC**: boot/login berhasil, enam baris ASCII art cocok exact, clean shutdown
+terverifikasi, base tetap. Tidak mengirim perintah lisensi, tidak mengganti password,
+tidak menghubungi VM pemilik, tidak menyimpan raw console. **Aktivasi image branded
+ini tidak dites**; bukti aktivasi pada §17 hanya image lama tanpa branding, tidak
+boleh disalin sebagai bukti aktivasi image baru. Belum uji VMware, SSH/WinBox,
+upgrade, throughput atau jangka panjang. Build evidence berstatus runtime false
+adalah snapshot sebelum probe; hasil runtime terpisah di bawah menjadi sumber
+klaim logo/boot, bukan mengedit ulang snapshot build seolah sudah diuji sebelumnya.
+
+Bukti tahan lama dari agent paralel:
+[build branded](evidence/chr-7.24.4-ali-media-banner-build-2026-10-05.json),
+[runtime branded](evidence/chr-7.24.4-ali-media-banner-runtime-2026-10-05.json), dan
+[enam baris ASCII tersanitasi](evidence/chr-7.24.4-ali-media-banner-ascii-2026-10-05.txt).
+Parent mengonfirmasi live remote `main` tetap pada `bb010811` saat penyerahan.
+
+Tidak ada pembacaan key untuk locating/patch logo. Lisensi, kunci, instruksi verifier,
+dan aset rilis lama tidak diubah oleh fitur ini; build produksi paralel tetap memakai
+jalur signing/runtime yang sebelumnya ada. Langkah lanjut: review final, validasi
+VMware/terminal lain bila diperlukan dan aktivasi branded secara terpisah; tetap
+bukan klaim dukungan versi/produk/arsitektur lain. Tidak ada commit/push/publikasi
+pada sesi implementasi atau probe ini.
+
+Validasi penyerahan: `git diff --check` lulus;37link relatif kedua dokumen valid,
+AST source/tes dan scan pola sensitif/karakter kontrol lulus (bukan audit secret
+seluruh repo; tidak membaca key). Perapian whitespace tes sempat menimbulkan satu
+error indentasi scope fixture, langsung diperbaiki; rerun final Windows23total
+21pass2skip dan WSL23/23. Source produksi tetap identik dengan hash build di atas.
+
+Verifikasi akhir parent: hash kedua file produksi cocok dengan build evidence;
+hash VMDK baru cocok dengan build/runtime evidence; SHA-256 ZIP
+`84ab632f895fa104542207fb703d78439e90576df514c0d76942a521dd719487`
+dihitung ulang. CRC ZIP lulus, tepat satu entri VMDK, dan hash isi entri sama
+dengan VMDK di disk. VMDK lama §17 dihitung ulang tetap
+`1e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08`.
+Ini pemeriksaan integritas ulang, bukan pengulangan boot atau aktivasi.
+
+### 20. Koreksi caption: logo MikroTik asli tetap utuh (2026-10-05; lokal)
+
+Arahan koreksi pemilik: **jangan mengganti ASCII art MikroTik**; tambahkan plain
+`Ali Media Patch` langsung di bawahnya. Gambar referensi tidak tersedia untuk
+inspeksi; tidak ada klaim screenshot match. Acuan `main` HEAD tetap
+`bb010811bd1443334ed32b0d3168ef09b77bc111`; HEAD vs cached `origin/main`0/0 dan
+`git ls-remote origin refs/heads/main` sama. Perubahan sesi sebelumnya dipertahankan,
+tanpa branch baru/commit/push/release atau overwrite dist lama.
+
+Implementasi dan bukti read-only baru:
+
+- Disassembly ulang `nova/bin/login` vendor §19 membuktikan push8 pada VA
+  `0x8063a03` sebelum helper pembaca baris, sehingga consumer membaca index0..7.
+  Consumer tetap pinned SHA-256
+  `4d43156092a5aa52f6e3f14a68fba818405fe1f1db13132721919784eb72c626`;
+  anchor path ELF tetap offset154472 (`0x25b68`). Tidak memodifikasi ELF.
+- `terminal_banner.py` kini hanya mengganti blank row index7 dengan
+  `b'  Ali Media Patch'`. Baris0 leading blank, enam baris art index1..6, dan
+  footer historis index8 beserta final newline byte-identical dengan original.
+  Original510byte hash tetap `438e1067bdc90044f90f18f1d90895403757d1b8ea0084e83cbcd558563a56f7`.
+  Caption527byte hash `c320009b2c6fabc9c025b245a4396ef6563c43a6e11cb6cade10a3b97d6abf0c`.
+  Insertion resource offset443, bukan offset ELF; ukuran +17 adalah perubahan
+  resource teks yang disengaja. Newline original `[0,71,142,218,291,366,442,443,509]`
+  menjadi `[0,71,142,218,291,366,442,460,526]`. Klaim same-length hanya milik §19.
+- Hanya exact original dan exact caption replacement diterima, consumer/schema
+  allowlist tetap, idempotent output `already-patched`/0replacement. Hasil block-art
+  lama tidak diterima sebagai source; rebuild dari pristine, jangan migrasi ambigu.
+  Report `size` tetap ukuran input, `output_size=527`, `size_delta=17` atau0 pada
+  idempotent. Caption tidak dihitung sebagai LICENSE coverage; kunci/lisensi/
+  aktivasi/guard/default/CLI dan API policy tidak berubah.
+- **Alasan pengecualian edit minimal `patch.py`:** strict on-image inventory
+  sebelumnya menyimpan ukuran file510, sehingga resource527 akan ditolak.
+  Expected size disesuaikan **hanya** target logo tervalidasi setelah mencocokkan
+  regular-file type dan source size dengan report. Semua field lain dan ukuran
+  file lain tetap dibandingkan. Tidak menghapus guard metadata. Tes injeksi salah
+  ukuran logo maupun file lain harus menolak sebelum signing/save.
+- Source produksi frozen untuk runtime colleague:
+  `terminal_banner.py` SHA-256 `ebaafd1d42a9e1f3e0cda3325ef57db1ac0451833db9752f5529098bcd3e4e83`;
+  `patch.py` SHA-256 `710619aa9f72f71de80fed593689d4c86739d8ec568ec218846b202782dcf3ea`.
+  Hash dicek ulang setelah focused tests dan tetap sama.
+- `tests/test_terminal_banner.py` diperbarui untuk original art/footer utuh,
+  posisi caption row7, size/newline shift, report/idempotency, reject perubahan
+  caption/art/footer, real vendor read-only, real SquashFS dan negative metadata
+  size regressions. Cara pakai tetap di [kontrak caption](patch-coverage.md).
+
+Tes aktual **sesudah koreksi** (bukan hasil historis §19):
+
+- Windows `venv/Scripts/python.exe -B -m unittest discover -s tests -p
+  test_terminal_banner.py -v` dan mode `-O -B`: masing-masing23total21pass2skip,
+  0failure/error (vendor WSL path dan POSIX SquashFS unavailable).
+- Windows `test_patch*.py` normal dan `-O`: masing-masing75total69pass6skip,
+  0failure/error. **Full Windows tidak diulang**; kegagalan deployment POSIX
+  15failure/13error pada full run §19 tetap tercatat, bukan dianggap selesai.
+- WSL `/home/djundev/.cache/mikpatch-audit/venv/bin/python`, `env -u PYTHONPATH`,
+  caller umask077: banner23/23 normal dan `-O`; coverage
+  `test_patch_coverage*.py`28/28 normal dan `-O`, tanpa skip/failure/error.
+  Banner mencakup real vendor/consumer, real SquashFS roundtrip dan negative
+  size metadata subtests (unrelated file serta logo target).
+- **Full WSL** `-B -m unittest discover -s tests -v`:356total349pass7skip,
+  0failure/error,201.558s,exit0. Skip4native cmd.exe,1Windows rename,2optional Caddy.
+- Run interim selama edit mengalami2failure tes (asumsi lama newline dan offset
+  insertion438). Data aktual menunjukkan443; implementasi split-row sudah benar,
+  hanya ekspektasi tes diperbaiki dan seluruh focused/full rerun di atas lulus.
+
+Bukti build/runtime block-art §19 dipertahankan sebagai **historical superseded
+visual interpretation**, bukan dipakai untuk mengklaim caption baru tampil.
+**Probe caption paralel selesai** (hasil tool colleague, dibaca dari evidence,
+bukan eksekusi ulang implementer): build exact527 lulus custom signature,
+coverage LICENSE2/signing5 terpisah dari caption1, consumer identik. Output baru
+`C:\laragon\www\mikpatch\dist\chr-x86-7.24.4-ali-media-caption\chr-7.24.4-patched.vmdk`,
+SHA-256 `690506a2d0fba6ed3a6117873d2dec1a6ebcd4a6f4377dde5faea46819ec8d02`.
+QEMU/TCG SeaBIOS IDE512MiB1vCPU **0NIC**, fresh disposable overlay: boot/login,
+keenam baris MikroTik asli dan caption persis langsung di bawahnya, clean shutdown
+terverifikasi; base dan15file delivery/evidence sebelumnya tidak berubah. Tidak
+mengirim perintah lisensi, mengubah password, menghubungi VM pemilik, atau menyimpan
+raw console. Tidak ada klaim screenshot match.
+
+Bukti baru terpisah:
+[build caption](evidence/chr-7.24.4-ali-media-caption-build-2026-10-05.json),
+[runtime caption](evidence/chr-7.24.4-ali-media-caption-runtime-2026-10-05.json), dan
+[tujuh baris tersanitasi](evidence/chr-7.24.4-ali-media-caption-ascii-2026-10-05.txt).
+Build JSON `banner_runtime_verified=false` tetap snapshot sebelum probe, bukan
+kegagalan atau bukti runtime; hasil runtime ada pada JSON terpisah. Aktivasi image
+caption **tidak diuji**; bukti aktivasi §17 milik image lama dan tidak diwariskan.
+Belum uji VMware/SSH/WinBox/upgrade/throughput. Langkah berikut: review hasil dan
+validasi hypervisor pemilik bila diminta; tetap tanpa publikasi/penggantian aset.
+
+Parent melaporkan pemeriksaan integritas independen: kedua hash source cocok
+dengan build caption; hash VMDK di disk cocok dengan build/runtime; ZIP SHA-256
+`2b0da6bed10f72092b2cb205bd95f6e23ef7fcff4917e4966e18801f2878b6f1` cocok,
+CRC `testzip` lulus, tepat satu entri VMDK dengan hash sama seperti VMDK di disk.
+Ini integritas ulang, bukan boot/aktivasi ulang oleh parent.
+
+Validasi penyerahan source/docs: `git diff --check` lulus; AST source/tes lulus
+serta41link relatif kedua dokumen valid. Tidak membaca key atau mengubah aktivasi
+pada sesi implementasi koreksi ini.
+
+### 21. Enam format CHR dan investigasi SFP/non-x86 (2026-10-05; lokal)
+
+Permintaan pemilik: jangan hanya VMDK; usahakan semua format/arsitektur dan
+pembacaan SFP x86 pada VM maupun hardware langsung. Baseline diperiksa ulang:
+`main`, HEAD `bb010811bd1443334ed32b0d3168ef09b77bc111`, cached origin/main0/0,
+serta live `git ls-remote origin refs/heads/main` cocok. Semua perubahan sebelumnya
+dipertahankan. Tidak membuat branch, commit, push, dispatch CI, rilis baru,
+mengganti tag/aset lama, atau menghubungi VM pemilik.
+
+#### Implementasi dan konversi CHR
+
+- Workflow menerapkan policy caption hanya pada CHR x86 versi7.24.4, bersama
+  runtime policy pada master NPK sebelum konversi. ISO/install-image/NetInstall/
+  standalone NPK/versi lain/non-x86 tidak menerima policy consumer yang belum
+  terbukti. Validasi setelah staging kini mencakup keenam arsip, bukan satu VMDK.
+  Field environment kunci/token tidak berubah. `scripts/release_assets.py` tetap.
+- `scripts/validate_chr_image.py` menambah pemeriksaan header spesifik format,
+  inventory enam ZIP dari kontrak release, CRC/hash/manifest/checksum, serta
+  QEMU info/check/compare opsional. API tiga argumen `validate` dipertahankan;
+  API `validate_all` dan CLI directory ditambahkan. Tidak menjalankan repair.
+- Delivery baru: `dist/chr-x86-7.24.4-caption-all-formats`, enam ZIP IMG/QCOW2/
+  VMDK/VHD/VHDX/VDI, manifest, SHA256SUMS, RELEASE_NOTES dan conversion-evidence.
+  [Panduan](chr-six-formats.md); [bukti](evidence/chr-six-format-caption-2026-10-05.json).
+  Bukti SHA256 `27ea5eb4c24028ef8e23a227dcf567e0eef86037ee1d71df1beb3343ca689890`
+  sama byte dengan salinan dist, dihitung ulang parent.
+- Sumber caption §20 hash `690506a2d0fba6ed3a6117873d2dec1a6ebcd4a6f4377dde5faea46819ec8d02`
+  tidak berubah. Keenam kontainer dibandingkan terhadap source dan lulus; ukuran
+  virtual semuanya134217728byte. ZIP single-member/CRC/hash/header lulus.
+  QEMU check lulus QCOW2/VMDK/VHDX/VDI; raw/VPC return63 unsupported, **bukan pass**.
+  Semua18file delivery/evidence terdahulu tetap identik pada finalisasi konversi.
+- Dua kegagalan interim dicatat, tidak disembunyikan: exclusive staging DrvFS
+  renameat2 errno22 diselesaikan dengan staging ext4 dan copy destination baru
+  secara eksklusif; fingerprint validator berubah oleh worker paralel sehingga
+  finalizer berhenti. Dilanjutkan read-only pada artefak yang sama setelah
+  fingerprint disepakati, tanpa konversi ulang atau overwrite.
+- Snapshot konversi memakai validator awal hash
+  `c422b8a9be69f3165066476849b3d7aafff48996652b2511b5562739cb9517f4`.
+  Review independen kemudian mereproduksi celah QCOW2 external-data yang dapat
+  lolos gate standalone meski bergantung file di luar ZIP. Perbaikan dan tes
+  regresi final selesai seperti dicatat di bawah; snapshot lama dipertahankan,
+  bukan ditulis ulang.
+
+#### Temuan SFP aktual: bukan dukungan universal
+
+- [Temuan lengkap](sfp-driver-findings.md) dan [JSON](evidence/sfp-x86-driver-inspection-2026-10-05.json)
+  berasal dari inspeksi statis firmware aktual, bukan hanya source Linux umum.
+  Ditemukan298modul, keluarga ixgbe/i40e/ice/igb/bnx2x/bnxt_en/mlx4/mlx5.
+  582file regular yang di-hash tetap identik; tidak ada perubahan firmware.
+- ixgbe5.19.9 loadable memiliki parameter integer-array allow_unsupported_sfp
+  max33, bukan switch universal. Jalur vendor-check generic yang diperiksa sudah
+  warning lalu success tanpa memeriksa allow flag; jalur penolakan tipe/read lain
+  tetap ada. Delivery parameter lewat custom loader RouterOS belum terbukti.
+  **Usulan injeksi boot parameter pada rencana awal dibatalkan sebagai fix yang
+  tidak didukung bukti. Tidak ada parameter/kernel patch yang diterapkan.**
+- Callback/table EEPROM ditemukan pada beberapa keluarga; pada tabel igb yang
+  diperiksa dua slot kandidat module-info/EEPROM nol meski helper SFP internal
+  ada. `nova/bin/net` memakai SIOCETHTOOL, tetapi jalur end-to-end menuju native
+  monitor/Winbox belum terbukti. Ini bukan bukti semua model bekerja/tidak bekerja.
+- Klaim awal rencana bahwa semua CCR memakai jalur hardware sama dan passthrough
+  adalah satu-satunya kemungkinan akses telemetry tidak dipakai sebagai fakta.
+  NIC virtual biasa tidak otomatis mengekspos sensor optik. Physical PF,
+  passthrough PF, SR-IOV VF dan emulated NIC perlu bukti terpisah.
+- Blocker nyata: belum ada pasangan NIC/OEM/PCI subsystem/NVM/transceiver yang
+  diuji atau kegagalan hardware teramati. Perlu output monitor/errors tersanitasi
+  dan pembanding Linux pada hardware sama; [template lab](sfp-lab-report.md).
+  Tidak ada boot/hardware/aktivasi pada inspeksi SFP. Fetch header pembanding
+  HTTP429 tidak dipakai sebagai bukti.
+
+#### Non-x86: akar kegagalan pencocokan ditemukan, belum diperbaiki
+
+- [Ringkasan](non-x86-findings.md), [evidence](evidence/non-x86-key-inspection-2026-10-05.json)
+  hash `5b6defb062aebc2113d69445aad0405a3d6d3070a4030eed0fb220c561418c18`
+  dihitung ulang parent. Enam NPK HTTPS vendor diperiksa; provenance/hash bukan
+  verifikasi signature vendor. Seluruh18target menunjukkan anchor configured:
+  13buffer32byte dan5buffer canonical10limb, dicek independen dari raw fields.
+- Target dalam paket arm64 ternyata ELF32 EM_ARM. ARM memakai literal/arithmetic;
+  MIPS LUI+ADDIU/ORI, PPC LIS/ORI. Loader lima arsitektur berbentuk ten-limb,
+  berbeda dari raw32. Target mipsbe dan smips identik byte.
+- Tidak ada matcher baru, replacement simulation, signing, build, runtime atau
+  aktivasi non-x86. ADDIU carry, delay slot, shared ARM pools/arithmetic,
+  alias/control-flow/relocations dan kebijakan loader perlu review serta tes
+  negatif sebelum implementasi. Jangan generalisasi policy loader x86. Guard
+  tetap menolak cakupan yang tidak terbukti; hasil CI non-x86 §18 belum terselesaikan.
+
+#### Batas delivery dan pengujian
+
+Ini enam format **CHR x86**, bukan semua37aset/7arsitektur. Belum ada boot ulang
+masing-masing format/hypervisor atau aktivasi caption; manifest boot_tested=false
+benar. Aktivasi image lama §17 tidak diwariskan. ISO/install-image/standalone NPK,
+NetInstall (termasuk error embedded patch yang dapat mempertahankan original),
+non-x86 dan dukungan SFP hardware tetap belum lengkap.
+
+Hasil tes awal implementer: Windows combined validator/branding/release106total
+104pass2skip normal/-O; WSL validator+branding47/47 normal/-O dengan QEMU nyata.
+Itu **sebelum perbaikan external-data**, bukan regresi final. Full Windows tidak
+diulang; kegagalan POSIX deployment historis §19 tetap belum diperbaiki.
+Review fix independen selesai tanpa temuan blocking. Validator final hash
+`186d752328b4867f756ed3b870a2e41326ad4d232276b6dacd610dd30c0b6e2d`, tes hash
+`f8b6399a6bb1a927bce6fc5b55a7b1eeb5192bd4b742f151dc8fa4eacfab34a9`.
+QCOW2 external-data, VMDK external/split extents/parent, dan malformed child/schema
+ditolak; semua6info diperiksa sebelum check/compare. `qemu-img info` sendiri dapat
+membuka referensi: ini bukan sandbox atau jaminan tidak ada external read.
+Empat tes targeted reviewer lulus termasuk reproduksi QCOW2 nyata dengan file
+eksternal masih tersedia. VMDK external-extent diuji mock, bukan fixture nyata;
+tes isolated create-type/parent-cid masih dapat diperkuat (non-blocking review).
+Implementer pasca-fix melaporkan50tes validator+workflow: Windows48pass2skip,
+WSL50/50, masing-masing normal/-O. Actual all6 kembali lulus Windows/WSL QEMU,
+hash ZIP tidak berubah. **Full WSL pasca-freeze** selesai:368total361pass7skip,
+0failure/error,166.624s,exit0. Skip4nativecmd.exe,1Windows rename,2optional Caddy.
+Python3.12.3, umask077, env-uPYTHONPATH, Node18.19.1, SquashFS4.6.1, QEMU enabled.
+Semua62source hashes stabil sebelum/sesudah; kedua fingerprint final cocok.
+[Bukti regresi final](evidence/chr-six-format-regression-2026-10-05.json) juga
+mencatat validasi independen actual all6 pasca-fix (6.525s,exit0), semua10file
+delivery dan source caption tetap identik. Ini bukan boot/aktivasi ulang.
+Full Windows tetap tidak diulang; jangan menyebut full Windows hijau.
+
+Full run interim saat kode/fixture diubah bersamaan menghasilkan365total357pass,
+7skip,1error (mock test_opt_in_qemu_info_check_compare_and_cleanup),0failure,
+165.539s,exit1. [Bukti pre-fix](evidence/chr-six-format-regression-pre-fix-2026-10-05.json)
+secara eksplisit menyatakan mixed/non-frozen snapshot, bukan hasil final. Tes
+tersebut lulus pada focused pasca-fix di kedua host. Bukti lama tidak ditimpa.
+Pemeriksaan penyerahan parent: git diff--check lulus (hanya peringatan LF/CRLF),
+59link relatif lima dokumen valid, JSON evidence baru dapat diparse, dan scan
+marker private-key/token terarah tidak menemukan hit. Ini bukan jaminan deteksi
+semua jenis rahasia. Hash evidence regresi final dihitung ulang:
+`1dec53cd82465259cd3443b5ecf1822c9a693acb58bcc01767310a988cd4d86f`.
+Tidak menandai rilis universal atau hardware selesai. Titik lanjut tetap matcher
+non-x86 yang ter-review dan pengujian pasangan hardware SFP nyata; publikasi baru
+harus mempertahankan batas bukti serta tidak mengganti aset lama.
+
+### 22. Permintaan push dan rilis NEW (2026-10-05; proses publikasi)
+
+Pemilik secara eksplisit meminta push dan build rilis baru bertanda NEW sesudah
+laporan §21. Izin ini dipakai untuk source yang telah direview dan profil
+**chr-x86 enam format**, bukan mengklaim SFP universal/non-x86 selesai. Branch
+main, HEAD acuan `bb010811bd1443334ed32b0d3168ef09b77bc111`, cached remote0/0 dan
+live main cocok saat preflight. Tidak memindahkan tag atau mengganti aset lama.
+
+Rencana eksekusi publikasi: commit source/tes/docs/evidence yang terverifikasi,
+tanpa file `.zcode/plans` lokal; push main; dispatch Patch v7 profil chr-x86 dengan
+draft baru; periksa hasil build dan enam aset sebelum mempublikasikan judul NEW.
+Catatan rilis harus menyatakan build-only, boot per-hypervisor/aktivasi caption
+belum diuji dan tidak ada patch SFP. Hasil tool aktual dicatat sesudah eksekusi.
+
+Pada preflight, `gh` tidak ada pada PATH Windows/Git Bash; lokasi CLI existing
+sedang ditelusuri tanpa membaca/menampilkan token. Diff--check lulus. Suite
+penuh tidak diulang untuk tahap publikasi; memakai hasil source frozen §21,
+dengan hash dicek ulang sebelum commit. Audit prepublication read-only selesai:
+24file delta tidak mengandung nilai kunci/credential/license body/log mentah;
+workflow env/key fields unchanged dan62/62source hashes cocok evidence §21.
+CLI existing ditemukan pada cache Windows; auth/repo push access true memakai
+credential Git hanya dalam memori proses, tanpa config/token disimpan ke disk.
+Staged diff--check menemukan trailing spaces pada enam baris evidence ASCII
+banner historis §19; byte dipertahankan karena bukti exact output, bukan source
+formatting. Check selain file tersebut lulus; file caption baru tidak bermasalah.
+Status publikasi belum selesai.

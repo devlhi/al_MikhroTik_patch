@@ -1,0 +1,6 @@
+   A  L   III     M M EEE DD  III  A      PP   A  TTT  CC H H         
+  A A L    I      MMM E   D D  I  A A     P P A A  T  C   H H         
+  AAA L    I      MMM EE  D D  I  AAA     PP  AAA  T  C   HHH              
+  A A L    I      M M E   D D  I  A A     P   A A  T  C   H H           
+  A A LLL III     M M EEE DD  III A A     P   A A  T   CC H H             
+  Ali Media Patch                                                          

@@ -4,6 +4,13 @@
 pada RouterOS x86 7.24.4 di proyek ini. Belum ada add-on NPK atau perubahan
 driver untuk power SFP.** Jangan mengiklankan “semua merek SFP didukung”.
 
+Inspeksi statis firmware aktual kini tersedia di [temuan driver](sfp-driver-findings.md).
+Parameter ixgbe memang ada, tetapi forwarding dari boot belum terbukti dan jalur
+vendor-check yang diperiksa sudah warning lalu melanjutkan. Karena itu tidak ada
+injeksi `allow_unsupported_sfp` atau patch driver berdasarkan asumsi vendor lock.
+Callback EEPROM dan penggunaan SIOCETHTOOL ditemukan; integrasi native monitor
+serta hasil hardware tetap belum terbukti.
+
 ## Apa yang sudah dan belum ada
 
 | Bagian | Status |

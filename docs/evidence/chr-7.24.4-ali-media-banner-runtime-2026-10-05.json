@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "banner_verified",
+  "network_devices": 0,
+  "base_sha256": "776f882b10a4fad341e91d3b984f97ac771eb214633ec6fda8e982ec381d6501",
+  "harness_sha256": "d32a3e8d6864a294136fb5b9015873b3933797f40893f604742c5c8f29276009",
+  "transport_sha256": "d3de4412c8c344818972a772e64f08c7e539d457625bd7f40d9f28c93e0fefa1",
+  "expected_banner_sha256": "79c0395cd7812a554b93b68f14789989c60e9a3d580854c9d19ef6dae8d7375c",
+  "fresh_overlay": true,
+  "overlay_path": "/home/djundev/.cache/mikpatch-audit/ali-media-banner-probe-buczqn7i/fresh-disposable.qcow2",
+  "raw_console_persisted": false,
+  "license_commands_sent": false,
+  "activation_tested": false,
+  "password_changed": false,
+  "boot_login_verified": true,
+  "banner_verified": true,
+  "configuration": {
+    "accel": "tcg",
+    "bios": "SeaBIOS",
+    "disk": "IDE",
+    "memory_mib": 512,
+    "vcpus": 1
+  },
+  "clean_shutdown_verified": true,
+  "already_exited_at_cleanup": true,
+  "base_unchanged": true,
+  "owner_vm_contacted": false,
+  "scope": "Exact six ASCII banner rows at boot/login and clean shutdown in isolated QEMU only; activation, VMware, upgrade and throughput not tested."
+}

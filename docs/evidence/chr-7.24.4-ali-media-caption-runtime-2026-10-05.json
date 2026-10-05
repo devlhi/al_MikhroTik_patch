@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "banner_verified",
+  "network_devices": 0,
+  "base_sha256": "690506a2d0fba6ed3a6117873d2dec1a6ebcd4a6f4377dde5faea46819ec8d02",
+  "harness_sha256": "dace63451d82caf5e1f714befefc655678008c2d4cfdae0d09160e4f0a641ce4",
+  "transport_sha256": "d3de4412c8c344818972a772e64f08c7e539d457625bd7f40d9f28c93e0fefa1",
+  "expected_banner_sha256": "12fef47edc51a2081b510af06a4a5a83182724d0f5071cdc35fc08a55bf33bd6",
+  "fresh_overlay": true,
+  "overlay_path": "/home/djundev/.cache/mikpatch-audit/ali-media-caption-probe-7vwaggpi/fresh-disposable.qcow2",
+  "raw_console_persisted": false,
+  "license_commands_sent": false,
+  "activation_tested": false,
+  "password_changed": false,
+  "boot_login_verified": true,
+  "banner_verified": true,
+  "configuration": {
+    "accel": "tcg",
+    "bios": "SeaBIOS",
+    "disk": "IDE",
+    "memory_mib": 512,
+    "vcpus": 1
+  },
+  "clean_shutdown_verified": true,
+  "already_exited_at_cleanup": true,
+  "base_unchanged": true,
+  "owner_vm_contacted": false,
+  "original_six_ascii_rows_preserved": true,
+  "caption_exactly_below_original_art": true,
+  "scope": "Exact six ORIGINAL MikroTik ASCII rows plus plain Ali Media Patch caption in order at boot/login and clean shutdown in isolated QEMU only; activation, VMware, upgrade and throughput not tested.",
+  "prior_delivery_and_evidence_files_unchanged": 15
+}
