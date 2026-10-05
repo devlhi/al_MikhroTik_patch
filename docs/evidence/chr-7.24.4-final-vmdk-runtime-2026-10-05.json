@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "source_vmdk_sha256": "1e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08",
+  "harness_sha256": "d3de4412c8c344818972a772e64f08c7e539d457625bd7f40d9f28c93e0fefa1",
+  "network_devices": 0,
+  "owner_vm_contacted": false,
+  "password_changed": false,
+  "base_format": "vmdk",
+  "raw_console_persisted": false,
+  "activation_verified": true,
+  "configuration": {
+    "machine": "pc,accel=tcg",
+    "memory_mib": 512,
+    "vcpus": 1,
+    "disk": "IDE",
+    "bios": "SeaBIOS"
+  },
+  "boot_login": true,
+  "level_before": "free",
+  "local_signature_and_id_valid": true,
+  "explicit_acceptance_prompt_observed": false,
+  "level_after_reboot_1": "p-unlimited",
+  "id_equal_after_reboot_1": true,
+  "level_after_reboot_2": "p-unlimited",
+  "id_equal_after_reboot_2": true,
+  "first_clean_shutdown": true,
+  "level_after_cold_restart": "p-unlimited",
+  "id_equal_after_cold_restart": true,
+  "new_qemu_process_same_overlay": true,
+  "second_clean_shutdown": true,
+  "status": "p_unlimited_two_reboots_and_cold_restart_verified",
+  "acceptance_basis": "Actual exact p-unlimited levels and ID equality, not prompt inference",
+  "host_cleanup_prior_guest_already_exited": true,
+  "base_sha256_after": "1e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08",
+  "base_unchanged": true,
+  "date": "2026-10-05",
+  "limits": [
+    "One completed final VMDK trial on QEMU/TCG, not VMware",
+    "No networking, throughput, upgrade or long-duration test",
+    "Delivered immutable base is unactivated; activated overlay remains scratch-only"
+  ]
+}

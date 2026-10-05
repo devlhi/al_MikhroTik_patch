@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-05",
+  "kind": "Sanitized bounded read-only static startup trace correlated with previously preserved crash registers",
+  "reference_head": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "candidate_identity": {
+    "build_commit": "c636fa654f23b807b2adb51e24106396783cb246",
+    "ci_run": "37207497763",
+    "vmdk_sha256": "328b34d4ff3fc116dfbdb548eafd02b46733d4d7aa211cdef93ff23778649f75",
+    "converted_base_raw_sha256": "d889b0ed36524e90e2371c7474127505aebf4207c48eb9799156757be78fe280",
+    "identity_source": "chr-7.24.4-candidate-offline-crash-2026-10-05.json; disk extraction owned by another agent, not repeated here",
+    "distinct_historical_experiment_raw_sha256": "6cd4fce4c9b2f0874bfd508d016983b1a0a273e46022362422decf8854efdad3",
+    "historical_limit": "Do not transfer the new candidate's register inference to the older experiment without its own register evidence. Historical sys2 byte equality to release is not a new comparison of the current candidate."
+  },
+  "method": {
+    "binary_root": "/home/djundev/.cache/mikpatch-audit/candidate-offline-20261005",
+    "tools": ["Python hashlib SHA-256 over whole files", "Capstone CS_ARCH_X86/CS_MODE_32 with virtual addresses mapped through ELF PT_LOAD headers", "readelf -rW and -Ws for PLT relocation and symbol resolution"],
+    "executed_original_binaries": false,
+    "boot_or_guest_input": false,
+    "firmware_or_source_modified": false,
+    "checks_disabled": false,
+    "scope": "Selected startup functions and executable-section scan for direct branches to the observed fault. No whole-program correctness claim or complete indirect control-flow graph.",
+    "command_issue": "One initial Python fingerprint command had a syntax error and executed no analysis; corrected command completed. No unit or boot tests run."
+  },
+  "source_fingerprints": {
+    "nova/bin/sys2": {"bytes": 289948, "sha256": "809f78beb72981a35a3c3cd1936096344487edfed67b2e4add93e1e8c5375187"},
+    "nova/bin/loader": {"bytes": 84220, "sha256": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401"},
+    "nova/bin/keyman": {"bytes": 55444, "sha256": "64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd"},
+    "nova/bin/mode": {"bytes": 75688, "sha256": "786a3309f7ad779d672da546217ed1fb1e6e49b0b21f6606fd4047c0a51eeeda"},
+    "lib/libumsg.so": {"bytes": 520904, "sha256": "c7baa0e363ce3d4ae5c0179878000a2a196f966e298c6af9c001be7b078cd22e"},
+    "patch.py": {"sha256": "39eb29fb8a0661867820a2563e23a5f0f0fe9b1c4271b2b5cfa3d404d975fcd3"},
+    "npk.py": {"sha256": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274"}
+  },
+  "evidence_inputs": [
+    {"path": "chr-7.24.4-candidate-offline-crash-2026-10-05.json", "sha256_at_read": "842012c98a5ca947bb545f1d94dda9227337920eb4c7f35a9d91a7ceb5d41127"},
+    {"path": "chr-7.24.4-lab-sys2-crash.json", "sha256_at_read": "acd1ef83ea6cb33e8271393ebaa2edd8c892ebca3d01944492df1c4558f8d455"},
+    {"path": "chr-7.24.4-license-verifier-lab.json", "sha256_at_read": "1876f24fc60181cbbfed1f459259f33f7379cc7c772a519a3365fa336c7222f0"}
+  ],
+  "fault_and_known_predecessors": {
+    "fault": {"address": "0x0805bfd3", "instruction": "mov byte ptr [0], 0", "following": "0x0805bfda ud2"},
+    "branches": [
+      {
+        "site": "0x0805a9ef", "failure_edge": "jne 0x0805bfd3",
+        "sequence": ["0x0805a9d9 call 0x08058692", "0x0805a9de add esp, 0x10", "0x0805a9e1 movzx eax, al", "0x0805a9e4 imul eax, eax, 0xa4", "0x0805a9ea cmp eax, 0x6910"],
+        "success_condition": "returned unsigned byte == 164; 164 * 164 == 0x6910"
+      },
+      {
+        "site": "0x0805aece", "failure_edge": "jne 0x0805bfd3",
+        "sequence": ["0x0805aeb3 call 0x0805840f", "0x0805aeb8 movzx ebx, byte ptr [eax]", "0x0805aebb call 0x08053144", "0x0805aec3 movzx eax, byte ptr [eax]", "0x0805aec6 imul eax, ebx", "0x0805aec9 imul ebx, ebx", "0x0805aecc cmp eax, ebx"],
+        "success_condition": "If A is byte from 0x0805840f and B from 0x08053144, A*B == A*A. A==0 also passes; not an unconditional equality check."
+      },
+      {
+        "site": "0x0805b67f", "failure_edge": "jne 0x0805bfd3",
+        "sequence": ["0x0805b66c call 0x08053290", "0x0805b674 movzx eax, byte ptr [eax]", "0x0805b677 imul eax, eax, 0x16", "0x0805b67a cmp eax, 0x1e4"],
+        "success_condition": "returned unsigned byte == 22; 22 * 22 == 484"
+      },
+      {
+        "site": "0x0805bfd1", "failure_edge": "fallthrough to 0x0805bfd3 when je 0x0805bfdc is not taken",
+        "sequence": ["0x0805bfb6 call 0x08053144", "0x0805bfbb movzx ebx, byte ptr [eax]", "0x0805bfbe call 0x0805840f", "0x0805bfc6 movzx eax, byte ptr [eax]", "0x0805bfc9 imul eax, ebx", "0x0805bfcc imul ebx, ebx", "0x0805bfcf cmp eax, ebx"],
+        "success_condition": "If A is byte from 0x0805840f and B from 0x08053144, A*B == B*B. B==0 also passes."
+      }
+    ],
+    "scan_result": "Three decoded direct conditional jumps target 0x0805bfd3, plus the adjacent conditional fallthrough. No completeness claim for indirect branches or corrupted execution.",
+    "historical_correction": "The older crash JSON listed two known checks, not an exhaustive predecessor set. This new trace expands that known subset without modifying historical evidence."
+  },
+  "register_inference": {
+    "source": "Two records in the already-completed actual candidate overlay; not a new runtime trace",
+    "shared_relevant_registers": {"eip": "0x0805bfd3", "eax": "0x00006ed4", "ebx": "0xf7ed555c", "eflags": "0x00000202"},
+    "arithmetic": {"observed_eax_decimal": 28372, "multiplier": 164, "inferred_unsigned_return_byte": 173, "expected_unsigned_return_byte": 164, "comparison_difference": "0x6ed4 - 0x6910 = 0x5c4"},
+    "normal_path_reasoning": [
+      "0x6ed4 == 173 * 164 exactly; the first branch preserves this EAX into the faulting NULL store.",
+      "At the two buffer-product checks, normal execution leaves EBX as a zero-extended byte squared, at most 65025. Recorded EBX is much larger.",
+      "At 0x0805b67f, normal execution leaves EAX as an unsigned byte times 22. 0x6ed4 is not divisible by 22 and exceeds 255*22.",
+      "EFLAGS 0x202 has ZF clear, consistent with the first unequal comparison."
+    ],
+    "conclusion": "Among the identified normal instruction paths, both records support failure at 0x0805a9ef: the lookup returned 173 instead of expected 164. They do not support attributing the actual candidate fault to the historical pair-buffer checks.",
+    "limits": "This is register/static-code correlation, not recorded branch execution. Preceding memory corruption, unexpected control flow, or corrupted crash state are not absolutely excluded. The common EIP alone cannot distinguish the checks."
+  },
+  "proved_static_startup_dataflow": {
+    "constructor": {
+      "sys2_call": "0x0805a99e via PLT 0x080517c0",
+      "library_function": "libumsg.so:0x000387fe nv::Looper constructor",
+      "forwarded_call": "0x0003886d calls PLT 0x00023130, relocation slot 0x0007f44c resolves nv::Looper::connectLoader at 0x0003811c",
+      "arguments": "27 unsigned-word arguments forwarded in addition to this; caller includes code address/range descriptors. Their complete semantic contract is not recovered."
+    },
+    "reply_storage": {
+      "function": "libumsg.so:0x0003811c nv::Looper::connectLoader",
+      "serialization": "0x0003835c..0x000384c0 adds constructor arguments to the startup message; receive-side processing follows the virtual call at 0x000384ed",
+      "field5": "0x0003864e/0x00038668 selects reply message field 5; 0x00038672 obtains it",
+      "destination": "0x0003867d computes this+0x594; 0x00038685 assigns the selected flat_message through PLT 0x00024d30",
+      "assignment_relocation": "slot 0x0007fb4c resolves nv::message::operator=(nv::flat_message const&) at 0x0002d5ae",
+      "conditionality": "Field 5 presence is checked at 0x00038651..0x0003865b; assignment is conditional. Subsequent processing can populate field 2. This is not a claim that every lookup byte was sent verbatim by loader."
+    },
+    "lookup": {
+      "function": "sys2:0x08058692",
+      "get_looper": "PLT 0x080517f0 / relocation slot 0x0808f5fc resolves nv::getLooper",
+      "accessor": "PLT 0x080500b0 / relocation slot 0x0808f02c resolves nv::message::get<nv::raw_id>",
+      "table": "0x080586a7 adds 0x594; 0x080586ac selects raw field 0x688; 0x080586b3 gets its buffer",
+      "index_buffer": "0x080586c1 adds 0x594; 0x080586c6 selects raw field 2; 0x080586ca gets its buffer",
+      "expression": "0x080586d8 reads unsigned index_buffer[14]; 0x080586dc reads unsigned table[index]; 0x080586f2 returns that byte",
+      "established_relation": "Reply field 5 feeds the Looper message state from which raw field 0x688 and raw field 2 supply the failing lookup."
+    }
+  },
+  "unresolved_hypotheses": [
+    {"hypothesis": "The loader LICENSE anchor change affects startup reply content or its client-side decoding/initialization.", "support": "A concrete constructor/connectLoader/message-state dependency exists and the actual fault is a lookup inconsistency.", "missing": "No anchor-to-handler dataflow or matched experiment proves that changing this anchor changes the relevant table/index. Do not label it established self-integrity, anti-tamper, or licensing behavior."},
+    {"hypothesis": "Other changed components, package representation, or startup state affect the same message state.", "support": "Historical repacked/signed NPK differs beyond the three decoded program byte ranges; an identical-NPK rewrite control did not isolate repacking/signing from anchor changes.", "missing": "No demonstrated metadata/inode-to-lookup dependency; no basis to claim inode numbering causes this failure."}
+  ],
+  "causal_correction": "The earlier statement 'Modifying loader alters reply table ... leading directly' exceeded the evidence and is withdrawn. The startup dependency and observed inconsistency are established at the scopes above; loader-anchor causation remains a hypothesis.",
+  "next_controlled_experiment": {
+    "reported_plan_not_executed_here": "Another agent is preparing a pristine-vendor full-guard variant that preserves only loader's LICENSE anchor while applying the intended keyman/mode changes. No checks are disabled.",
+    "requirements": ["Pin input, engine, signing identity and every output hash; compare decoded content and metadata and retain differences beyond the intended loader anchor.", "Use matched isolated VM configuration and fresh disposable overlays; preserve the existing baseline and capture sanitized branch/register outcomes, not just login/no-login.", "If restored-loader variant changes the outcome, treat that as evidence for loader-anchor involvement under this setup, not proof of table-generation algorithm or sole root cause.", "If it fails at the same check, compare table/index state under observational debugging if separately authorized; do not skip or modify the check.", "Do not bypass the repository coverage guard to build a zero-replacement control. Any repack-only control needs a separately approved diagnostic method that does not masquerade as a successful guarded firmware build."]
+  },
+  "sensitive_values_exported": false,
+  "activation_tested": false,
+  "firmware_fix_claimed": false
+}

@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-05T05:33:37.518292+00:00",
+  "reference_checkout": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "branch": "main",
+  "committed": false,
+  "source_pushed": false,
+  "remote_mutations": false,
+  "keys_modified": false,
+  "owner_vm_contacted": false,
+  "guest_input_sent": false,
+  "license_sent": false,
+  "activation_tested": false,
+  "credentials_used": false,
+  "scope": "OLD public 7.24.4 asset 604788961 matched QEMU boot control only",
+  "acquisition": {
+    "release_tag": "7.24.4",
+    "asset_id": 604788961,
+    "owner_vm_contacted": false,
+    "activation_tested": false,
+    "recorded_at_utc": "2026-10-05T05:25:38.683872+00:00",
+    "status": "verified",
+    "release_id": 401538288,
+    "source_commit": "bd2dc61ea6c7ce4165dc0b074457544c852904dd",
+    "release_digest": "sha256:b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a",
+    "expected_zip_size": 65482116,
+    "manifest.json_sha256": "8525a418afe1a658d2bae7e4aed6639a35a46abce06c460146423b7690fe6043",
+    "SHA256SUMS_sha256": "c824e437608129546d00e22886fb152c152a51de902bd7c25bc5f5218d830f63",
+    "selected_manifest_entry": {
+      "source": "chr-7.24.4-patched.vmdk.zip",
+      "filename": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+      "size": 65482116,
+      "sha256": "b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a"
+    },
+    "manifest_sha256sums_release_digest_agree": true,
+    "resumed_from_bytes": 9437184,
+    "partial_sha256_before": "2dc1b1dfc68a918bc1f873ce39caa7f9ca9687690ef82127f9b33adc1e806101",
+    "download_method": "resumed_prefix_parallel_validated_HTTP_206_ranges_8_workers",
+    "zip_path": "C:\\Users\\AliMedia_PC\\AppData\\Local\\Temp\\mikpatch-lab-20261005\\old-release-control\\ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+    "zip_sha256": "b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a",
+    "zip_size": 65482116,
+    "metadata_digest_verified": true,
+    "selected_manifest_checksum_verified": true,
+    "vmdk_path": "C:\\Users\\AliMedia_PC\\AppData\\Local\\Temp\\mikpatch-lab-20261005\\old-release-control\\chr-7.24.4-patched.vmdk",
+    "vmdk_sha256": "14dc40bce8f85de0fabad4dd641b14b4f71bb5a0a0c030beef96c243296fc728",
+    "vmdk_size": 67567616,
+    "zip_member": "chr-7.24.4-patched.vmdk",
+    "zip_member_declared_size": 67567616,
+    "zip_member_crc32": "bac91508",
+    "zip_crc_verified": true,
+    "zip_member_size_verified": true,
+    "elapsed_seconds": 42.203
+  },
+  "runtime": {
+    "source_commit": "bd2dc61ea6c7ce4165dc0b074457544c852904dd",
+    "asset_id": 604788961,
+    "release_tag": "7.24.4",
+    "base": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/chr-7.24.4-patched.vmdk",
+    "output_dir": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z",
+    "network_devices": 0,
+    "owner_vm_contacted": false,
+    "license_sent": false,
+    "guest_input_sent": false,
+    "samples": [
+      {
+        "seconds": 30,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-030.png"
+      },
+      {
+        "seconds": 60,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-060.png"
+      },
+      {
+        "seconds": 90,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-090.png"
+      },
+      {
+        "seconds": 120,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-120.png"
+      },
+      {
+        "seconds": 180,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-180.png"
+      },
+      {
+        "seconds": 240,
+        "qemu_status": "running",
+        "serial_bytes": 52,
+        "login_prompt_seen_serial": true,
+        "vga_png": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/control-smoke-20261005T052731Z/vga-240.png"
+      }
+    ],
+    "activation_tested": false,
+    "base_sha256_before": "14dc40bce8f85de0fabad4dd641b14b4f71bb5a0a0c030beef96c243296fc728",
+    "configuration": {
+      "machine": "pc,accel=tcg",
+      "memory_mib": 512,
+      "vcpus": 1,
+      "disk": "IDE, fresh qcow2 overlay over verified VMDK",
+      "bios": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/bios-256k.bin"
+    },
+    "termination": "host QMP quit, not clean guest shutdown",
+    "process_exited": true,
+    "status": "boot_gate_passed_login_by_first_30s_sample",
+    "base_sha256_after": "14dc40bce8f85de0fabad4dd641b14b4f71bb5a0a0c030beef96c243296fc728",
+    "base_unchanged": true,
+    "serial_sanitized_text": "MikroTik 7.24.4 (stable)\nCHR Login:",
+    "serial_sha256": "fa5d3ae5ef139fa663abbaa4c0636ff4b41821b3853643078b0588899c1af453",
+    "vga_observations": [
+      {
+        "seconds": 30,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login: _",
+        "screenshot_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+        "login_seen_ocr": true
+      },
+      {
+        "seconds": 60,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login:",
+        "screenshot_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+        "login_seen_ocr": true
+      },
+      {
+        "seconds": 90,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login: _",
+        "screenshot_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+        "login_seen_ocr": true
+      },
+      {
+        "seconds": 120,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login:",
+        "screenshot_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+        "login_seen_ocr": true
+      },
+      {
+        "seconds": 180,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login: _",
+        "screenshot_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+        "login_seen_ocr": true
+      },
+      {
+        "seconds": 240,
+        "ocr_text": "NikroTik 7.24.4 (stable)\nCHR Login:",
+        "screenshot_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+        "login_seen_ocr": true
+      }
+    ],
+    "login_seen": true,
+    "first_login_observation_seconds": 30,
+    "login_time_exact_known": false,
+    "observation_seconds": 240,
+    "qemu_version": "8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "qemu_module_dir": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu/qemu",
+    "vga_rom": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/vgabios-stdvga.bin",
+    "screenshot_assessment_method": "Tesseract 5.3.4 --psm 6; serial text independently corroborates login prompt",
+    "visual_confirmation": false,
+    "visual_review_limitation": "Read PNG attempted, but provider explicitly omitted image input because selected model does not support images. No model visual interpretation claimed.",
+    "interpretation": "Old published asset reaches CHR Login by first 30s sample and remains at login through 240s. One boot test only; no guest input or activation test.",
+    "owned_qemu_processes_remaining": 0
+  },
+  "harness": {
+    "source": "C:/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/boot_smoke.py",
+    "source_sha256": "4de230ca35b541b525024bf2287bba5429251f723278890f162e6c0765abad23",
+    "wrapper": "C:/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/run_control.py",
+    "wrapper_sha256": "4977c2b5e873bfeae8e07713b9cab79b94c277be501f82a9111378744e08b9da",
+    "reuse_changes": [
+      "old-release base path",
+      "expected base SHA256",
+      "new control output directory",
+      "source/release provenance only"
+    ],
+    "qemu_arguments_and_capture_schedule_unchanged": true,
+    "launch_command": "MSYS_NO_PATHCONV=1 wsl -e python3 /mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/old-release-control/run_control.py",
+    "runs_completed_this_task": 1,
+    "environment": {
+      "LD_LIBRARY_PATH": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu",
+      "QEMU_MODULE_DIR": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu/qemu"
+    }
+  },
+  "comparison": {
+    "candidate_result_path": "C:/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/candidate-smoke-20261005T045717Z/result.json",
+    "candidate_previous_run": "No login through 240s; services timeout and reboot sequence in previous OCR evidence",
+    "old_control_this_run": "Login by first 30s sample and stable login at all six samples through 240s",
+    "configuration": "same WSL QEMU 8.2.2 TCG pc, 512 MiB, 1 CPU, IDE fresh overlay, SeaBIOS and explicit VGA ROM, no NIC",
+    "interpretation": "Generic inability of this QEMU configuration to boot CHR is not supported: old image passes while candidate failed. Does not identify changed firmware component or runtime root cause, activation behavior, or VMware behavior."
+  },
+  "verification_limits": [
+    "No guest login, license, activation, firmware signature or owner VM test",
+    "Exact login timing unknown; first capture was at 30s",
+    "VGA screenshots interpreted via OCR only; serial confirms login text",
+    "No repository test suites rerun; no source code edits in this subtask",
+    "Raw images, firmware, overlay and full scratch acquisition/harness files remain temporary; durable JSON retains sanitized OCR/serial evidence and hashes, not image copies",
+    "Existing old provenance.json intentionally retained as prior failed acquisition; resume-provenance.json records successful completion",
+    "HANDOFF update delegated to parent agent"
+  ],
+  "retention": {
+    "durable_evidence_path": "C:/laragon/www/mikpatch/docs/evidence/chr-7.24.4-old-release-control-2026-10-05.json",
+    "temporary_full_result_sha256": "2a3d5a7e9c9dbe99de28cde52314dd231ad2c02cb5624df67826dfa994b74b64",
+    "temporary_acquisition_provenance_sha256": "bfd37cb289945d92a99eb7780673a4e4625f3b79840189f3187c8e2c58a9bbea"
+  }
+}

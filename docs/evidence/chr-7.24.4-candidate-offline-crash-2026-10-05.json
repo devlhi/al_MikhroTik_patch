@@ -1,0 +1,349 @@
+{
+  "method": "unprivileged qemu-img conversion to new raw; offline debugfs without -w",
+  "sources": {
+    "base": {
+      "path": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/chr-7.24.4-patched.vmdk",
+      "sha256_before": "328b34d4ff3fc116dfbdb548eafd02b46733d4d7aa211cdef93ff23778649f75",
+      "sha256_after": "328b34d4ff3fc116dfbdb548eafd02b46733d4d7aa211cdef93ff23778649f75",
+      "raw_sha256": "d889b0ed36524e90e2371c7474127505aebf4207c48eb9799156757be78fe280",
+      "raw_size": 134217728
+    },
+    "overlay": {
+      "path": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/candidate-smoke-20261005T045717Z/disposable.qcow2",
+      "sha256_before": "b79d04cc53efa437f448f9ca8de15be710b63f163766782914f72e03c8fda429",
+      "sha256_after": "b79d04cc53efa437f448f9ca8de15be710b63f163766782914f72e03c8fda429",
+      "raw_sha256": "3457719f0fcf8d63cef89a615fb3ec0830c22d9906d1499d84860b5c75baa8be",
+      "raw_size": 134217728
+    }
+  },
+  "partitions": {
+    "base-p1": {
+      "start_sector": 34,
+      "end_sector": 65569,
+      "sha256": "e330ef4217de61817867c64631cbddd2072301f01547083cfc687d28bd068227",
+      "size": 33554432
+    },
+    "base-p2": {
+      "start_sector": 65570,
+      "end_sector": 258047,
+      "sha256": "6ce027c47233070de0a0d925af8cfc63a419cdcc779cafe4bb3ec78bb4ad6f16",
+      "size": 98548736
+    },
+    "overlay-p1": {
+      "start_sector": 34,
+      "end_sector": 65569,
+      "sha256": "26f2691ceeef96cc95be27f2384ad4e125acb99bb21ed88fcd4c22c4760ab6f7",
+      "size": 33554432
+    },
+    "overlay-p2": {
+      "start_sector": 65570,
+      "end_sector": 258047,
+      "sha256": "e54c529a461478f88224757247409ca7d9ba2d89c4f8719cb16fb255a0b02910",
+      "size": 98548736
+    }
+  },
+  "date": "2026-10-05",
+  "reference_head": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "candidate_build_commit": "c636fa654f23b807b2adb51e24106396783cb246",
+  "scope": "Read-only offline analysis of preserved completed 240-second smoke overlay; no new guest boot or input; no firmware edits or mounts.",
+  "source_hashes_rechecked": {
+    "base": "328b34d4ff3fc116dfbdb548eafd02b46733d4d7aa211cdef93ff23778649f75",
+    "overlay": "b79d04cc53efa437f448f9ca8de15be710b63f163766782914f72e03c8fda429"
+  },
+  "crash": {
+    "guest_path": "/rw/logs/backtrace.log",
+    "bytes": 12533,
+    "sha256": "fbffd466d3835b00d0547b733a96d7a773c42284c8085c6ea1f215489ac43f9c",
+    "record_count": 2,
+    "records": [
+      {
+        "record_number": 1,
+        "process": "/nova/bin/sys2",
+        "registers_and_signal": {
+          "signal": "11",
+          "eip": "0x0805bfd3",
+          "eflags": "0x00000202",
+          "edi": "0x6acc2ea4",
+          "esi": "0xf7edbd70",
+          "ebp": "0xffffddb8",
+          "esp": "0xffffdbb0",
+          "eax": "0x00006ed4",
+          "ebx": "0xf7ed555c",
+          "ecx": "0xf7ffc9e8",
+          "edx": "0x00000000"
+        }
+      },
+      {
+        "record_number": 2,
+        "process": "/nova/bin/sys2",
+        "registers_and_signal": {
+          "signal": "11",
+          "eip": "0x0805bfd3",
+          "eflags": "0x00000202",
+          "edi": "0x6ac7a37b",
+          "esi": "0xf7edbd70",
+          "ebp": "0xffffddb8",
+          "esp": "0xffffdbb0",
+          "eax": "0x00006ed4",
+          "ebx": "0xf7ed555c",
+          "ecx": "0xf7ffc9e8",
+          "edx": "0x00000000"
+        }
+      }
+    ],
+    "base_rw_logs_absent": true,
+    "overlay_critical_program_crash_marker_present": true,
+    "raw_log_published": false,
+    "limits": "Host QMP quit was not a clean guest shutdown; unsynced or missing data possible. Two records are not evidence of two complete guest reboots."
+  },
+  "fault_site": {
+    "component": "nova/bin/sys2",
+    "virtual_address": "0x0805bfd3",
+    "instruction_bytes": "c60500000000000f0b",
+    "instructions": [
+      "movb $0x0,0x0",
+      "ud2"
+    ],
+    "interpretation": "Intentional null-address store at shared consistency failure site, not proof of anti-tamper or license cause.",
+    "known_branch_sites": [
+      "0x0805aece",
+      "0x0805bfd1"
+    ],
+    "upstream_cause": "Not established by this offline extraction; independent control and dataflow analysis needed."
+  },
+  "components": {
+    "bndl/dhcp/lib/libudhcp.so": {
+      "bytes": 26028,
+      "sha256": "393d4d85b51fb480b8f9145722dac587a3b68b743e5c04ec937e9fef21b21964",
+      "extracted_mode": "0o755"
+    },
+    "lib/libc.so": {
+      "bytes": 235032,
+      "sha256": "23b1c3c5ed6c654463ceed773ebe439b633e4f2308d23f09c8cda02682470c64",
+      "extracted_mode": "0o755"
+    },
+    "lib/libeap.so": {
+      "bytes": 79908,
+      "sha256": "b045599902534d54c3af872db1c0f56c61ecf47b3a5c1f2d20996eb4e77b4b4a",
+      "extracted_mode": "0o755"
+    },
+    "lib/libjson.so": {
+      "bytes": 25872,
+      "sha256": "9852d85ff22b2bccb158eccff72a902f1bc3e72dfd8d3e5ffb9d5425fdaa7849",
+      "extracted_mode": "0o755"
+    },
+    "lib/librappsup.so": {
+      "bytes": 154100,
+      "sha256": "4f7ccb70c500ceb81ff5e9816ffe7f69a8d1a0b9aafe6f9dd769557e9b81d626",
+      "extracted_mode": "0o755"
+    },
+    "lib/libubox.so": {
+      "bytes": 104512,
+      "sha256": "2e7daa03d54be248df96f76b6117852f45994a1acf9eba7353a5391427ff2335",
+      "extracted_mode": "0o755"
+    },
+    "lib/libuc++.so": {
+      "bytes": 67360,
+      "sha256": "846dd0685432725df0dac2a07c647a3a594a049cfef9db0ba00da6a626dc88d8",
+      "extracted_mode": "0o755"
+    },
+    "lib/libucrypto.so": {
+      "bytes": 269816,
+      "sha256": "b6cd84d3e8825348e004309c877b45f7bdfb49e5e9943ab812a9e5abeefdf811",
+      "extracted_mode": "0o755"
+    },
+    "lib/libufiber.so": {
+      "bytes": 30176,
+      "sha256": "9b71876d914de313288aeb80f8c5bd36dc5f102cc8d8e9fd781c6108b70868bd",
+      "extracted_mode": "0o755"
+    },
+    "lib/libuhttp.so": {
+      "bytes": 174088,
+      "sha256": "75ab39e90ec3e96339370f137a3de65d9e66a0f08399317f2e87baeacacdba9d",
+      "extracted_mode": "0o755"
+    },
+    "lib/libumsg.so": {
+      "bytes": 520904,
+      "sha256": "c7baa0e363ce3d4ae5c0179878000a2a196f966e298c6af9c001be7b078cd22e",
+      "extracted_mode": "0o755"
+    },
+    "lib/liburadius.so": {
+      "bytes": 36904,
+      "sha256": "b65e071b53bc781609bff24ae0354586aa95abdda5389307acd0aed5a360a74e",
+      "extracted_mode": "0o755"
+    },
+    "lib/libuxml++.so": {
+      "bytes": 13532,
+      "sha256": "8cbb57e90db6e0d431a00144436aa74de66ca545713725408ec6f3115adf45e3",
+      "extracted_mode": "0o755"
+    },
+    "lib/libwww.so": {
+      "bytes": 38692,
+      "sha256": "397b42dd28b32051c8b0b8a8aa8d40f70cc2f5ec4db448e68762168aa3acfb76",
+      "extracted_mode": "0o755"
+    },
+    "lib/libxml.so": {
+      "bytes": 17628,
+      "sha256": "547b87f043dd58e209919858fa36835af7e92c5495fe6103ee7b1cc46ac42f2f",
+      "extracted_mode": "0o755"
+    },
+    "lib/libz.so": {
+      "bytes": 66932,
+      "sha256": "be81688c24a29cf578b4816cc63460f81cd68cf9072433c59515ac6949173099",
+      "extracted_mode": "0o755"
+    },
+    "nova/bin/keyman": {
+      "bytes": 55444,
+      "sha256": "64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd",
+      "extracted_mode": "0o755"
+    },
+    "nova/bin/loader": {
+      "bytes": 84220,
+      "sha256": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401",
+      "extracted_mode": "0o755"
+    },
+    "nova/bin/mode": {
+      "bytes": 75688,
+      "sha256": "786a3309f7ad779d672da546217ed1fb1e6e49b0b21f6606fd4047c0a51eeeda",
+      "extracted_mode": "0o755"
+    },
+    "nova/bin/sys2": {
+      "bytes": 289948,
+      "sha256": "809f78beb72981a35a3c3cd1936096344487edfed67b2e4add93e1e8c5375187",
+      "extracted_mode": "0o755"
+    }
+  },
+  "package": {
+    "bytes": 20524705,
+    "sha256": "fdf2109f3426122e0946a741d551028abbcec3257e2d94aaf9329e35bcd72fd9",
+    "overlay_sha256": "fdf2109f3426122e0946a741d551028abbcec3257e2d94aaf9329e35bcd72fd9",
+    "unchanged_during_boot": true,
+    "parts": [
+      {
+        "id": 25,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 1,
+        "size": 36,
+        "sha256": "d1142cb37a7e9fd8217509f3cfd399db4154e3568604b45b990342068f5028a2"
+      },
+      {
+        "id": 24,
+        "size": 6,
+        "sha256": "f379ccb92b9116442dc65bdc35648a85d3786b34779db7f704a901fa07b00cb6"
+      },
+      {
+        "id": 16,
+        "size": 4,
+        "sha256": "dcfe83f89f01bf7858bac6f03be1c14a5d03eef68b7d24116d5a80111445189c"
+      },
+      {
+        "id": 2,
+        "size": 46,
+        "sha256": "485a5da6f2668d0809a819be68be568595a2bddebc930227579f79ef13ea29dc"
+      },
+      {
+        "id": 23,
+        "size": 40,
+        "sha256": "8550f9b0472421b2757c4c9cc8d529f5e0b709bef3ddca7d8a48341d6ce14896"
+      },
+      {
+        "id": 3,
+        "size": 2,
+        "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+      },
+      {
+        "id": 22,
+        "size": 3900,
+        "sha256": "8c5295d846d4f42e4220bc0aa596ffba4556199e54739c5fee995c58e0f0167d"
+      },
+      {
+        "id": 21,
+        "size": 16601088,
+        "sha256": "33117042f8216ebc77c56312a9a7d1bcb82fd359c517213bf785535b38fd12f1"
+      },
+      {
+        "id": 7,
+        "size": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": 4,
+        "size": 3919363,
+        "sha256": "babdf2eb2f23e92b00ccf01b5e3c802c708804f41456387bda511f3d844befa8"
+      },
+      {
+        "id": 9,
+        "size": 132,
+        "sha256": "009c1a04c8333ff541b811753aa09b7751acbab56a54c80865d427e52c7cb9fb"
+      },
+      {
+        "id": 16,
+        "size": 1,
+        "sha256": "a83dd0ccbffe39d071cc317ddf6e97f5c6b1c87af91919271f9fa140b0508c6c"
+      }
+    ],
+    "signature": {
+      "repo_verifier_custom_public_pair": true,
+      "repo_verifier_vendor_public_pair": false,
+      "signature_bytes": 132,
+      "keys_not_exported": true,
+      "limits": "Repository verifier; not vendor-authoritative runtime verification. Signature gate is distinct from boot."
+    }
+  },
+  "installed_container_comparison": {
+    "BOOTX64.EFI": {
+      "installed_sha256": "a88d9a8c16f9bbf7d4fd5c328000415e312cc6331afba00545a142c8c33c1988",
+      "container_sha256": "a88d9a8c16f9bbf7d4fd5c328000415e312cc6331afba00545a142c8c33c1988",
+      "equal": true
+    },
+    "bin/bash": {
+      "installed_sha256": "a477ee00053b250c3a34d620c91252c7c71f26beaf6f9cd95cd3174f3cb643c3",
+      "container_sha256": "a477ee00053b250c3a34d620c91252c7c71f26beaf6f9cd95cd3174f3cb643c3",
+      "equal": true
+    },
+    "bin/milo": {
+      "installed_sha256": "541faaac8a3f85449328f79babe375f154d96e9d1aff0765b1117eb83d1604ee",
+      "container_sha256": "541faaac8a3f85449328f79babe375f154d96e9d1aff0765b1117eb83d1604ee",
+      "equal": true
+    },
+    "overlay_BOOTX64.EFI_sha256": "a88d9a8c16f9bbf7d4fd5c328000415e312cc6331afba00545a142c8c33c1988"
+  },
+  "squashfs": {
+    "sha256": "33117042f8216ebc77c56312a9a7d1bcb82fd359c517213bf785535b38fd12f1",
+    "compression": "xz",
+    "block_size": 262144,
+    "inodes": 893,
+    "files": 582,
+    "directories": 276,
+    "symlinks": 35,
+    "xattrs_stored": false,
+    "filesystem_bytes": 16597424,
+    "part_bytes": 16601088,
+    "extraction_success": "Linux case-sensitive filesystem",
+    "extraction_limitation": "Windows mounted filesystem extraction failed on case-insensitive xt_DSCP.ko / xt_dscp.ko collision; retried successfully under Linux; no damaged-source conclusion."
+  },
+  "reproduction": {
+    "commands": [
+      "MSYS_NO_PATHCONV=1 wsl -e python3 <scratch>/offline_candidate.py",
+      "LD_LIBRARY_PATH=<tools>/usr/lib/x86_64-linux-gnu QEMU_MODULE_DIR=<tools>/usr/lib/x86_64-linux-gnu/qemu <tools>/usr/bin/qemu-img convert -f qcow2 -O raw <preserved-overlay> <NEW-temp.raw>",
+      "Parse GPT little-endian partition start/end LBAs and copy partition byte ranges to NEW images",
+      "debugfs -R \"dump /rw/logs/backtrace.log <NEW-local-file>\" <overlay-p2.img>",
+      "debugfs -R \"dump /var/pdb/system/image <NEW-local-file>\" <base-p2.img>",
+      "Parse NPK magic/length and <HI> part frames; extract part 0x15; unsquashfs to NEW case-sensitive Linux directory",
+      "objdump -d --start-address=0x805bfbb --stop-address=0x805bfdc <root>/nova/bin/sys2"
+    ],
+    "no_debugfs_write_flag": true,
+    "no_mounts": true
+  },
+  "limits": [
+    "No fresh matched control available to this subagent.",
+    "No runtime bypass or corrective firmware changes attempted.",
+    "Original firmware and overlay preserved; hashes rechecked.",
+    "No repo tests run: diagnostic-only evidence addition.",
+    "No license activation tested; no upstream root-cause claim.",
+    "No private keys, passwords, SystemID, arbitrary guest log lines, stack dumps, or config contents exported."
+  ]
+}

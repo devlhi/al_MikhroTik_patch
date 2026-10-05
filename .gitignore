@@ -5,3 +5,4 @@ app/
 /test_*.py
 .ali_license_private_key
 /ali-lab-license-*.txt
+/dist/

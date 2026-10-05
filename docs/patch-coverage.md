@@ -86,3 +86,64 @@ pembersihan workspace, kegagalan repack, dan pemisahan sign-only. Tes
 `test_patch_coverage_integration.py` memakai tool SquashFS nyata untuk pack,
 extract dan membaca ulang byte hasil; signing tetap di-mock. Tes integrasi
 secara eksplisit di-skip jika tool belum tersedia—skip bukan bukti lulus.
+
+## Addendum: kebijakan runtime CHR x86 7.24.4
+
+`patch.py npk --runtime-policy chr-x86-7.24.4` memilih kebijakan sempit,
+opt-in dan fail-closed. API `patch_npk_file` / `patch_npk_package` menerima
+`runtime_policy` serta `license_public_key` (pola lama peran LICENSE) secara
+eksplisit; CLI mengambil peran itu dari `MIKRO_LICENSE_PUBLIC_KEY`, **bukan
+urutan dictionary**. Tanpa opsi, penggantian/guard generik tetap berlaku.
+Opsi ini dapat dibatalkan dengan membangun ulang dari sumber pristine tanpa
+opsi; bukan transformasi balik terhadap paket yang sudah di-patch.
+
+- Hanya NPK tunggal `system`, versi persis `7.24.4.final`; multi-package,
+  versi/arsitektur tak dikenal, part wajib hilang/duplikat ditolak sebelum
+  signing. Pembacaan preflight tidak memakai `__getitem__` yang membuat part.
+- Arsitektur authoritative harus `b'i386'` sebelum SIGNATURE. Satu marker
+  tambahan `b'I'` hanya diizinkan setelah SIGNATURE, sesuai layout sumber CHR
+  yang dilaporkan parent; maknanya belum diketahui. Part itu tidak dihapus atau
+  diubah. Duplikat/konflik lain ditolak; tidak ada propagasi arsitektur spekulatif.
+- Hanya `nova/bin/loader` persis, regular bukan symlink/hardlink, yang boleh
+  mempertahankan satu anchor immediate LICENSE terverifikasi decoder ELF i386.
+  Delapan dword adalah **satu anchor**, bukan delapan replacements. Nol/lebih
+  dari satu anchor ditolak. `keyman` dan `mode` juga wajib regular tanpa alias
+  dan masing-masing menghasilkan ≥1 penggantian LICENSE nyata.
+- Seluruh mapping dan envelope instruksi diperiksa overlap pada byte pristine
+  **sebelum** anchor loader dikecualikan. Literal LICENSE dan seluruh mapping
+  lain (termasuk signing) tetap diproses. Indeks mapping asli/hitungan aktual
+  dipertahankan; laporan `preserved_anchors` memuat path, role, `count: 1`,
+  `counted_as_coverage: false`. Anchor yang dipertahankan bukan coverage.
+  Tidak ada bypass guard, perubahan check `sys2`, atau pelemahan signature.
+- Mtime file reguler dipertahankan saat penulisan (juga jalur generik). Kebijakan
+  ini memeriksa uid/gid sumber on-image lewat `unsquashfs -lln -full`, menolak
+  selain 0/0, lalu repack `-all-root` dan `-mkfs-time` dari uint32 superblock
+  SquashFS v4 sumber, bukan waktu saat build. Listing sumber/hasil dibandingkan
+  untuk tipe, mode, uid/gid, mtime detik, ukuran non-direktori dan target symlink.
+  Dua hasil ekstraksi juga dibandingkan untuk tipe/mode/mtime, device metadata,
+  target symlink dan kelompok hardlink. Perubahan metadata atau format listing
+  yang tidak dikenali membatalkan signing/output. Panjang byte direktori dapat
+  berubah karena packing; xattrs tetap di luar kontrak (`-no-xattrs` seperti
+  jalur generik). Ekstraksi tool yang gagal (misalnya special file tanpa izin)
+  tetap gagal, tidak dinormalisasi diam-diam.
+- Ekstraksi policy memakai `umask=0` **hanya pada child subprocess POSIX**
+  untuk mempertahankan mode asli. Umask parent tidak diubah; workspace tetap
+  private (0700) dan file output mengikuti umask caller. Ini berdasarkan
+  reproduksi sumber nyata: caller umask 077 menyebabkan 582 file reguler
+  kehilangan bit group/other (contoh 0755 menjadi 0700), sedangkan roundtrip
+  dengan child umask 0 menghasilkan nol delta pada 893 entri. Kedua ekstraksi
+  (sumber dan verifikasi) memakai aturan sama; parity tetap wajib, bukan bypass.
+  Host non-POSIX menolak ekstraksi policy ini secara eksplisit.
+
+Tes baru `tests/test_chr_runtime_policy.py` memakai ELF/NPK/kunci sintetis saja,
+mock signing, dan SquashFS nyata jika tersedia. Jalankan normal serta `-O`:
+
+```sh
+python -B -m unittest discover -s tests -p test_chr_runtime_policy.py -v
+python -O -B -m unittest discover -s tests -p test_chr_runtime_policy.py -v
+```
+
+Kebijakan ini mengikuti hasil diagnostik runtime yang dilaporkan parent;
+tes sintetis tidak membuktikan firmware produksi boot atau menerima lisensi.
+Build final, verifikasi signature nyata, boot/login dan persistensi aktivasi
+harus diuji terpisah. Kebijakan tidak menyatakan dukungan versi/produk lain.

@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "scope": "Discriminative paired experiment: loader-license-preserved diagnostic vs full-matcher baseline from identical pinned vendor source and metadata.",
+  "source_vendor_raw_sha256": "e87eaa06af9e29f5946d951a0595de56d6e8a972d023e34e56583412265063e7",
+  "source_vendor_npk_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+  "reference_checkout": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "paired_component_difference": [
+    {
+      "path": "nova/bin/loader",
+      "full_sha256": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401",
+      "preserved_sha256": "792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7",
+      "size_full": 84220,
+      "size_preserved": 84220,
+      "byte_differences": 32,
+      "different_offsets": [
+        29806,
+        29807,
+        29808,
+        29809,
+        29816,
+        29817,
+        29818,
+        29819,
+        29826,
+        29827,
+        29828,
+        29829,
+        29836,
+        29837,
+        29838,
+        29839,
+        29846,
+        29847,
+        29848,
+        29849,
+        29856,
+        29857,
+        29858,
+        29859,
+        29863,
+        29864,
+        29865,
+        29866,
+        29870,
+        29871,
+        29872,
+        29873
+      ]
+    }
+  ],
+  "paired_metadata_difference": [],
+  "variants": {
+    "full": {
+      "image_sha256": "c03c1674c93cf68dc5bb9bd57bfc5e7acf7500978a022e4c43440341229a2fe4",
+      "npk_sha256": "eb6bf3ebfc0d69c9389df65a11dd78eb2cad9c1f433e23052aaf9886ea7c559b",
+      "status": "no_login_within_240s",
+      "serial_bytes": 0,
+      "login_prompt_seen_serial": false,
+      "base_unchanged": true,
+      "coverage": [
+        {
+          "package": "system",
+          "status": "coverage-passed",
+          "replacements": [
+            {
+              "mapping_index": 1,
+              "kernel": 0,
+              "squashfs": 3,
+              "total": 3
+            },
+            {
+              "mapping_index": 2,
+              "kernel": 2,
+              "squashfs": 3,
+              "total": 5
+            }
+          ],
+          "scope": "literal replacement coverage only; boot and activation untested"
+        }
+      ],
+      "vga_samples": [
+        {
+          "seconds": 30,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "6680fa3cb01bec3578c7d47837841ac8ef49a06213da7ff7cab38918c60c454a",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": true,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 60,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "b5a9a2106b09f74c32fe36719c6935f847e7358a52cc74ecc9645b4e9d90cf92",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": true,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 90,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "6680fa3cb01bec3578c7d47837841ac8ef49a06213da7ff7cab38918c60c454a",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": true,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 120,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "b5a9a2106b09f74c32fe36719c6935f847e7358a52cc74ecc9645b4e9d90cf92",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": true,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 180,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "5b37614d18428d4a780ade4d380c7ca295cb52660d58e3779dcb99910054ad76",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": false,
+            "timeout": true,
+            "rebooting": true
+          }
+        },
+        {
+          "seconds": 240,
+          "serial_bytes": 0,
+          "login_prompt_seen_serial": false,
+          "vga_png_sha256": "97deea3d70aae2ed04a4dfa56342bc42f376c24c057129b69755842c0b34f296",
+          "ocr_indicators": {
+            "login": false,
+            "starting_services": false,
+            "timeout": true,
+            "rebooting": true
+          }
+        }
+      ],
+      "postboot_crash": {
+        "backtrace_bytes": 12533,
+        "backtrace_sha256": "330a40594466e391538e2970284e4ae0d20016a8e143fdb17fef509fb08355f6",
+        "signals": [
+          "11",
+          "11"
+        ],
+        "eips": [
+          "0x0805bfd3",
+          "0x0805bfd3"
+        ],
+        "raw_log_not_exported": true
+      },
+      "configuration": {
+        "machine": "pc,accel=tcg",
+        "memory_mib": 512,
+        "vcpus": 1,
+        "disk": "IDE, fresh qcow2 overlay over verified diagnostic raw",
+        "bios": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/bios-256k.bin"
+      },
+      "base_sha256_after": "c03c1674c93cf68dc5bb9bd57bfc5e7acf7500978a022e4c43440341229a2fe4",
+      "process_exited": true
+    },
+    "loader-preserved": {
+      "image_sha256": "61093f0581280fa8a786b01623a298ffcd220fa1122f269883d11a780ba0f13f",
+      "npk_sha256": "94d9bf1c42d3c5bcf27d7279e270545649ce115060c4f07d72dc86c69699dfc2",
+      "status": "login_prompt_at_30s_and_through_240s",
+      "serial_bytes": 52,
+      "login_prompt_seen_serial": true,
+      "base_unchanged": true,
+      "coverage": [
+        {
+          "package": "system",
+          "status": "coverage-passed",
+          "replacements": [
+            {
+              "mapping_index": 1,
+              "kernel": 0,
+              "squashfs": 2,
+              "total": 2
+            },
+            {
+              "mapping_index": 2,
+              "kernel": 2,
+              "squashfs": 3,
+              "total": 5
+            }
+          ],
+          "scope": "literal replacement coverage only; boot and activation untested"
+        }
+      ],
+      "vga_samples": [
+        {
+          "seconds": 30,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 60,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 90,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 120,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 180,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "8a159b25005ca04b8b1b63fefc3cb7bdf926d58d1dd8f48eab6b2ef1fe6a0b9b",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        },
+        {
+          "seconds": 240,
+          "serial_bytes": 52,
+          "login_prompt_seen_serial": true,
+          "vga_png_sha256": "acd6d7a5ff97fc9f9c3ff0e495cfe95c7d7a6291d817b2a76fb119fb0f95549f",
+          "ocr_indicators": {
+            "login": true,
+            "starting_services": false,
+            "timeout": false,
+            "rebooting": false
+          }
+        }
+      ],
+      "postboot_crash": {
+        "backtrace_bytes": 0,
+        "backtrace_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "signals": [],
+        "eips": [],
+        "raw_log_not_exported": true
+      },
+      "configuration": {
+        "machine": "pc,accel=tcg",
+        "memory_mib": 512,
+        "vcpus": 1,
+        "disk": "IDE, fresh qcow2 overlay over verified diagnostic raw",
+        "bios": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/bios-256k.bin"
+      },
+      "base_sha256_after": "61093f0581280fa8a786b01623a298ffcd220fa1122f269883d11a780ba0f13f",
+      "process_exited": true
+    }
+  },
+  "build": {
+    "source_raw_sha256": "e87eaa06af9e29f5946d951a0595de56d6e8a972d023e34e56583412265063e7",
+    "source_npk_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+    "source_repo": {
+      "patch.py": "39eb29fb8a0661867820a2563e23a5f0f0fe9b1c4271b2b5cfa3d404d975fcd3",
+      "npk.py": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274"
+    },
+    "variants": {
+      "full": {
+        "npk_sha256": "eb6bf3ebfc0d69c9389df65a11dd78eb2cad9c1f433e23052aaf9886ea7c559b",
+        "image_sha256": "c03c1674c93cf68dc5bb9bd57bfc5e7acf7500978a022e4c43440341229a2fe4",
+        "image_path": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/loader-anchor-diagnostic-20261005/full.raw",
+        "coverage": [
+          {
+            "package": "system",
+            "status": "coverage-passed",
+            "replacements": [
+              {
+                "mapping_index": 1,
+                "kernel": 0,
+                "squashfs": 3,
+                "total": 3
+              },
+              {
+                "mapping_index": 2,
+                "kernel": 2,
+                "squashfs": 3,
+                "total": 5
+              }
+            ],
+            "scope": "literal replacement coverage only; boot and activation untested"
+          }
+        ],
+        "signature_custom": true,
+        "kernel_equal_existing_candidate": true,
+        "replacement_events": [
+          {
+            "file": "initramfs",
+            "mapping_counts": {
+              "1": 0,
+              "2": 2
+            },
+            "changed_bytes": 64
+          },
+          {
+            "file": "bndl/security/nova/bin/ssh",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/loader",
+            "mapping_counts": {
+              "1": 1,
+              "2": 0
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/installer",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/keyman",
+            "mapping_counts": {
+              "1": 1,
+              "2": 0
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/sys2",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/mode",
+            "mapping_counts": {
+              "1": 1,
+              "2": 0
+            },
+            "changed_bytes": 32
+          }
+        ]
+      },
+      "loader-preserved": {
+        "npk_sha256": "94d9bf1c42d3c5bcf27d7279e270545649ce115060c4f07d72dc86c69699dfc2",
+        "image_sha256": "61093f0581280fa8a786b01623a298ffcd220fa1122f269883d11a780ba0f13f",
+        "image_path": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/loader-anchor-diagnostic-20261005/loader-preserved.raw",
+        "coverage": [
+          {
+            "package": "system",
+            "status": "coverage-passed",
+            "replacements": [
+              {
+                "mapping_index": 1,
+                "kernel": 0,
+                "squashfs": 2,
+                "total": 2
+              },
+              {
+                "mapping_index": 2,
+                "kernel": 2,
+                "squashfs": 3,
+                "total": 5
+              }
+            ],
+            "scope": "literal replacement coverage only; boot and activation untested"
+          }
+        ],
+        "signature_custom": true,
+        "kernel_equal_existing_candidate": true,
+        "replacement_events": [
+          {
+            "file": "initramfs",
+            "mapping_counts": {
+              "1": 0,
+              "2": 2
+            },
+            "changed_bytes": 64
+          },
+          {
+            "file": "bndl/security/nova/bin/ssh",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/installer",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/keyman",
+            "mapping_counts": {
+              "1": 1,
+              "2": 0
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/sys2",
+            "mapping_counts": {
+              "1": 0,
+              "2": 1
+            },
+            "changed_bytes": 32
+          },
+          {
+            "file": "nova/bin/mode",
+            "mapping_counts": {
+              "1": 1,
+              "2": 0
+            },
+            "changed_bytes": 32
+          }
+        ]
+      }
+    },
+    "metadata_policy": "Both variants restore all source regular-file mtimes after patching; repack all-root and original source SquashFS mkfs-time. Same tools/source/settings. No check or coverage modifications.",
+    "source_signature_vendor_repo_verifier": false,
+    "paired_comparison": {
+      "regular_files": 582,
+      "content_differences": [
+        {
+          "path": "nova/bin/loader",
+          "full_sha256": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401",
+          "preserved_sha256": "792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7",
+          "size_full": 84220,
+          "size_preserved": 84220,
+          "byte_differences": 32,
+          "different_offsets": [
+            29806,
+            29807,
+            29808,
+            29809,
+            29816,
+            29817,
+            29818,
+            29819,
+            29826,
+            29827,
+            29828,
+            29829,
+            29836,
+            29837,
+            29838,
+            29839,
+            29846,
+            29847,
+            29848,
+            29849,
+            29856,
+            29857,
+            29858,
+            29859,
+            29863,
+            29864,
+            29865,
+            29866,
+            29870,
+            29871,
+            29872,
+            29873
+          ]
+        }
+      ],
+      "mode_mtime_differences": []
+    },
+    "vendor_raw_unchanged": true
+  },
+  "acquisition": {
+    "url": "https://download.mikrotik.com/routeros/7.24.4/chr-7.24.4.img.zip",
+    "zip_bytes": 45274342,
+    "zip_sha256": "dd678564de45eb7ae27b22f5fb4bd45a67970aed842e1cea96f5dd018d7b00ae",
+    "raw_bytes": 134217728,
+    "raw_sha256": "e87eaa06af9e29f5946d951a0595de56d6e8a972d023e34e56583412265063e7",
+    "crc_passed": true,
+    "vendor_published_checksum_checked": false,
+    "duration": 39.51232310011983
+  },
+  "run_scope": {
+    "network_devices": 0,
+    "guest_input_sent": false,
+    "license_sent": false,
+    "activation_tested": false,
+    "owner_vm_contacted": false,
+    "runtime_seconds_each": 240,
+    "paired_runs_concurrent": true,
+    "no_integrity_check_disabled": true,
+    "coverage_validator_unchanged": true,
+    "engine_modified": false,
+    "source_files_modified": false,
+    "termination": "QMP quit, not clean guest shutdown"
+  },
+  "conclusion": "Under this paired source/toolchain/metadata/configuration, full replacement failed before login and preserving only the loader license anchor while still replacing keyman/mode and all signing matches reached login. This isolates the loader-anchor transformation as a boot regression trigger in this pair; does not prove license activation or describe all upstream mechanisms.",
+  "limitations": [
+    "One run per variant; concurrent tests can introduce host scheduling variation.",
+    "Vendor CRC and source hashes pinned; vendor-published checksum not obtained and repo verifier rejects original vendor NPK (known limitation).",
+    "No activation attempted, no guest input, no production readiness claim.",
+    "Metadata differs from original CI but is identical between paired variants.",
+    "Raw diagnostic images and full crash logs remain scratch-only.",
+    "Repository test suite not run; engine untouched."
+  ]
+}

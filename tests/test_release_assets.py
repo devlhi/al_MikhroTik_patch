@@ -19,13 +19,17 @@ VERSION = "7.24.4"
 ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc"]
 METADATA_FILES = ("SHA256SUMS", "manifest.json", "RELEASE_NOTES.md")
 TOTAL_ASSETS = 37
+PYTHON = [sys.executable, *(["-O"] if sys.flags.optimize else []), "-B"]
 
 
 def suffix(arch):
     return "" if arch == "x86" else f"-{arch}"
 
 
-def expected_sources(arch):
+def expected_sources(arch, profile="all"):
+    if profile == "chr-x86":
+        return [f"chr-{VERSION}-patched.{fmt}.zip"
+                for fmt in ("img", "qcow2", "vmdk", "vhd", "vhdx", "vdi")]
     s = suffix(arch)
     if arch == "x86":
         names = [
@@ -65,31 +69,33 @@ class Base(unittest.TestCase):
         self.changelog = self.source / "CHANGELOG"
         self.changelog.write_text("Synthetic changelog for tests only.\n")
 
-    def make_sources(self, arch):
+    def make_sources(self, arch, profile="all"):
         payloads = {}
-        for name in expected_sources(arch):
+        for name in expected_sources(arch, profile):
             data = f"SYNTHETIC TEST FIXTURE, NOT FIRMWARE: {arch} {name}\n".encode()
             (self.source / name).write_bytes(data)
             payloads[name] = data
         return payloads
 
-    def stage(self, arch, output=None, version=VERSION):
+    def stage(self, arch, output=None, version=VERSION, profile=None):
         output = output or self.root / "dist" / arch
         return subprocess.run(
-            [sys.executable, "-B", str(SCRIPT), "stage",
+            [*PYTHON, str(SCRIPT), "stage",
              "--source", str(self.source), "--output", str(output),
              "--version", version, "--arch", arch,
-             "--changelog", str(self.changelog)],
+             "--changelog", str(self.changelog)]
+            + (["--profile", profile] if profile is not None else []),
             text=True, capture_output=True, timeout=30,
         ), output
 
-    def combine(self, dist, output=None):
+    def combine(self, dist, output=None, profile=None):
         output = output if output is not None else self.root / "merged"
         before = self.snapshot(self.root)
         result = subprocess.run(
-            [sys.executable, "-B", str(SCRIPT), "combine",
+            [*PYTHON, str(SCRIPT), "combine",
              "--dist", str(dist), "--output", str(output),
-             "--version", VERSION, "--changelog", str(self.changelog)],
+             "--version", VERSION, "--changelog", str(self.changelog)]
+            + (["--profile", profile] if profile is not None else []),
             text=True, capture_output=True, timeout=30,
         )
         if result.returncode:
@@ -726,6 +732,7 @@ class CombineTests(Base):
             ("size-string", lambda e: e.__setitem__("size", "12")),
             ("size-bool", lambda e: e.__setitem__("size", True)),
             ("size-negative", lambda e: e.__setitem__("size", -1)),
+            ("size-zero", lambda e: e.__setitem__("size", 0)),
             ("sha-uppercase", lambda e: e.__setitem__("sha256", e["sha256"].upper())),
             ("sha-short", lambda e: e.__setitem__("sha256", "abc")),
             ("filename-not-str", lambda e: e.__setitem__("filename", 7)),
@@ -877,6 +884,9 @@ class CombineTests(Base):
         self.assert_rejected_without_side_effects(link / ".." / "dist", out,
                                                   result, "symlink")
 
+    @unittest.skipUnless(os.name == "posix", "requires POSIX read permissions")
+    @unittest.skipIf(hasattr(os, "geteuid") and os.geteuid() == 0,
+                     "root bypasses POSIX read permissions")
     def test_combine_preflights_metadata_readability(self):
         self.stage_all()
         for metadata in METADATA_FILES:
@@ -889,7 +899,7 @@ class CombineTests(Base):
                 try:
                     out = self.root / "merged"
                     result = subprocess.run(
-                        [sys.executable, "-B", str(SCRIPT), "combine",
+                        [*PYTHON, str(SCRIPT), "combine",
                          "--dist", str(dist), "--output", str(out),
                          "--version", VERSION, "--changelog", str(self.changelog)],
                         text=True, capture_output=True, timeout=30,
@@ -930,6 +940,250 @@ class CombineTests(Base):
                 self.assert_rejected_without_side_effects(
                     dist, out, result, "checksum list mismatch")
                 self.assertEqual(self.snapshot(dist), before)
+
+
+def load_release_module():
+    spec = importlib.util.spec_from_file_location("release_assets_profiles", SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ProfileTests(Base):
+    def stage_chr(self):
+        self.make_sources("x86", "chr-x86")
+        result, output = self.stage("x86", profile="chr-x86")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return output.parent
+
+    def test_chr_profile_contains_only_six_images_and_scoped_metadata(self):
+        dist = self.stage_chr()
+        expected = {branded_name("x86", name)
+                    for name in expected_sources("x86", "chr-x86")}
+        self.assertEqual(len(expected), 6)
+        result, output = self.combine(dist, profile="chr-x86")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for directory in (dist / "x86", output):
+            self.assertEqual({p.name for p in directory.iterdir()},
+                             expected | set(METADATA_FILES))
+            manifest = json.loads((directory / "manifest.json").read_text())
+            self.assertEqual(manifest["profile"], "chr-x86")
+            self.assertIs(manifest["boot_tested"], False)
+            architectures = manifest.get("architectures", [manifest])
+            self.assertEqual([m["architecture"] for m in architectures], ["x86"])
+            self.assertEqual(architectures[0]["profile"], "chr-x86")
+            notes = (directory / "RELEASE_NOTES.md").read_text(encoding="utf-8")
+            self.assertIn("CHR x86 experimental", notes)
+            self.assertNotIn("semua arsitektur", notes)
+            for line in (directory / "SHA256SUMS").read_text().splitlines():
+                digest, name = line.split("  ")
+                self.assertEqual(hashlib.sha256((directory / name).read_bytes()).hexdigest(), digest)
+
+    def test_default_all_remains_strict_and_schema_compatible(self):
+        module = load_release_module()
+        self.assertEqual(module.expected_sources(VERSION, "x86"),
+                         module.expected_sources(VERSION, "x86", "all"))
+        self.make_sources("x86")
+        result, output = self.stage("x86")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("profile", json.loads((output / "manifest.json").read_text()))
+        result, _ = self.combine(output.parent)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("missing architecture", result.stderr)
+        result, _ = self.combine(output.parent, profile="chr-x86")
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_profile_api_without_namespace_profile(self):
+        module = load_release_module()
+        self.make_sources("x86", "chr-x86")
+        args = module.parse_args([
+            "stage", "--source", str(self.source), "--output", str(self.root / "dist" / "x86"),
+            "--version", VERSION, "--arch", "x86", "--changelog", str(self.changelog)])
+        del args.profile
+        self.assertEqual(module.stage_assets(args, profile="chr-x86"), 0)
+        combine_args = module.parse_args([
+            "combine", "--dist", str(args.output.parent), "--output", str(self.root / "merged"),
+            "--version", VERSION, "--changelog", str(self.changelog)])
+        del combine_args.profile
+        self.assertEqual(module.combine_assets(combine_args, profile="chr-x86"), 0)
+        self.assertEqual(module.expected_sources(VERSION, "x86", "chr-x86"),
+                         expected_sources("x86", "chr-x86"))
+
+    def test_invalid_profile_and_architecture_fail_before_output(self):
+        self.make_sources("x86", "chr-x86")
+        for arch, profile in (("x86", "unknown"), ("arm64", "chr-x86")):
+            result, output = self.stage(arch, profile=profile)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(output.exists())
+        dist = self.root / "empty-dist"
+        dist.mkdir()
+        for profile in ("unknown", "chr-x86"):
+            result, output = self.combine(dist, profile=profile)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(output.exists())
+        module = load_release_module()
+        with self.assertRaises(ValueError):
+            module.expected_sources(VERSION, "arm", "chr-x86")
+        with self.assertRaises(ValueError):
+            module.expected_sources(VERSION, "x86", "unknown")
+
+    def test_stage_rejects_missing_and_empty_assets_for_both_profiles(self):
+        for profile in ("all", "chr-x86"):
+            for kind in ("missing", "empty"):
+                with self.subTest(profile=profile, kind=kind):
+                    self.make_sources("x86", profile)
+                    source = self.source / expected_sources("x86", profile)[-1]
+                    source.unlink() if kind == "missing" else source.write_bytes(b"")
+                    result, output = self.stage("x86", profile=profile)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertFalse(output.exists())
+                    self.assertFalse(list(self.root.rglob(".ali-combine-*")))
+
+    def test_chr_combine_rejects_missing_extra_and_wrong_arch_inputs(self):
+        dist = self.stage_chr()
+        asset = branded_name("x86", expected_sources("x86", "chr-x86")[0])
+        cases = ["missing-arch", "extra-arch", "extra-asset", "missing-asset", *METADATA_FILES]
+        for label in cases:
+            with self.subTest(case=label):
+                case = self.root / ("case-" + label)
+                shutil.copytree(dist, case)
+                if label == "missing-arch":
+                    (case / "x86").rename(case / "arm")
+                elif label == "extra-arch":
+                    (case / "arm").mkdir()
+                elif label == "extra-asset":
+                    (case / "x86" / "netinstall.zip").write_bytes(b"NOT FIRMWARE")
+                else:
+                    (case / "x86" / (asset if label == "missing-asset" else label)).unlink()
+                result, output = self.combine(case, profile="chr-x86")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse(output.exists())
+
+    def test_chr_combine_rejects_profile_arch_and_positive_size_mismatches(self):
+        dist = self.stage_chr()
+        for label in ("profile-missing", "profile-all", "arch", "zero-size", "empty-body"):
+            with self.subTest(case=label):
+                case = self.root / label
+                shutil.copytree(dist, case)
+                path = case / "x86" / "manifest.json"
+                manifest = json.loads(path.read_text())
+                if label == "profile-missing":
+                    del manifest["profile"]
+                elif label == "profile-all":
+                    manifest["profile"] = "all"
+                elif label == "arch":
+                    manifest["architecture"] = "arm"
+                else:
+                    manifest["assets"][0]["size"] = 0
+                    if label == "empty-body":
+                        entry = manifest["assets"][0]
+                        (case / "x86" / entry["filename"]).write_bytes(b"")
+                        entry["sha256"] = hashlib.sha256(b"").hexdigest()
+                        (case / "x86" / "SHA256SUMS").write_text("\n".join(
+                            f"{e['sha256']}  {e['filename']}" for e in manifest["assets"]) + "\n")
+                path.write_text(json.dumps(manifest))
+                result, output = self.combine(case, profile="chr-x86")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("manifest invalid", result.stderr)
+                self.assertFalse(output.exists())
+
+    def test_all_rejects_profile_field_even_with_complete_legacy_inventory(self):
+        module = load_release_module()
+        self.make_sources("x86")
+        result, output = self.stage("x86")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        path = output / "manifest.json"
+        manifest = json.loads(path.read_text())
+        manifest["profile"] = "chr-x86"
+        path.write_text(json.dumps(manifest))
+        with self.assertRaises(module.CombineError):
+            module._validated_manifest(path, "x86", VERSION)
+
+    def test_stage_copy_and_metadata_failures_clean_owned_temporary_output(self):
+        module = load_release_module()
+        self.make_sources("x86", "chr-x86")
+        parent = self.root / "publish"
+        parent.mkdir()
+        output = parent / "release"
+        argv = ["stage", "--source", str(self.source), "--output", str(output),
+                "--version", VERSION, "--arch", "x86", "--profile", "chr-x86",
+                "--changelog", str(self.changelog)]
+        real_copy = shutil.copyfile
+        real_write = Path.write_text
+        for kind in ("copy", "metadata", "hash", "unsupported"):
+            with self.subTest(kind=kind):
+                before = self.snapshot(self.root)
+                calls = []
+                def fail_copy(src, dest):
+                    calls.append(dest)
+                    if len(calls) == 2:
+                        raise OSError("synthetic copy failure")
+                    return real_copy(src, dest)
+                def fail_write(path, *args, **kwargs):
+                    if path.name == "manifest.json":
+                        raise OSError("synthetic metadata failure")
+                    return real_write(path, *args, **kwargs)
+                def fail_hash(path):
+                    if path.parent.name.startswith(".ali-combine-"):
+                        raise OSError("synthetic hash failure")
+                    return hashlib.sha256(path.read_bytes()).hexdigest()
+                target, replacement = {
+                    "copy": ("shutil.copyfile", fail_copy),
+                    "metadata": ("pathlib.Path.write_text", fail_write),
+                    "hash": (None, fail_hash),
+                    "unsupported": (None, None),
+                }[kind]
+                context = (mock.patch(target, side_effect=replacement, autospec=True) if target else
+                           mock.patch.object(module, "sha256_of", side_effect=replacement)
+                           if kind == "hash" else mock.patch.object(sys, "platform", "unsupported"))
+                with context, redirect_stderr(io.StringIO()):
+                    code = module.main(argv)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(self.snapshot(self.root), before)
+
+    def test_unsupported_combine_cleans_staging_without_loading_libc(self):
+        module = load_release_module()
+        dist = self.stage_chr()
+        before = self.snapshot(self.root)
+        with mock.patch.object(sys, "platform", "unsupported"), \
+                mock.patch.object(module.ctypes, "CDLL") as libc, redirect_stderr(io.StringIO()):
+            code = module.main([
+                "combine", "--dist", str(dist), "--output", str(self.root / "merged"),
+                "--version", VERSION, "--profile", "chr-x86", "--changelog", str(self.changelog)])
+        self.assertNotEqual(code, 0)
+        libc.assert_not_called()
+        self.assertEqual(self.snapshot(self.root), before)
+
+    @unittest.skipUnless(sys.platform == "win32", "requires native Windows rename semantics")
+    def test_windows_publication_refuses_destination_created_after_precheck(self):
+        module = load_release_module()
+        real_rename = os.rename
+        for kind in ("empty-dir", "file", "nonempty-dir", "dangling-link"):
+            with self.subTest(kind=kind):
+                staging = self.root / (".ali-combine-" + kind)
+                staging.mkdir()
+                (staging / "asset").write_bytes(b"SYNTHETIC")
+                output = self.root / kind
+                def race(src, dst):
+                    if kind == "file":
+                        output.write_bytes(b"KEEP")
+                    elif kind == "dangling-link":
+                        output.symlink_to(self.root / "absent", target_is_directory=True)
+                    else:
+                        output.mkdir()
+                        if kind == "nonempty-dir":
+                            (output / "keep").write_bytes(b"KEEP")
+                    before = self.snapshot(self.root)
+                    try:
+                        return real_rename(src, dst)
+                    finally:
+                        self.assertEqual(self.snapshot(self.root), before)
+                with mock.patch.object(os, "rename", side_effect=race), \
+                        mock.patch.object(module.ctypes, "CDLL") as libc:
+                    with self.assertRaises(OSError):
+                        module._publish_output(staging, output)
+                libc.assert_not_called()
+                self.assertTrue(staging.is_dir())
 
 
 if __name__ == "__main__":

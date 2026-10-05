@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-05",
+  "reference_head": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "final_patch_sha256": "e2fb985d61733393e0345970c67bf594dbd83676430dfe2a4ae34d0c07a6b035",
+  "previous_checkpoint_patch_sha256": "a71b293c60293f2adf0a439b83d3d0fd0c1060f40dbc7d85eeb44cdf9e1a6821",
+  "failed_build_diagnosis": {
+    "cause": "umask 077 stripped group/other permission bits during non-root unsquashfs extraction on 582 files",
+    "fix": "added umask=0 only to child POSIX subprocess options in _run_tools when preserve_modes=True; parent umask untouched",
+    "parity_check_weakened": false
+  },
+  "source_review": {
+    "reviewer_verdict": "PASS",
+    "scope": "narrow child umask fix, policy extraction, and regression tests",
+    "blockers_in_production_code": 0,
+    "test_code_audit_finding": "unadorned unsquashfs in test fixture required child umask=0; test corrected"
+  },
+  "test_results": {
+    "full_suite_final_umask_077": {
+      "total": 333,
+      "passed": 326,
+      "skipped": 7,
+      "failures": 0,
+      "errors": 0,
+      "time_seconds": 166.186
+    },
+    "full_suite_umask_022": {
+      "total": 333,
+      "passed": 326,
+      "skipped": 7,
+      "failures": 0,
+      "errors": 0,
+      "time_seconds": 171.571
+    },
+    "policy_suite_linux": {
+      "total": 26,
+      "passed": 26,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    "patch_suites_normal_and_O": {
+      "total": 75,
+      "passed": 75,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    "windows_policy_suite": {
+      "total": 26,
+      "passed": 12,
+      "skipped": 14,
+      "failures": 0,
+      "errors": 0
+    },
+    "skips_breakdown": [
+      "4 native Windows cmd.exe tests",
+      "1 Windows rename race test",
+      "2 optional Caddy integration tests"
+    ]
+  },
+  "proof_separation": "Unit tests and source validation are not firmware boot proof; runtime validation conducted separately on final VMDK."
+}

@@ -1,7 +1,7 @@
 # HANDOFF — Ali Patch Code
 
 Dokumen serah terima untuk developer lain yang mau melanjutkan kerja repo ini.
-**Status diperbarui: 2026-10-05 (WITA): fix launcher Windows ter-push `9b4d6f9`, 5/5 file publik cocok. Run `37219037250` sukses: 52/52 tes per Python 3.10.11 dan 3.14.7, tanpa skip; cmd.exe dan symlink/race nyata lulus (§13). Build firmware `37207497763`: hanya x86 sukses (18 aset), enam arsitektur gagal guard, rilis skipped. Hash ulang biner, boot/login, dan aktivasi firmware tetap belum terbukti.**
+**Status diperbarui: 2026-10-05: perubahan masih lokal/belum commit di atas `6071aea`. VMDK final lokal sudah dibangun lewat jalur produksi dan diuji langsung: boot/login, `free` menjadi `p-unlimited`, dua reboot serta shutdown/cold restart, semuanya dengan System ID sama (§17). Signature custom, coverage aktual 2 LICENSE/5 signing, metadata SquashFS dan integritas ZIP/VMDK lulus. Suite Linux final: 333 tes, 326 lulus, 7 skip, 0 gagal/error. File final ada di `dist/chr-x86-7.24.4-runtime-fix`; belum ada firmware baru diterbitkan di GitHub. Bukti runtime hanya QEMU tanpa jaringan, bukan VMware/upgrade/throughput. Jangan install ulang kandidat CI lama sebagai solusi lisensi.**
 Dokumen awal masuk lewat commit `3e2a73b`
 atas instruksi pemilik repo (`devlhi`). Ini memori proyek yang ikut Git, bukan
 salinan memori pribadi agent atau tempat menyimpan kredensial.
@@ -41,7 +41,7 @@ juga tertulis di [AGENTS.md](../AGENTS.md) dan [CONTRIBUTING.md](../CONTRIBUTING
 | Rilis 7.24.4 | release biasa + **Latest**; 40 aset; aset TIDAK dibangun ulang dengan guard |
 | Rilis 7.23.3 | **prerelease**; tag `7.23.3` + tag build lama; 40 aset; aset TIDAK dibangun ulang |
 | Instalasi & boot | **ISO: masalah “load system” masih terbuka (§5). VMDK CHR: VM aktif dan WebFig dapat diakses (§6); asal/hash image belum dikonfirmasi.** Salinan aset VMDK rilis 7.24.4 terbukti boot sampai login di QEMU terisolasi tanpa jaringan (§7) |
-| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Aset rilis: `free` → paste → reboot → `free` (§7); anchor vendor yang terlewat pola literal kini terkonfirmasi untuk satu aset (§9). Approval versi source lama ditahan oleh defect overlap (§10); round 2 kini lulus review delta dan diterima parent pada fingerprint tercatat untuk scope sintetis (§11). Lab belum login dan aktivasi belum terbukti.** |
+| Aktivasi lisensi / upgrade | **VM pemilik tetap free (§6). Aset rilis: `free` → paste → reboot → `free` (§7); anchor vendor yang terlewat pola literal kini terkonfirmasi untuk satu aset (§9). Approval versi source lama ditahan oleh defect overlap (§10); round 2 kini lulus review delta dan diterima parent pada fingerprint tercatat untuk scope sintetis (§11). Diagnostik (§16) dan VMDK final produksi lokal (§17) berhasil aktivasi `p-unlimited`. Final lolos dua reboot dan cold restart dengan ID sama; belum diuji di VMware milik pemilik.** |
 
 ## Apa yang sudah dikerjakan
 
@@ -1010,6 +1010,214 @@ artifact firmware, enam arsitektur non-x86, boot/login dan aktivasi dengan ID
 sama setelah reboot. Keberhasilan launcher tidak menutup pekerjaan firmware
 itu. Tidak ada build/QEMU lokal atau akses VM baru tanpa arahan pemilik.
 
+### 14. Pemeriksaan ulang rilis publik (2026-10-05)
+
+- Acuan checkout dan remote `main`: `6071aea`; working tree bersih sebelum
+  pemeriksaan. GET anonim GitHub API untuk releases, run `patch7.yml`, jobs,
+  dan metadata artifact dijalankan ulang pada sesi ini.
+- Rilis publik yang terdaftar masih `7.24.4` (Latest menurut status sebelumnya)
+  dan `7.23.3`; masing-masing 40 aset. Rilis `7.24.4` mencatat commit sumber
+  `bd2dc61`. Aset CHR x86 VMDK ZIP dibuat/diperbarui pada 2026-10-02,
+  sebelum perbaikan engine `daf390f`; catatan rilis menegaskan aset belum
+  dibangun ulang. Tidak ada rilis publik baru yang memuat fix engine.
+- Run firmware terbaru tetap `37207497763` pada `c636fa6`: job x86 sukses,
+  enam arsitektur lain gagal, dan job release skipped. Artifact x86
+  `11305142056` masih tersedia (`expired: false`), kedaluwarsa
+  `2026-10-18T14:04:00Z`. Artifact Actions bukan rilis firmware permanen.
+- Ini pemeriksaan metadata langsung, bukan unduh/hash ulang firmware atau
+  uji boot/aktivasi. Tidak ada build baru, publikasi, pergantian tag/aset,
+  instalasi VM, atau pengulangan suite pada sesi ini. Jangan menyarankan
+  install ulang aset rilis lama sebagai solusi lisensi; kandidat x86 baru
+  tetap memerlukan verifikasi isi dan uji lab sebelum mengganti VM pemilik.
+
+### 15. Audit rilis, perbaikan pipeline lokal, dan uji kandidat nyata (2026-10-05)
+
+**Acuan checkout:** `main`, HEAD `6071aea0a8059aa4378d56d0e41918ef6bd4bf3b`,
+HEAD/origin-main 0/0 pada pemeriksaan sesi. Perubahan berikut belum di-commit
+atau di-push. Tidak ada build Actions baru, draft, atau firmware baru diterbitkan.
+Bukti tersanitasi: [release-audit-2026-10-05.json](evidence/release-audit-2026-10-05.json).
+Panduan gate: [release-validation.md](release-validation.md).
+
+#### Perubahan source yang benar-benar dilakukan
+
+- `.github/workflows/patch7.yml`: pilihan eksplisit `all` / `chr-x86`.
+  `all` tetap gagal bila arsitektur wajib gagal; `chr-x86` hanya enam format
+  CHR x86, tanpa ISO/Netinstall/produk lain. Tidak memakai bypass guard,
+  `continue-on-error`, atau mengganti keypair. Env kunci dibandingkan dengan
+  HEAD dan tidak berubah; engine `patch.py`/`npk.py` juga tidak diubah.
+- Semua NPK dalam all-packages memakai `patch.py npk`, bukan signing langsung
+  tanpa kontrak cakupan. ARM64 memakai satu sumber archive authoritative,
+  bukan update ZIP yang bisa mempertahankan entri ISO lama. Draft tetap untested,
+  prerelease, bukan Latest, memakai tag run/attempt baru dan commit build.
+- `scripts/release_assets.py`: profile/inventory ketat, file kosong ditolak,
+  stage transactional dan cleanup miliknya sendiri, rehash hasil copy, serta
+  publikasi non-overwrite native Windows; Linux/macOS mempertahankan exclusive rename.
+- `scripts/validate_chr_image.py` + tes baru: hash ZIP utuh dibandingkan manifest
+  dan checksum, satu member yang tepat, ukuran aktual cocok metadata, CRC,
+  header VMDK/QCOW2, tanpa encrypted/symlink/special-file member. Review independen
+  mereproduksi dua celah awal (mode file khusus dan ukuran declared palsu);
+  keduanya diperbaiki dan tes regresinya lulus. Ini bukan verifier aktivasi.
+- `.gitattributes` menetapkan shell script LF; checkout `deploy/install-panel.sh`
+  dinormalisasi dari CRLF menjadi LF, byte konten ternormalisasi cocok HEAD,
+  tanpa perubahan logika. Fixture subprocess x86 mempertahankan env Windows
+  yang dibutuhkan (`SYSTEMROOT`, `WINDIR`, `TEMP`, `TMP`). Tes terkait diperluas.
+
+#### Integritas dan runtime kandidat — hasil tool, bukan laporan VM pemilik
+
+- Kandidat nyata dari commit `c636fa654f23b807b2adb51e24106396783cb246`,
+  run `37207497763`, artifact `11305142056` (kedaluwarsa 2026-10-18 14:04 UTC).
+  Unduhan selective HTTP ranges memverifikasi member terpilih, **bukan hash
+  keseluruhan outer artifact 1 GB**. ZIP VMDK 65,484,382 byte:
+  SHA-256 `8dab31741761959ee4ed9e26d2d9abd6e7144f6fe68f95e3ed9e083a5c2f7e4f`.
+  Hash cocok manifest/SHA256SUMS dan CRC lulus. Parent menjalankan validator
+  final terhadap ZIP tersebut, lulus. Tidak ada verifikasi signature firmware
+  nyata baru pada sesi ini.
+- VMDK 67,567,616 byte:
+  SHA-256 `328b34d4ff3fc116dfbdb548eafd02b46733d4d7aa211cdef93ff23778649f75`.
+  QEMU 8.2.2 TCG di WSL Ubuntu, SeaBIOS, 512 MiB, 1 vCPU, IDE,
+  fresh disposable qcow2 overlay, tanpa NIC. Tidak mengakses VM pemilik,
+  tidak mengirim keyboard/login/lisensi. Base hash sebelum/sesudah sama;
+  proses dihentikan melalui host QMP quit, bukan shutdown guest bersih.
+- **Tidak mencapai login selama 240 detik.** OCR screenshot 30/60/90/120 detik
+  menunjukkan `Starting services...`; 180 detik menunjukkan
+  `SCRIPT ERROR: std failure: timeout (13)` dan `Rebooting...`; 240 detik
+  menambah `failed to stop parser: std failure: timeout (13)`. Serial nol byte.
+  Read gambar dicoba, tetapi model tidak menerima media, sehingga interpretasi
+  layar **OCR-only, bukan konfirmasi visual**. Ini urutan reboot pertama,
+  bukan bukti loop berulang, fault `sys2`, akar sebab, atau perilaku VMware.
+  Kandidat ini berbeda dari eksperimen pre-review §8–10.
+- Setup awal gagal karena MSYS path conversion, module path QEMU, dan VGA ROM;
+  itu kegagalan harness sebelum uji selesai, bukan kegagalan firmware tambahan.
+  Pembanding aset lama tidak selesai diunduh dalam budget 180 detik;
+  partial ZIP tidak diverifikasi/tidak dipakai dan **tidak ada boot pembanding baru**.
+  Bukti historis login aset lama bukan fresh matched control sesi ini.
+- **Aktivasi tidak diuji karena gate boot gagal.** Jangan publish/rekomendasikan
+  kandidat sebagai solusi install ulang. JSON ringkasan/OCR tersanitasi tahan lama
+  ada di repo; screenshot mentah, full runtime JSON, firmware dan overlay masih
+  di folder sementara Windows `mikpatch-lab-20261005`, tidak di-commit.
+  Hash screenshot di evidence bukan pengganti file gambar bila scratch hilang.
+
+#### Tes aktual dan kendalanya
+
+- WSL Ubuntu Python 3.12.3, `python -B -m unittest discover -s tests -v`:
+  **302 tes, 295 lulus, 7 skip, exit 0, 210.675 detik**. Skip: satu native Windows
+  rename, empat cmd.exe, dua Caddy nyata opsional. Full run dimulai sebelum dua
+  regresi validator terakhir ditambahkan; jangan menyebut 304 full-suite lulus.
+- WSL `python -O -B -m unittest discover -s tests -p 'test_patch*.py' -v`:
+  **72 tes, 0 skip, exit 0**; SquashFS nyata tersedia. Bukan seluruh suite mode -O.
+- Native Windows Python 3.14.0: release helper normal dan `-O` masing-masing
+  **59 tes, 58 lulus, 1 skip POSIX permissions**; child CLI mewarisi -O.
+  Race destination Windows nyata lulus. Validator final **11/11** (parent ulang),
+  engine x86 **20/20**, workflow **24/24**, license CLI **28/28**,
+  launcher cmd.exe **9/9**, semuanya tanpa skip.
+- 17 shell block workflow `bash -n`, empat kasus validasi profile, pip check,
+  YAML parsing, dan `git diff --check` lulus. Pemeriksaan akhir dokumentasi:
+  26 link relatif valid, evidence JSON parse, tidak ada nilai kunci workflow
+  terpin pada dokumen/validator baru yang diperiksa. Review independen tidak menemukan
+  blocker profile/draft setelah delta validator diperbaiki.
+- Baseline native Windows penuh gagal (272 tes, 22 failure, 14 error, 8 skip):
+  beberapa deployment POSIX tidak portable, SquashFS/Caddy tidak tersedia,
+  CDLL Windows dan env subprocess. **Suite penuh Windows tidak diulang**;
+  hanya suite targeted di atas lulus. Linux awal juga gagal: 280 tes,
+  20 failure/6 skip karena CRLF shell; intermediate 302 tes error 1/skip 7
+  karena mock metadata baru belum autospec. Keduanya diperbaiki sebelum full
+  Linux final hijau; jangan menghapus riwayat kegagalan dari laporan.
+
+#### Perubahan remote yang sudah diverifikasi
+
+- Catatan rilis `7.24.4` (`401538288`) dan `7.23.3` (`401130489`) diperbarui
+  melalui gh API: warning tegas aset lama bukan fix lisensi; hasil kandidat baru
+  dibedakan dari aset terbit dan dari versi 7.23.3. Catatan lama dipertahankan
+  sebagai historis. Cakupan izin: perapian rilis sesuai permintaan audit/perbaikan,
+  bukan publikasi firmware baru atau push source.
+- GET setelah PATCH mengonfirmasi body tepat, serta ID/nama/size/digest/state/
+  updated_at **40+40 aset** tidak berubah. Tag/target/name/draft/prerelease tetap;
+  Latest tetap 7.24.4. Ini metadata comparison, bukan hash ulang semua 80 file.
+  Tidak ada tag dipindahkan, aset diganti/dihapus, atau firmware baru diunggah.
+- Kendala utama tersisa: kandidat engine baru tidak lolos boot ke login,
+  aktivasi belum terbukti, dan kontrol baru belum tersedia. Perbaikan pipeline
+  tidak mengklaim memperbaiki runtime. Jika investigasi dilanjutkan, gunakan
+  matched control dan ubah satu variabel dengan provenance tetap; jangan
+  mematikan check konsistensi atau cakupan untuk memaksa login.
+
+### 16. Investigasi runtime terfokus setelah permintaan pemilik (2026-10-05, berlangsung)
+
+Pemilik menegaskan target adalah build yang benar-benar menerima lisensi lab,
+bukan hanya tooling rilis. HEAD tetap `6071aea` pada `main` dengan perubahan
+lokal §15 dipertahankan. Tidak ada commit/push atau publikasi baru pada tahap ini.
+
+- **Kontrol lama kini berhasil diperoleh dan diuji**: ZIP SHA-256
+  `b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a`
+  cocok digest rilis, manifest dan checksum; VMDK SHA-256
+  `14dc40bce8f85de0fabad4dd641b14b4f71bb5a0a0c030beef96c243296fc728`.
+  Satu run 240 detik dengan konfigurasi QEMU identik kandidat: `CHR Login:`
+  muncul pada sampel pertama 30 detik dan semua sampel berikutnya sampai 240.
+  Bukti serial menguatkan OCR; tidak ada login/input/lisensi dikirim.
+  Base hash tidak berubah, proses berhenti melalui QMP quit.
+  [Bukti kontrol](evidence/chr-7.24.4-old-release-control-2026-10-05.json).
+  Ini menggantikan kendala unduhan kontrol §15, bukan bukti aktivasi.
+- **Crash kandidat nyata terlokalisasi offline**: dua catatan `sys2` SIGSEGV
+  pada `0x0805bfd3`; log tidak ada pada base pristine. Package custom signature
+  valid menurut verifier repo; kernel boot terpasang cocok byte dengan
+  FILE_CONTAINER, demikian pula bash/milo. Tidak ada perubahan base/overlay.
+  [Bukti offline](evidence/chr-7.24.4-candidate-offline-crash-2026-10-05.json).
+- **Koreksi interpretasi cabang lama**: lokasi abort punya lebih dari dua
+  predecessor. Register kandidat `EAX=0x6ed4` mendukung cabang `0x0805a9ef`
+  (hasil lookup 173, expected 164) pada asumsi alur normal, bukan bukti langsung
+  mismatch dua buffer waktu yang diduga sebelumnya. Data tabel berasal dari
+  jawaban IPC loader melalui libumsg; perubahan anchor loader sebagai penyebab
+  tetap hipotesis, tidak dibuktikan oleh disassembly saja.
+  [Trace statis dan batas inferensi](evidence/chr-7.24.4-candidate-static-startup-trace-2026-10-05.json).
+- Parent menguji synthetic challenge signature dua pasangan key workflow:
+  pasangan lisensi KCDSA dan signing paket EdDSA konsisten. Hanya boolean
+  dilaporkan; tidak ada keypair baru/nilai kunci diekspor. Ini bukan aktivasi.
+- **Eksperimen berpasangan selesai** dari input vendor raw SHA-256
+  `e87eaa06af9e29f5946d951a0595de56d6e8a972d023e34e56583412265063e7`:
+  baseline full (`c03c1674…`) kembali gagal login selama 240 detik, dua crash
+  `sys2` di `0x0805bfd3`; diagnostik loader-preserved (`61093f05…`)
+  mencapai login pada 30 detik dan setiap sampel hingga 240 detik. Dari
+  582 file reguler, hanya isi `nova/bin/loader` berbeda (32 byte immediate);
+  mode/mtime kedua varian identik. Keduanya menggunakan toolchain, input,
+  metadata policy, dan kernel boot yang sama. Ini mengisolasi penggantian
+  anchor lisensi loader sebagai pemicu regresi boot dalam pasangan ini,
+  bukan bukti mekanisme internal lengkap atau dukungan arsitektur lain.
+  [Bukti eksperimen](evidence/chr-7.24.4-loader-anchor-experiment-2026-10-05.json).
+- Guard cakupan tetap aktif; full menghasilkan mapping lisensi/signing 3/5,
+  loader-preserved 2/5 penggantian nyata. Signature custom keduanya valid
+  menurut verifier repo. Tidak ada check `sys2` atau signature dimatikan.
+  Diagnostic memakai intersepsi scratch dan kebijakan mtime/all-root/mkfs-time
+  yang sama pada kedua varian; **belum menjadi fix produksi `patch.py`**.
+  Verifier repo menolak signature input vendor, sehingga autentisitas
+  kriptografis vendor belum dapat diklaim dari pemeriksaan tersebut.
+- Probe aktivasi awal belum konklusif: percobaan pertama berhenti pada parser
+  output lisensi; kedua berhasil login admin lokal, membaca level `free`,
+  dan memverifikasi signature/ID payload lokal, tetapi pembacaan prompt echo
+  mengganggu urutan paste/reboot. Kedua probe tidak menghasilkan bukti level
+  pascareboot; ini kegagalan helper, bukan verdict penerimaan firmware.
+  Base tetap tidak berubah, tanpa NIC/kontak VM pemilik; helper sedang
+  diperbaiki pada scratch. Riwayat kegagalan helper dipertahankan sebagai
+  incomplete, bukan penolakan lisensi.
+- **Probe lengkap berikutnya berhasil**: raw diagnostik `61093f05…` boot/login,
+  level awal `free`; payload dibuat dengan key yang sudah ada hanya di memori
+  dan wrapper memverifikasi signature lengkap serta kesamaan ID. CHR menolak
+  `/system license input`; global paste blok empat baris memerlukan satu baris
+  kosong tambahan untuk menyelesaikan multiline entry. Pesan acceptance segera
+  tidak berhasil ditangkap, tetapi setelah `/system reboot` nyata level menjadi
+  **`p-unlimited`**, setelah reboot kedua tetap **`p-unlimited`**, dengan ID sama
+  pada kedua pembandingan. Setelah shutdown guest bersih dan proses QEMU baru
+  memakai overlay yang sama, level masih **`p-unlimited`**. Kesamaan ID cold
+  restart tidak diuji karena ID awal tidak dipersist antarproses host.
+  [Bukti aktivasi/persistensi](evidence/chr-7.24.4-loader-preserved-activation-2026-10-05.json).
+  Tidak ada NIC, kontak VM pemilik, penggantian keypair/password atau check
+  bypass. Base hash tetap; pemeriksaan `/proc` sesudah cleanup: 0 proses QEMU.
+  Overlay berisi lisensi tersimpan dan tetap scratch-only, tidak untuk publikasi.
+  Satu uji aktivasi berhasil ini bukan bukti VMware, upgrade, semua arsitektur,
+  bandwidth atau pengujian jangka panjang. Suite source tidak diulang pada fase
+  diagnostik; `git diff --check` dan cek 31 link dokumen/scan nilai sensitif lulus.
+- Implementasi kebijakan produksi sempit CHR x86 7.24.4 dan tes regresi sedang
+  berjalan; build final tanpa intersepsi scratch dan aktivasi pada VMDK final
+  tetap wajib sebelum menyatakan artefak siap diserahkan.
+
 ## Yang bisa / perlu dikerjakan selanjutnya
 
 1. **Lanjutkan investigasi laporan boot VMware** (lihat §5): identifikasi ISO dan
@@ -1117,3 +1325,81 @@ env -u PYTHONPATH TMPDIR="$HOME/.hermes/cache/scratch" \
 [8] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37207497763 — GitHub Patch v7 c636fa6: x86 sukses, enam gagal
 [9] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37214834349 — Windows launcher f392288: native menu passes, symlink tests fail
 [10] https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37219037250 — Windows hard-link fix 9b4d6f9: 52 tests per Python, no skips
+
+
+### 17. Build produksi lokal dan uji VMDK final (2026-10-05)
+
+**Hasil tool aktual:** final VMDK berhasil boot/login dan menerima kode lab dari
+konfigurasi kunci yang sudah ada; level awal free, lalu p-unlimited setelah dua
+reboot dan shutdown/cold restart, dengan System ID sama pada ketiga pemeriksaan.
+VM pemilik tidak dihubungi. Bukti hanya QEMU/TCG, BIOS, IDE, 512 MiB, 1 vCPU,
+-NIC none; bukan VMware, upgrade, throughput atau uji jangka panjang.
+
+- Acuan Git: main HEAD6071aea0a8059aa4378d56d0e41918ef6bd4bf3b, remote sama,
+  0 ahead/behind saat awal lanjutan. Semua perubahan masih lokal; tidak ada
+  commit/push/dispatch/publikasi baru atau penggantian tag/aset lama.
+- Implementasi patch.py: policy sempit chr-x86-7.24.4, loader LICENSE anchor
+  dipertahankan namun tidak dihitung coverage, keyman/mode wajib berubah nyata.
+  Signing/check sys2 tidak dimatikan. Workflow memakai opsi hanya CHR x86 7.24.4.
+- Dua percobaan produksi sebelumnya gagal sebelum signing karena metadata parity.
+  Diagnosis no-key mengonfirmasi caller umask077 menyebabkan 582 file regular
+  diekstrak0755→0700 atau0644→0600. Fix memberi subprocess extraction umask0
+  hanya di child POSIX; mask parent/private directory tetap, parity tetap ketat.
+  Roundtrip vendor893 entry setelah fix:0 delta. patch.py fingerprint final:
+  e2fb985d61733393e0345970c67bf594dbd83676430dfe2a4ae34d0c07a6b035.
+- Review independen source menemukan0 blocker produksi, tetapi1 helper tes
+  mengekstrak tanpa child umask0. Full suite awal077:333total,325pass,7skip,
+  1failure,0error. Suite022:333total326pass7skip. Helper tes diperbaiki;
+  full suite FINAL077:333total326pass7skip0failure/error exit0,166.186s.
+  Skip:4cmd.exe,1Windows rename,2optional Caddy. Policy26/26 normal dan-O
+  dilaporkan implementer sebelum helper fix; parent26/26 normal077 setelahnya.
+  Patch suites75/75 normal/-O; Windows policy12pass14skip (SquashFS/POSIX).
+  Full suite lama331/324pass7skip adalah checkpoint sebelum2 regresi tambahan.
+- Build direct production patch_npk_file, tidak monkeypatch, lolos coverage
+  LICENSE2/signing5, signature custom, metadata guard,582file inventory,
+  loader unchanged, mtime0delta, NPK/kernel readback dan raw/VMDK compare.
+  Partisi BIOS template pembanding dipakai ulang dengan hash pinned; partisi
+  sistem vendor pristine dipatch baru. Bukan eksekusi identik workflow CI atau
+  inventory rilis6format; hanya final VMDK/ZIP lokal.
+- Delivery dist/chr-x86-7.24.4-runtime-fix berisi base BELUM diaktivasi,
+  ZIP, manifest, SHA256SUMS, build-evidence dan runtime-evidence.
+  VMDK SHA2561e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08;
+  ZIP SHA256ad5e18d81144f17d948e67b26cf495ccc9703e6686c8437190ba95230d8c7dd5.
+  /dist/ diabaikan Git. Activated overlay hanya scratch, tidak disertakan.
+- Probe memakai fresh qcow2 dengan backing FINAL VMDK, bukan raw diagnostik.
+  Signature dan ID payload diverifikasi lokal; paste global multiline ditutup
+  baris kosong. Pesan acceptance eksplisit tidak teramati; bukti penerimaan
+  adalah level p-unlimited aktual. Dua guest reboot dan cold restart melalui
+  proses QEMU baru semuanya mempertahankan level serta ID. Dua clean shutdown,
+  QEMU keluar dan hash base tetap. ID/password/license/log console mentah
+  tidak diekspor; password dan keypair tidak diganti. Autentisitas signature
+  vendor masih belum established; signature CUSTOM diverifikasi.
+
+Bukti tahan lama: [build final](evidence/chr-7.24.4-final-build-2026-10-05.json),
+[runtime final](evidence/chr-7.24.4-final-vmdk-runtime-2026-10-05.json),
+[tes/review final](evidence/chr-7.24.4-final-source-tests-2026-10-05.json), dan
+[panduan lokal](chr-7.24.4-local-install.md). Checkpoint review lama mencatat
+kegagalan sebelum fix, bukan verdict akhir. Langkah tersisa di luar bukti lab:
+validasi VMware dan pemakaian lama, serta commit/push/rilis hanya dengan izin
+pemilik untuk tindakan itu. Jangan klaim remote release sudah diperbarui.
+
+Validasi penyerahan terakhir: git diff --check exit0;34link relatif pada
+HANDOFF/panduan/kontrak valid,0missing; pemindaian nilai kunci pinned pada
+dokumen/evidence0hit; dist terkonfirmasi diabaikan Git; hash VMDK/ZIP
+dibaca ulang sesudah uji dan cocok. Tidak ada raw log disalin ke repo.
+
+### 18. Permintaan push dan cakupan semua arsitektur (2026-10-05)
+
+Pemilik meminta push perubahan dan memastikan bukan hanya VMDK: x86,ARM,dll.
+Review read-only aktual: profil all mencakup x86,arm,arm64,mipsbe,mmips,smips,ppc
+dengan37aset firmware+3metadata.27tes workflow dan20matcher lulus,8file Python
+parsed serta diff check lulus. Namun6arsitektur non-x86 masih memiliki kegagalan
+LICENSE coverage historis; matcher immediate yang tersedia hanya i386. Policy
+runtime hanya CHR x86, bukan ISO/install-image. NetInstall memiliki jalur lama
+yang menangkap error individual tanpa guard setara. Tidak ada klaim semua
+produk siap, tidak memperluas exception atau melemahkan guard.
+
+Acuan sebelum commit6071aea; main dan live remote sama. Push diizinkan pemilik
+untuk sesi ini. Source/evidence akan dipush tanpa dist,overlay atau kunci baru.
+GH CLI ditemukan tetapi belum authenticated pada environment default; git push
+--dry-run berhasil. Build all belum dijalankan pada checkpoint ini.

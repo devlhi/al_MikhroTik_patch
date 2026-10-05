@@ -301,7 +301,9 @@ class X86ImmediateReplacementTests(unittest.TestCase):
                 self.assertEqual(log, '')
 
     def test_integration_fixture_imports_work_in_module_and_discovery_modes(self):
-        environment = {name: os.environ[name] for name in ('PATH', 'HOME', 'TMPDIR')
+        environment = {name: os.environ[name]
+                       for name in ('PATH', 'HOME', 'TMPDIR', 'SYSTEMROOT', 'WINDIR',
+                                    'TEMP', 'TMP')
                        if name in os.environ}
         for arguments in (
             ['tests.test_patch_coverage_integration'],

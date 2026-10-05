@@ -3,6 +3,14 @@ name: Patch v7
 on:
   workflow_dispatch:
     inputs:
+      build_profile:
+        description: 'Build all architectures/packages or only the six CHR x86 image formats'
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - chr-x86
       create_draft_release:
         description: 'Create a draft (never published) GitHub Release with the branded assets'
         required: false
@@ -27,9 +35,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86, arm, arm64, mipsbe, mmips, smips, ppc]
+        arch: ${{ fromJSON(inputs.build_profile == 'chr-x86' && '["x86"]' || '["x86","arm","arm64","mipsbe","mmips","smips","ppc"]') }}
 
     steps:
+    - name: Validate build profile
+      env:
+        BUILD_PROFILE: ${{ inputs.build_profile }}
+      run: |
+        case "$BUILD_PROFILE" in
+          all|chr-x86) ;;
+          *) printf '%s\n' 'Unsupported build profile' >&2; exit 1 ;;
+        esac
+
     - name: Checkout
       uses: actions/checkout@v4
 
@@ -73,7 +90,7 @@ jobs:
         echo "ARCH=$ARCH" >> $GITHUB_ENV
 
     - name: Cache mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}.iso
-      if: steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
       id: cache_mikrotik
       uses: actions/cache@v4
       with:
@@ -81,12 +98,12 @@ jobs:
         key: mikrotik-${{ env.LATEST_VERSION }}-${{ matrix.arch }}
 
     - name: Get mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}.iso
-      if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_mikrotik.outputs.cache-hit != 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && steps.cache_mikrotik.outputs.cache-hit != 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
       run: |
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output mikrotik.iso https://download.mikrotik.com/routeros/$LATEST_VERSION/mikrotik-$LATEST_VERSION$ARCH.iso
 
     - name: Patch mikrotik-${{ env.LATEST_VERSION }}${{ env.ARCH }}.iso
-      if: steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && (matrix.arch == 'x86' || matrix.arch == 'arm64')
       run: |
         sudo mkdir iso
         sudo mount -o loop,ro mikrotik.iso iso/
@@ -135,15 +152,18 @@ jobs:
                        new_iso/
         fi
         sudo rm -rf efiboot/
-        sudo mkdir all_packages_iso$ARCH-$LATEST_VERSION
-        sudo cp new_iso/*.npk all_packages_iso$ARCH-$LATEST_VERSION/
+        # Only x86 exports ISO packages. ARM64 uses the downloaded package set below.
+        if [ "${{ matrix.arch }}" == "x86" ]; then
+          sudo mkdir all_packages_iso$ARCH-$LATEST_VERSION
+          sudo cp new_iso/*.npk all_packages_iso$ARCH-$LATEST_VERSION/
+          cd all_packages_iso$ARCH-$LATEST_VERSION/
+          sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk
+          cd ../
+        fi
         sudo rm -rf new_iso/
-        cd all_packages_iso$ARCH-$LATEST_VERSION/
-        sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk
-        cd ../
 
     - name: Cache refind
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       id: cache_refind
       uses: actions/cache@v4
       with:
@@ -151,12 +171,12 @@ jobs:
         key: refind
 
     - name: Get refind
-      if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_refind.outputs.cache-hit != 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && steps.cache_refind.outputs.cache-hit != 'true' && matrix.arch == 'x86'
       run: |
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output refind-bin-0.14.2.zip https://downloads.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip
 
     - name: Cache install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.zip
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       id: cache_install_image
       uses: actions/cache@v4
       with:
@@ -164,12 +184,12 @@ jobs:
         key: install-image-${{ env.LATEST_VERSION }}-${{ matrix.arch }}
 
     - name: Get install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.zip
-      if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_install_image.outputs.cache-hit != 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && steps.cache_install_image.outputs.cache-hit != 'true' && matrix.arch == 'x86'
       run: |
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output install-image.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/install-image-$LATEST_VERSION.zip
 
     - name: Patch install-image-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       run: |
         sudo unzip install-image.zip
         sudo modprobe nbd
@@ -240,7 +260,11 @@ jobs:
         fi
         sudo umount /dev/nbd0p1
         sudo mount /dev/nbd0p2 chr/routeros/
-        sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
+        if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.4" ]; then
+          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 chr/routeros/var/pdb/system/image
+        else
+          sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
+        fi
         sudo umount /dev/nbd0p2
         sudo rm -rf chr/
         sudo qemu-nbd -d /dev/nbd0
@@ -267,7 +291,7 @@ jobs:
         sudo rm chr-$LATEST_VERSION$ARCH-patched.img
 
     - name: Cache NetInstall ${{ env.LATEST_VERSION }}
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       id: cache_netinstall
       uses: actions/cache@v4
       with:
@@ -278,14 +302,14 @@ jobs:
         key: netinstall-${{ env.LATEST_VERSION }}
 
     - name: Get netinstall ${{ env.LATEST_VERSION }}
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86' && steps.cache_netinstall.outputs.cache-hit != 'true'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86' && steps.cache_netinstall.outputs.cache-hit != 'true'
       run: |
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.zip
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall64.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall64-$LATEST_VERSION.zip
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output netinstall.tar.gz https://download.mikrotik.com/routeros/$LATEST_VERSION/netinstall-$LATEST_VERSION.tar.gz
 
     - name: Patch netinstall ${{ env.LATEST_VERSION }}
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
       run: |
         sudo unzip netinstall.zip netinstall.exe
         sudo -E python3 patch.py netinstall netinstall.exe
@@ -298,7 +322,7 @@ jobs:
         sudo tar -czvf netinstall-$LATEST_VERSION-patched.tar.gz netinstall-cli
 
     - name: Cache routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}.npk & all_packages${{ env.ARCH }}-${{ env.LATEST_VERSION }}.zip
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch != 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch != 'x86'
       id: cache_routeros_npk
       uses: actions/cache@v4
       with:
@@ -308,13 +332,13 @@ jobs:
         key: routeros-${{ env.LATEST_VERSION }}-${{ matrix.arch }}
 
     - name: Get routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}.npk & all_packages${{ env.ARCH }}-${{ env.LATEST_VERSION }}.zip
-      if: steps.get_latest.outputs.has_new_version == 'true' && steps.cache_routeros_npk.outputs.cache-hit != 'true' && matrix.arch != 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && steps.cache_routeros_npk.outputs.cache-hit != 'true' && matrix.arch != 'x86'
       run: |
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output routeros-$LATEST_VERSION$ARCH.npk https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION$ARCH.npk
         sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output all_packages$ARCH-$LATEST_VERSION.zip https://download.mikrotik.com/routeros/$LATEST_VERSION/all_packages$ARCH-$LATEST_VERSION.zip
 
     - name: Patch routeros-${{ env.LATEST_VERSION }}${{ env.ARCH }}.npk & all_packages${{ env.ARCH }}-${{ env.LATEST_VERSION }}.zip
-      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch != 'x86'
+      if: inputs.build_profile == 'all' && steps.get_latest.outputs.has_new_version == 'true' && matrix.arch != 'x86'
       run: |
         sudo mkdir all_packages$ARCH-$LATEST_VERSION
         sudo unzip all_packages$ARCH-$LATEST_VERSION.zip -d all_packages$ARCH-$LATEST_VERSION/
@@ -322,7 +346,7 @@ jobs:
         sudo -E python3 patch.py npk routeros-$LATEST_VERSION$ARCH-patched.npk
         NPK_FILES=$(find all_packages$ARCH-$LATEST_VERSION/*.npk)
         for file in $NPK_FILES; do
-          sudo -E python3 npk.py sign $file $file
+          sudo -E python3 patch.py npk "$file"
         done
         cd all_packages$ARCH-$LATEST_VERSION/
         sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk
@@ -338,7 +362,17 @@ jobs:
           --output dist/${{ matrix.arch }} \
           --version "$LATEST_VERSION" \
           --arch "${{ matrix.arch }}" \
+          --profile "${{ inputs.build_profile }}" \
           --changelog CHANGELOG
+
+    - name: Validate CHR x86 VMDK archive integrity
+      id: validate_chr_image
+      if: steps.get_latest.outputs.has_new_version == 'true' && matrix.arch == 'x86'
+      run: |
+        python3 scripts/validate_chr_image.py \
+          --archive "dist/x86/ali-patch-code-x86-chr-$LATEST_VERSION-patched.vmdk.zip" \
+          --manifest dist/x86/manifest.json \
+          --checksums dist/x86/SHA256SUMS
 
     - name: Upload branded artifacts
       if: steps.get_latest.outputs.has_new_version == 'true'
@@ -384,12 +418,13 @@ jobs:
           --dist release-input \
           --output dist \
           --version "$PINNED_VERSION" \
+          --profile "${{ inputs.build_profile }}" \
           --changelog CHANGELOG
 
     - name: Create draft release
       uses: softprops/action-gh-release@v2
       with:
-        name: "Ali Patch Code — RouterOS ${{ env.PINNED_VERSION }} (semua arsitektur, untested)"
+        name: "Ali Patch Code — RouterOS ${{ env.PINNED_VERSION }} (${{ inputs.build_profile == 'chr-x86' && 'CHR x86 only, six formats' || 'semua arsitektur' }}, untested)"
         body_path: dist/RELEASE_NOTES.md
         tag_name: ali-patch-code-${{ env.PINNED_VERSION }}-run${{ github.run_id }}-attempt${{ github.run_attempt }}
         target_commitish: ${{ github.sha }}

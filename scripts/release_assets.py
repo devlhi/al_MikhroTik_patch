@@ -30,8 +30,21 @@ HISTORICAL_STATUS = {
 }
 
 
-def expected_sources(version: str, arch: str) -> list[str]:
-    """Exact output names from patch7.yml, not a permissive glob."""
+PROFILES = ("all", "chr-x86")
+
+
+def profile_architectures(profile: str) -> tuple[str, ...]:
+    if profile not in PROFILES:
+        raise ValueError(f"unsupported profile: {profile}")
+    return ("x86",) if profile == "chr-x86" else ARCHITECTURES
+
+
+def expected_sources(version: str, arch: str, profile: str = "all") -> list[str]:
+    """Exact output names for the explicitly selected release scope."""
+    if arch not in profile_architectures(profile):
+        raise ValueError(f"unsupported architecture for profile {profile}: {arch}")
+    if profile == "chr-x86":
+        return [f"chr-{version}-patched.{fmt}.zip" for fmt in IMAGE_FORMATS]
     suffix = "" if arch == "x86" else f"-{arch}"
     names = [
         f"routeros-{version}{suffix}-patched.npk",
@@ -74,53 +87,63 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     combine.add_argument("--output", type=Path, required=True)
     combine.add_argument("--version", required=True)
     combine.add_argument("--changelog", type=Path, required=True)
+    for command in (stage, combine):
+        command.add_argument("--profile", choices=PROFILES, default="all")
     return parser.parse_args(argv)
 
 
-def stage_assets(args: argparse.Namespace) -> int:
-    if args.arch not in ARCHITECTURES:
-        print(f"unsupported architecture: {args.arch}", file=sys.stderr)
-        return 2
-    if not VALID_VERSION.fullmatch(args.version):
-        print(f"invalid version: {args.version!r}", file=sys.stderr)
-        return 2
-    if not args.changelog.is_file():
-        print(f"changelog not found: {args.changelog}", file=sys.stderr)
-        return 2
-    sources = [args.source / name for name in expected_sources(args.version, args.arch)]
-    for src in sources:
-        if not src.is_file() or src.is_symlink():
-            print(f"artifact not found or not a regular file: {src}", file=sys.stderr)
-            return 3
-    if args.output.exists() or args.output.is_symlink():
-        print(f"output already exists; choose a new directory: {args.output}", file=sys.stderr)
-        return 4
-    changelog = args.changelog.read_text(encoding="utf-8", errors="replace").rstrip()
-    args.output.mkdir(parents=True)
-    staged = []
-    checksum_lines = []
-    for src in sources:
-        branded = f"{BRAND_SLUG}-{args.arch}-{src.name}"
-        dest = args.output / branded
-        shutil.copyfile(src, dest)
-        digest = sha256_of(dest)
-        staged.append({"source": src.name, "filename": branded,
-                       "size": dest.stat().st_size, "sha256": digest})
-        checksum_lines.append(f"{digest}  {branded}")
-    (args.output / "SHA256SUMS").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")
-    manifest = {"brand": BRAND, "routeros_version": args.version,
-                "architecture": args.arch, "boot_tested": False, "assets": staged}
-    (args.output / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    notes = "\n".join([
-        f"# {BRAND} — RouterOS {args.version} — {args.arch}", "",
-        "Hasil patch BELUM diuji boot pada perangkat atau VM.",
-        "Gunakan hanya di lab dengan rencana pemulihan; untuk produksi gunakan lisensi resmi.", "",
-        HISTORICAL_STATUS[args.arch], "",
-        "## Checksum", "", "Lihat SHA256SUMS pada rilis ini.", "",
-        f"## Changelog RouterOS {args.version}", "", changelog, "",
-    ])
-    (args.output / "RELEASE_NOTES.md").write_text(notes, encoding="utf-8")
+def stage_assets(args: argparse.Namespace, profile: str = "all") -> int:
+    profile = getattr(args, "profile", profile)
+    try:
+        names = expected_sources(args.version, args.arch, profile)
+        if not VALID_VERSION.fullmatch(args.version):
+            raise CombineError(f"invalid version: {args.version!r}", 2)
+        _reject_symlink_ancestors(args.changelog, "changelog")
+        _expect_regular(args.changelog, "changelog")
+        _reject_symlink_ancestors(args.source, "input root")
+        _reject_symlink_ancestors(args.output, "output path")
+        if args.output.exists() or args.output.is_symlink():
+            raise CombineError(
+                f"output already exists; choose a new directory: {args.output}", 4)
+        entries = []
+        staged = []
+        for name in names:
+            src = args.source / name
+            _expect_regular(src, "artifact")
+            size = src.stat().st_size
+            if size <= 0:
+                raise CombineError(f"artifact must be nonempty: {src}", 3)
+            digest = sha256_of(src)
+            branded = branded_filename(args.arch, name)
+            entries.append({"source": src, "dest": branded,
+                            "size": size, "sha256": digest})
+            staged.append({"source": name, "filename": branded,
+                           "size": size, "sha256": digest})
+        changelog = args.changelog.read_text(encoding="utf-8", errors="replace").rstrip()
+        manifest = {"brand": BRAND, "routeros_version": args.version,
+                    "architecture": args.arch, "boot_tested": False, "assets": staged}
+        scope = args.arch
+        if profile == "chr-x86":
+            manifest["profile"] = profile
+            scope = "CHR x86 experimental"
+        notes = "\n".join([
+            f"# {BRAND} — RouterOS {args.version} — {scope}", "",
+            "Hasil patch BELUM diuji boot pada perangkat atau VM.",
+            "Gunakan hanya di lab dengan rencana pemulihan; untuk produksi gunakan lisensi resmi.", "",
+            HISTORICAL_STATUS[args.arch], "",
+            "## Checksum", "", "Lihat SHA256SUMS pada rilis ini.", "",
+            f"## Changelog RouterOS {args.version}", "", changelog, "",
+        ])
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        staging = Path(tempfile.mkdtemp(prefix=".ali-combine-", dir=args.output.parent))
+        try:
+            _materialize({"entries": entries, "manifest": manifest, "notes": notes}, staging)
+            _publish_output(staging, args.output)
+        finally:
+            _remove_staging(staging, staging.parent)
+    except (OSError, CombineError, ValueError) as error:
+        print(f"release staging failed: {error}", file=sys.stderr)
+        return error.code if isinstance(error, CombineError) else 1
     print(f"staged {len(staged)} {args.arch} assets into {args.output}")
     return 0
 
@@ -159,7 +182,8 @@ def _expect_regular(path: Path, description: str) -> None:
         raise CombineError(f"{description} not a regular file: {path}", 5)
 
 
-def _validated_manifest(path: Path, arch: str, version: str) -> dict:
+def _validated_manifest(path: Path, arch: str, version: str,
+                        profile: str = "all") -> dict:
     where = f"manifest invalid: {path}"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -168,6 +192,10 @@ def _validated_manifest(path: Path, arch: str, version: str) -> dict:
     if not isinstance(data, dict):
         raise CombineError(f"{where}: top level is not a JSON object")
     keys = {"brand", "routeros_version", "architecture", "boot_tested", "assets"}
+    if profile == "chr-x86":
+        keys.add("profile")
+        if data.get("profile") != profile:
+            raise CombineError(f"{where}: profile must be {profile!r}")
     if set(data) != keys:
         raise CombineError(f"{where}: keys must be exactly {sorted(keys)}")
     if data["brand"] != BRAND:
@@ -182,7 +210,7 @@ def _validated_manifest(path: Path, arch: str, version: str) -> dict:
     if not isinstance(assets, list):
         raise CombineError(f"{where}: assets must be a list")
     expected = {branded_filename(arch, name): name
-                for name in expected_sources(version, arch)}
+                for name in expected_sources(version, arch, profile)}
     if len(assets) != len(expected):
         raise CombineError(
             f"{where}: {len(assets)} asset entries, expected {len(expected)}")
@@ -202,9 +230,9 @@ def _validated_manifest(path: Path, arch: str, version: str) -> dict:
             raise CombineError(
                 f"{where}: {filename!r} is not an expected asset of {arch}")
         size = entry["size"]
-        if isinstance(size, bool) or not isinstance(size, int) or size < 0:
+        if isinstance(size, bool) or not isinstance(size, int) or size <= 0:
             raise CombineError(f"{where}: size for {filename!r} must be a "
-                               "nonnegative integer")
+                               "positive integer")
         digest = entry["sha256"]
         if not isinstance(digest, str) or not SHA256_HEX.fullmatch(digest):
             raise CombineError(f"{where}: sha256 for {filename!r} must be "
@@ -215,10 +243,13 @@ def _validated_manifest(path: Path, arch: str, version: str) -> dict:
     if seen != set(expected):
         raise CombineError(
             f"{where}: missing asset entries {sorted(set(expected) - seen)}")
-    return {"brand": BRAND, "routeros_version": version, "architecture": arch,
-            "boot_tested": False,
-            "assets": [{key: entry[key] for key in ("source", "filename", "size", "sha256")}
-                       for entry in sorted(assets, key=lambda item: item["filename"])]}
+    validated = {"brand": BRAND, "routeros_version": version, "architecture": arch,
+                 "boot_tested": False,
+                 "assets": [{key: entry[key] for key in ("source", "filename", "size", "sha256")}
+                            for entry in sorted(assets, key=lambda item: item["filename"])]}
+    if profile == "chr-x86":
+        validated["profile"] = profile
+    return validated
 
 
 def _validated_checksums(path: Path, verified: dict[str, str]) -> None:
@@ -247,8 +278,13 @@ def _validated_checksums(path: Path, verified: dict[str, str]) -> None:
             f"{where}: missing={missing} extra={extra} stale={stale}")
 
 
-def _preflight_combine(args: argparse.Namespace) -> dict:
-    """Validate every input for every architecture before anything is copied."""
+def _preflight_combine(args: argparse.Namespace, profile: str = "all") -> dict:
+    """Validate every input in the explicitly selected scope before copying."""
+    profile = getattr(args, "profile", profile)
+    try:
+        architectures = profile_architectures(profile)
+    except ValueError as error:
+        raise CombineError(str(error), 2) from None
     if not VALID_VERSION.fullmatch(args.version):
         raise CombineError(f"invalid version: {args.version!r}", 2)
     _reject_symlink_ancestors(args.changelog, "changelog")
@@ -277,22 +313,22 @@ def _preflight_combine(args: argparse.Namespace) -> dict:
         raise CombineError(f"changelog unreadable: {error}") from None
 
     present = {entry.name for entry in dist.iterdir()}
-    for arch in ARCHITECTURES:
+    for arch in architectures:
         if arch not in present:
             raise CombineError(
                 f"missing architecture staging directory: {dist / arch}", 5)
-    for name in sorted(present - set(ARCHITECTURES)):
+    for name in sorted(present - set(architectures)):
         raise CombineError(f"unexpected entry in input root: {dist / name}")
 
     manifests: list[dict] = []
     entries: list[dict] = []
     destinations: set[str] = set()
-    for arch in ARCHITECTURES:
+    for arch in architectures:
         arch_dir = dist / arch
         if arch_dir.is_symlink():
             raise CombineError(f"symlink not allowed: {arch_dir}", 8)
         expected_assets = {branded_filename(arch, name)
-                           for name in expected_sources(args.version, arch)}
+                           for name in expected_sources(args.version, arch, profile)}
         expected_entries = expected_assets | set(COMBINE_METADATA)
         actual = {entry.name for entry in arch_dir.iterdir()}
         for metadata in COMBINE_METADATA:
@@ -311,7 +347,7 @@ def _preflight_combine(args: argparse.Namespace) -> dict:
             raise CombineError(
                 f"unreadable metadata file: {arch_dir / 'RELEASE_NOTES.md'}: "
                 f"{error}") from None
-        manifest = _validated_manifest(arch_dir / "manifest.json", arch, args.version)
+        manifest = _validated_manifest(arch_dir / "manifest.json", arch, args.version, profile)
         verified: dict[str, str] = {}
         for entry in manifest["assets"]:
             asset_path = arch_dir / entry["filename"]
@@ -332,11 +368,15 @@ def _preflight_combine(args: argparse.Namespace) -> dict:
 
     manifest = {"brand": BRAND, "routeros_version": args.version,
                 "architectures": manifests, "boot_tested": False}
-    notes = ["# " + BRAND + " — RouterOS " + args.version + " — semua arsitektur", "",
+    scope = "semua arsitektur"
+    if profile == "chr-x86":
+        manifest["profile"] = profile
+        scope = "CHR x86 experimental"
+    notes = ["# " + BRAND + " — RouterOS " + args.version + " — " + scope, "",
              "Hasil patch BELUM diuji boot pada perangkat atau VM.",
              "Gunakan hanya di lab dengan rencana pemulihan; "
              "untuk produksi gunakan lisensi resmi.", ""]
-    for arch in ARCHITECTURES:
+    for arch in architectures:
         notes += [f"## {arch}", "", HISTORICAL_STATUS[arch], ""]
     notes += ["## Checksum", "", "Lihat SHA256SUMS pada rilis ini.", "",
               f"## Changelog RouterOS {args.version}", "", changelog_text, ""]
@@ -345,7 +385,7 @@ def _preflight_combine(args: argparse.Namespace) -> dict:
 
 
 def _remove_staging(staging: Path, parent: Path) -> None:
-    """Delete only the temporary directory combine itself created."""
+    """Delete only the temporary directory this operation created."""
     if (staging.parent == parent and staging.name.startswith(".ali-combine-")
             and staging.is_dir() and not staging.is_symlink()):
         shutil.rmtree(staging, ignore_errors=True)
@@ -384,6 +424,13 @@ def _publish_output(staging: Path, output: Path) -> None:
     if output.exists() or output.is_symlink():
         raise CombineError(
             f"output already exists; choose a new directory: {output}", 4)
+    if sys.platform == "win32":
+        # Windows rename refuses an existing destination, including empty dirs.
+        # Unlike POSIX rename, this also protects against creation after precheck.
+        os.rename(staging, output)
+        return
+    if sys.platform != "darwin" and not sys.platform.startswith("linux"):
+        raise OSError(errno.ENOTSUP, "atomic non-replacing rename is unavailable")
     libc = ctypes.CDLL(None, use_errno=True)
     if sys.platform == "darwin":
         rename = libc.renamex_np
@@ -405,9 +452,9 @@ def _publish_output(staging: Path, output: Path) -> None:
         raise OSError(error, os.strerror(error), str(output))
 
 
-def combine_assets(args: argparse.Namespace) -> int:
+def combine_assets(args: argparse.Namespace, profile: str = "all") -> int:
     try:
-        plan = _preflight_combine(args)
+        plan = _preflight_combine(args, profile)
     except CombineError as error:
         print(error, file=sys.stderr)
         return error.code
@@ -422,10 +469,11 @@ def combine_assets(args: argparse.Namespace) -> int:
         _materialize(plan, staging)
         _publish_output(staging, output)
     except (OSError, CombineError) as error:
-        _remove_staging(staging, staging_parent)
         print(f"combine failed: {error}", file=sys.stderr)
         return 1
-    print(f"combined {len(ARCHITECTURES)} architectures into {output}")
+    finally:
+        _remove_staging(staging, staging_parent)
+    print(f"combined {len(plan['manifest']['architectures'])} architectures into {output}")
     return 0
 
 

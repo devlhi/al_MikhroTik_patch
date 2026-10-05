@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "runtime_policy": "chr-x86-7.24.4",
+  "head": "6071aea0a8059aa4378d56d0e41918ef6bd4bf3b",
+  "code_sha256": {
+    ".github/workflows/patch7.yml": "a5eba51deb82847696cf764eb769e0b593916c5ce660feef04cb0dad38e57bc7",
+    "deploy/render_panel_config.py": "b47091768228d09318eee37942d28dc399e11a95c4ab0be8c12168eee2b0f63f",
+    "license.py": "6c5df49e12decc006a5e13d5e09b49aec68ed60591370105aeacbbc4fa2688f6",
+    "mikro.py": "07c6ec0fc3d0b52794b177aa8c1f7b7fa88dcc86043320a115a10a4fadd4a817",
+    "npk.py": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274",
+    "patch.py": "e2fb985d61733393e0345970c67bf594dbd83676430dfe2a4ae34d0c07a6b035",
+    "scripts/license_cli.py": "68229c7f9d4638ff40810b1afb1d23027765ab6b18f29e7c4ac72a7cc1fe879b",
+    "scripts/license_server.py": "67b2d191bbdb7b22e97027862ebb58919750e81a41ebb054e406b5dac880e8a9",
+    "scripts/license_util.py": "b9d7d5a3cb2b5045c6275ecd0176cc390333042d423958c6cd4a21db78098254",
+    "scripts/release_assets.py": "029d07d977858f5469157719aebc4ea255701232ade859efdbdf98795c097a5e",
+    "scripts/sfp_diagnostics.py": "eacb47fb1d2adbbd9899d925da05d5e205de6b989973cd13bd704facbb40071b",
+    "scripts/validate_chr_image.py": "e796a77d52902b2f2ec6c6f4a1180ae3b0e153654fad535aa8071aa8b3065f7e",
+    "sha256.py": "3dda603db9fb65d63eb26d6a9edad6587df324bb6869ac22c95ccdee55c292df",
+    "toyecc/ASN1.py": "8d1e62030c91e99ac303b362b3e4dc2665478aaae174da10dd79b3f7263a947d",
+    "toyecc/AffineCurvePoint.py": "957c10db7f92207a17ab0924e99307a68a73399c9d14f38c0c14496a01953ff5",
+    "toyecc/CRT.py": "c1401dd488f7d28f718793314754086bcee8a8fccda364e9ad0dbe21b0ba3c3b",
+    "toyecc/CurveDB.py": "456c1170226242421ea0b264b040b99e7083a4cb1cbdaf92b3bde65544dac6d9",
+    "toyecc/CurveOps.py": "b560473547d81974f37b5b248168310d361030e8a21509d1cad3d3b1a9a17f8b",
+    "toyecc/CurveQuirks.py": "9212a4832c85ff221ee0ba5eb0c5b764490d1bcc8f586823f02abe1ebffcc36c",
+    "toyecc/DivisionPolynomial.py": "7b4a9adb38828a955027b29f059f79bf8a7fc6fc2c7c097acf7fd1b0fead10a9",
+    "toyecc/DocInherit.py": "b44129ffc1089cf8986324f3407165bc850581077aab6f5aea8e6218ec42cb1f",
+    "toyecc/ECPrivateKey.py": "ff2173edfc1a3d4d190c12363e2a022415a89ec0519c2ceed66ba2f52566e154",
+    "toyecc/ECPublicKey.py": "50fc8a9374f337fdf71da9c00e61b6834db917339ccb89593d4947ab7cf583b3",
+    "toyecc/EllipticCurve.py": "7f22641d3f0e069ca16a8fdd5511839b24cf198d84b6633666f602125334ac8d",
+    "toyecc/Exceptions.py": "cd200dfbbd8f22362f91a00672c6d25a2188bb6b2df92f285cfd2e50869ff619",
+    "toyecc/FieldElement.py": "56fcc7785063aab123c2a06d7ef99e5568582949dac958823324752cd9a52a0d",
+    "toyecc/MontgomeryCurve.py": "9721851547678b3f918cf8acb27bea4140e537e30b3cdf67547a327ebab39243",
+    "toyecc/PointOps.py": "3468375fdef08b10b1c1b5f8aaf6e305d871725f61bb1c442edcd0fc8aa88d7c",
+    "toyecc/Polynomial.py": "8e8e7e17481ee314190f8f8a045b2e1ef91a3758bf733c1f73bc7fe819c1d0f7",
+    "toyecc/PrivKeyOps.py": "61e831760e99facecea853498ab3af63ff8cca645f94c50f8ae76d8ec6cf7ca3",
+    "toyecc/PubKeyOps.py": "171d24229454f1c84d9bb8f6d1823e0c4d7029e756d2768e930d6e4327579d62",
+    "toyecc/Random.py": "b41df3ea63a78e5e7945b190332a25b384ade9d2f64667737c0a2277041907ef",
+    "toyecc/ShortWeierstrassCurve.py": "20b3014b79a5f486c8e2da10f2ac8e2224286171d93d94975dea7d7c89d65bfa",
+    "toyecc/Singleton.py": "8957be8f4ec790301da287f0fce5386fabc2f3d77776087e5579eb1f8895d48d",
+    "toyecc/Tools.py": "437b022d7f052f15606dcc37c7002eaa64510ec72e8daba16e03544746a6c049",
+    "toyecc/TwistedEdwardsCurve.py": "91318c611fffb82edd57785dc1c552726e5d537a8edba5614975fc25221d85d1",
+    "toyecc/__init__.py": "854030a23ef9068add4aa43e875f580e6e2b27251de4ce78f93904c3e7a008f0"
+  },
+  "harness_sha256": "beb38f7c61dbc2c0cd243f7e73d28b5bebfd7cca5c67b7be7e5fc7b483cf4a8b",
+  "tool_sha256": {
+    "debugfs": {
+      "path": "/usr/sbin/debugfs",
+      "sha256": "1e83118cc9582afcad2711fbb7f40f56668adccb386d988cb6d9ad5c2d001049"
+    },
+    "unsquashfs": {
+      "path": "/usr/bin/unsquashfs",
+      "sha256": "b305985eb764b6d0ef757571e3e44044ebf71c827c4263efe576e9e14b4abcfb"
+    },
+    "mksquashfs": {
+      "path": "/usr/bin/mksquashfs",
+      "sha256": "47d5c1af3da11864e64c9dc6bb4e568719dcc315e6a744e79381ce3374fb7393"
+    },
+    "qemu-img": {
+      "path": "/home/djundev/.cache/mikpatch-audit/tools/usr/bin/qemu-img",
+      "sha256": "634320b91165669917123e8e79cce1c4d00cee0a4aa4d662d7c0a8186479b3fb"
+    }
+  },
+  "source_vendor_signature_authenticity": "Not established; HTTPS acquisition, CRC and local hashes only",
+  "source_raw_sha256": "e87eaa06af9e29f5946d951a0595de56d6e8a972d023e34e56583412265063e7",
+  "source_npk_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+  "boot_template_sha256": "e330ef4217de61817867c64631cbddd2072301f01547083cfc687d28bd068227",
+  "source_unchanged": true,
+  "production_npk_sha256": "12466062dea4778637029ffafdd347018bdd89dded8ff297b7e9a60d192ce608",
+  "production_raw_sha256": "43335c5c51b4ffa47902954d710b7ceb2a1d149db45dc0abc25e8a31d9b7cd2a",
+  "vmdk_sha256": "1e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08",
+  "vmdk_path": "/mnt/c/laragon/www/mikpatch/dist/chr-x86-7.24.4-runtime-fix/chr-7.24.4-patched.vmdk",
+  "custom_signature_verified": true,
+  "coverage": [
+    {
+      "package": "system",
+      "status": "coverage-passed",
+      "replacements": [
+        {
+          "mapping_index": 1,
+          "kernel": 0,
+          "squashfs": 2,
+          "total": 2
+        },
+        {
+          "mapping_index": 2,
+          "kernel": 2,
+          "squashfs": 3,
+          "total": 5
+        }
+      ],
+      "scope": "literal replacement coverage only; boot and activation untested",
+      "runtime_policy": "chr-x86-7.24.4",
+      "preserved_anchors": [
+        {
+          "path": "nova/bin/loader",
+          "role": "LICENSE",
+          "count": 1,
+          "counted_as_coverage": false
+        }
+      ]
+    }
+  ],
+  "squashfs_ownership": {
+    "vendor": {
+      "inodes_including_root": 893,
+      "uid_gid_pairs": [
+        "0/0"
+      ]
+    },
+    "production": {
+      "inodes_including_root": 893,
+      "uid_gid_pairs": [
+        "0/0"
+      ]
+    }
+  },
+  "content_changes": [
+    {
+      "path": "bndl/security/nova/bin/ssh",
+      "before": {
+        "mode": 448,
+        "mtime_ns": 1789559743000000000,
+        "kind": "file",
+        "size": 212732,
+        "sha256": "3d6408c29924612152198883cd058ba99dfe1ce920d2f4aded80aa0872a64363"
+      },
+      "after": {
+        "mode": 448,
+        "mtime_ns": 1789559743000000000,
+        "kind": "file",
+        "size": 212732,
+        "sha256": "b85da46c57882541eb66b9906d47631b772ba7277faae3c6df63f8519d05866b"
+      }
+    },
+    {
+      "path": "nova/bin/installer",
+      "before": {
+        "mode": 448,
+        "mtime_ns": 1789558505000000000,
+        "kind": "file",
+        "size": 125084,
+        "sha256": "08c5e749d93995ebf7d64377d02d69217ec6bbe91f3ade122e9f0ff2f456f5fd"
+      },
+      "after": {
+        "mode": 448,
+        "mtime_ns": 1789558505000000000,
+        "kind": "file",
+        "size": 125084,
+        "sha256": "bf14614c44e5e6a251734dc47900045df216ec5b1121579c1785aa86648fad9b"
+      }
+    },
+    {
+      "path": "nova/bin/keyman",
+      "before": {
+        "mode": 448,
+        "mtime_ns": 1789558491000000000,
+        "kind": "file",
+        "size": 55444,
+        "sha256": "ace0e5fa8de1fdd4098540102b59ae0ab734f2c8bc9bf13a0c86103c2b419ac0"
+      },
+      "after": {
+        "mode": 448,
+        "mtime_ns": 1789558491000000000,
+        "kind": "file",
+        "size": 55444,
+        "sha256": "64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd"
+      }
+    },
+    {
+      "path": "nova/bin/mode",
+      "before": {
+        "mode": 448,
+        "mtime_ns": 1789558564000000000,
+        "kind": "file",
+        "size": 75688,
+        "sha256": "f55ae4709fcdf62227fba0985aee8429058d1543d048751cedd86485cd67102a"
+      },
+      "after": {
+        "mode": 448,
+        "mtime_ns": 1789558564000000000,
+        "kind": "file",
+        "size": 75688,
+        "sha256": "786a3309f7ad779d672da546217ed1fb1e6e49b0b21f6606fd4047c0a51eeeda"
+      }
+    },
+    {
+      "path": "nova/bin/sys2",
+      "before": {
+        "mode": 448,
+        "mtime_ns": 1789558572000000000,
+        "kind": "file",
+        "size": 289948,
+        "sha256": "719e9ca06cfc9939d72677f62917f8c07111fc7696f7a91d7b974ee6e2b486b8"
+      },
+      "after": {
+        "mode": 448,
+        "mtime_ns": 1789558572000000000,
+        "kind": "file",
+        "size": 289948,
+        "sha256": "809f78beb72981a35a3c3cd1936096344487edfed67b2e4add93e1e8c5375187"
+      }
+    }
+  ],
+  "inventory_count": 892,
+  "regular_files": 582,
+  "loader_unchanged": true,
+  "mtime_differences": [],
+  "installed_kernel_readback_equal": true,
+  "installed_npk_readback_equal": true,
+  "qemu_image_compare_equal": true,
+  "template_kernel_equal_fresh_production_kernel": true,
+  "workflow_differences": [
+    "No privileged mount/nbd/extlinux invocation: proven candidate BIOS p1 reused with pinned hash.",
+    "Pristine vendor p2 patched offline with debugfs; no candidate p2 reuse.",
+    "EFI taken directly from freshly production-patched FILE_CONTAINER, not separate kernel CLI.",
+    "No harness metadata restoration, tool flags injection or production function overrides.",
+    "Only VMDK delivered; single-asset manifest follows validate_chr_image format, not six-format release_assets combine profile."
+  ],
+  "validator": {
+    "archive": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+    "archive_sha256": "ad5e18d81144f17d948e67b26cf495ccc9703e6686c8437190ba95230d8c7dd5",
+    "image": "chr-7.24.4-patched.vmdk",
+    "image_sha256": "1e86aad1c10fe42294bac28be9597922579989ed210f3d5aed87eff83bd7fa08",
+    "image_size": 54591488,
+    "zip_crc_verified": true,
+    "boot_tested": false,
+    "activation_tested": false,
+    "scope": "byte integrity and ZIP structure only"
+  },
+  "boot_tested": false,
+  "activation_tested": false,
+  "no_activated_overlay_in_delivery": true,
+  "date": "2026-10-05"
+}
