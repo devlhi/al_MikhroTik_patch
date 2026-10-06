@@ -1,5 +1,10 @@
 # HANDOFF — Ali Patch Code
 
+**Laporan pemilik terbaru (§29): setelah memilih ROS untuk lisensi x86, pemilik
+menyatakan berhasil dan mengirim screenshot. Ini laporan pemilik, bukan verifikasi
+agent atas screenshot atau boot/aktivasi aset CI tertentu. Nama/hash media,
+level lisensi dan persistence sesudah reboot belum dikonfirmasi.**
+
 **Publikasi NEW v2 selesai 2026-10-06 (§28): source/build `369f5b9` dipush
 hanya main melalui cabang sementara lokal yang sudah dihapus. CI37407917092
 x86-all sukses; prerelease NEW v2 ID404279452 terbit, bukan Latest. Seluruh21
@@ -2453,3 +2458,31 @@ working diff--check exit0. Suite tidak diulang karena hanya docs/evidence.
 Console helper coverage final memakai istilah system identical: yang tepat
 **non-signature parts equal**, bukan entire wire; durable JSON mencatat false
 untuk entire-wire equality dan signature-only difference.
+
+### 29. Laporan pemilik: patch lisensi ROS x86 berhasil
+
+Sesudah penjelasan bahwa RouterOS x86 installer memakai pilihan ROS/Software ID,
+bukan CHR/System ID, pemilik menyatakan "matnap berhasil" dan mengirim screenshot.
+Dalam konteks percakapan ini laporan ditafsirkan sebagai keberhasilan patch lisensi
+ROS x86 pada instalasi pemilik; bukan hasil pengujian baru oleh agent.
+
+Acuan repo saat pencatatan `e750b9cf19b344ec088a64a432c9e75e0851cdad`, main lokal,
+cached dan live remote sama, divergence 0/0; working tree awal hanya .zcode untracked.
+Build rilis NEW v2 tetap369f5b9 (§28). Nama/hash file yang dipasang, bentuk media,
+model hardware/hypervisor, level lisensi, serta persistence setelah reboot belum
+dikonfirmasi. Screenshot ada pada cache sesi saja; model tidak dapat memeriksa
+isinya secara visual. Tidak menyalin gambar atau mengekspor Software ID/kredensial/
+blok lisensi. Tidak mengklaim screenshot membuktikan level tertentu atau menjamin
+seluruh aset/arsitektur/SFP.
+
+Hanya HANDOFF diperbarui lokal, tanpa commit/push, branch, perubahan firmware,
+tes suite atau akses perangkat baru. Laporan ini tidak mengubah bukti tool CI
+§28 yang build/integrity-only. Persistence setelah reboot/cold start dan identitas
+media diperlukan bila ingin memperkuat bukti runtime pemilik di kemudian hari.
+
+Pemilik kemudian meminta push catatan ini. Preflight main/local/live remote
+masih e750b9c, divergence 0/0; perubahan hanya HANDOFF dan .zcode untracked.
+Push hanya mencakup HANDOFF melalui cabang sementara lokal lalu fast-forward
+main; .zcode dikecualikan. Sebanyak 66 link lokal valid, diff diperiksa untuk
+informasi sensitif dan whitespace. Suite tidak diulang karena dokumentasi saja.
+Tidak ada build baru, perubahan tag/aset NEW v2 atau akses perangkat.
