@@ -1,10 +1,12 @@
 # HANDOFF — Ali Patch Code
 
-**PRECOMMIT publikasi NEW v2, 2026-10-06 (§28): pemilik menyetujui cabang
-sementara LOKAL saja, fast-forward main, hapus cabang lokal yang sudah merged,
-lalu push hanya main. Scope x86-all 18 produk, prerelease lab bukan Latest;
-bukan rilis non-x86/universal. HEAD/live awal `60ed61c`. Source 76/76 cocok
-raw hash regresi §26; belum ada build CI NEW v2 atau publikasi pada checkpoint ini.**
+**Publikasi NEW v2 selesai 2026-10-06 (§28): source/build `369f5b9` dipush
+hanya main melalui cabang sementara lokal yang sudah dihapus. CI37407917092
+x86-all sukses; prerelease NEW v2 ID404279452 terbit, bukan Latest. Seluruh21
+aset (18produk+3metadata) diunduh dan size/SHA/GitHub digest diverifikasi;
+15ZIP CRC, 13NPK signature, 12disk standalone/sector equivalence lulus.
+Tidak ada boot/login/aktivasi baru pada aset CI. Rilis/tag lama89aset tetap utuh;
+Latest tetap7.24.4. Batas cooldown awal/USBUEFI/non-x86/hardware/SFP tetap terbuka.**
 
 **Status terbaru 2026-10-06 (§26): HEAD/live main `60ed61c`; perubahan lokal,
 belum commit/push/rilis NEW v1. Defect katalog EFI ISO diperbaiki dengan xorriso.
@@ -2391,3 +2393,63 @@ detached offline; TILE inventory saja. Tidak memindahkan tag/replace aset lama.
 Tambahan tes baru Windows sebelum commit: workflow39 = 38pass/1skip
 (xorriso unavailable), release-assets66 = 65pass/1skip (POSIX read permissions),
 0failure/error keduanya. Run penuh Windows maupun full WSL tidak diulang.
+
+**HASIL FINAL §28, 2026-10-06:** source reviewed38file dikomit melalui
+`publish-new-v2-local-20261006-324bbb00`, main di-fast-forward, cabang lokal
+dihapus, push hanya main. Local/live main dikonfirmasi
+`369f5b94ba041abbd52b46783051ec56294ffc57`. Staged source cocok bytes reviewed
+setelah normalisasi Git LF/CRLF; .zcode/dist/biner/rawlog tidak dikomit.
+
+[CI37407917092](https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37407917092)
+profil x86-all/draft true berhasil: patch x86 8m40s, release1m4s. Cache input
+restore; semua patch produksi dan guard dijalankan, bukan reuse output. Runner
+memberi warning Node20 deprecated/forced24 dan migrasi ubuntu-latest; bukan build
+failure. Draft ID404279452 menghasilkan21aset:18produk+3metadata.
+
+[NEW v2 prerelease](https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run37407917092-attempt1)
+berjudul "NEW v2 — Ali Media Patch 7.24.4 — x86 installers + CHR (lab)" telah
+diterbitkan (`draft=false`, `prerelease=true`, `make_latest=false`). Tag tetap
+`ali-patch-code-7.24.4-run37407917092-attempt1` menunjuk build commit369f5b9,
+bukan commit dokumentasi penutupan. Tidak mengganti aset/tag terdahulu.
+
+Unduhan semua21aset ke directory baru eksklusif
+`dist/new-v2-ci-37407917092-20261006T032324Z`; size/SHA/GitHub digest21/21 cocok.
+Inventory18 cocok expected_sources x86-all; manifest dan checksum metadata cocok.
+15ZIP CRC lulus; satu gzip/tar dibaca lengkap. NPK standalone+12archive signature
+13/13 valid. Readback system keyman/mode masing-masing custom anchor1/vendor0;
+loader vendor1/custom0 sengaja retained dan tidak dihitung coverage. Standalone
+dan archive berbeda signature bytes hasil signing independen; semua part selain
+SIGNATURE sama. Asumsi equality seluruh wire awal gagal lalu dikoreksi tanpa
+perubahan source/artefak. Tidak recompute exhaustive kernel/signing counts.
+
+CHR6+install-image6 container standalone/no external references, format/size
+serta guest sector equivalence lulus WSL qemu-img8.2.2. Structural check8pass;
+raw/VHD4 unsupported-by-format, bukan pass palsu. Installer disk bukan sistem
+terpasang. NPK/signature/integrity tidak membuktikan boot/aktivasi. Aset CI baru
+**tidak diuji boot/login/aktivasi**, hasil ISO lokal v2/Level6v1 tidak dibawa.
+
+Rilis lama3 metadata/tag dan89aset (9/40/40) sebelum/sesudah tetap sama (ID/nama/
+size/digest/state/timestamps; download counters dikecualikan karena mutable).
+Latest API tetap release401538288 tag7.24.4.
+[Bukti durable publikasi](evidence/new-v2-x86-publication-2026-10-06.json)
+menyimpan semua hashes, URL/commit/tag, signature/coverage/disk results dan limits.
+
+Kendala harness publikasi: lookup draft by tags endpoint gagal (unpublished);
+lookup list release berhasil. WSL path-conversion shell probe dan parser sed
+gagal, diganti script path absolut dengan MSYS_NO_PATHCONV. Lookup qemu-img
+full filesystem dihentikan karena lambat; path qualified dari evidence berhasil.
+Tidak ada build failure atau perubahan perilaku tambahan. Tes full/boot tidak
+diulang untuk docs closure; hasil Windows39/66 di atas aktual sesi ini.
+
+Limits tetap: cooldown initial unresolved; USBUEFI target unresolved; exactv2
+activation, baremetal/NVMe/SecureBoot/network/nativeSFP/non-x86 runtime tidak diuji.
+ARM/MIPS/PPC offline detached, TILE inventory only. Langkah berikut bila diperlukan:
+runtime aset CI exact dengan hash/config tercatat, diagnosis USBUEFI/cooldown,
+uji hardware/SFP terpisah. Publikasi scoped selesai, bukan dukungan universal.
+
+Closure audit sebelum commit docs:3file disclosure scan (configured key values/
+secret markers) nol, link relatif dua dokumen valid,48JSON evidence parse,
+working diff--check exit0. Suite tidak diulang karena hanya docs/evidence.
+Console helper coverage final memakai istilah system identical: yang tepat
+**non-signature parts equal**, bukan entire wire; durable JSON mencatat false
+untuk entire-wire equality dan signature-only difference.

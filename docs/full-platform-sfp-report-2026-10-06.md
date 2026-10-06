@@ -303,12 +303,19 @@ klaim build dapat direproduksi byte-identik dari satu commit remote saat ini.
 
 ## Status penyerahan
 
-**Checkpoint publikasi NEW v2 2026-10-06:** pemilik menyetujui publikasi
-prerelease lab `x86-all` (18 produk), bukan menunggu klaim universal. Izin cabang
-sementara hanya lokal untuk commit/fast-forward main lalu dihapus; push hanya
-main. Precommit ini belum merupakan build/publikasi CI. Hasil berikut adalah
-status runtime lokal historis, bukan validasi biner CI yang akan dibangun.
-Hasil akhir publikasi dicatat pada HANDOFF §28.
+**Publikasi NEW v2 selesai 2026-10-06:** source `369f5b9` dipush hanya main,
+CI [37407917092](https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37407917092)
+x86-all berhasil. [NEW v2 prerelease lab](https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run37407917092-attempt1)
+memuat18produk+3metadata; seluruh21aset diunduh, size/SHA/GitHub digest cocok,
+15ZIP CRC/13NPK signature/12disk container-sector equivalence lulus. Empat
+structural checks raw/VHD unsupported; delapan format lain pass. Ini bukan
+runtime: **tidak ada boot/login/aktivasi ulang pada aset CI**. ISO lokal v2 dan
+Level6v1 tetap bukti terpisah. Tag tetap build commit; Latest tetap7.24.4,
+rilis/tag lama89aset tidak berubah. [Bukti durable](evidence/new-v2-x86-publication-2026-10-06.json)
+dan HANDOFF §28 memuat detail termasuk cooldown awal unresolved dan limits.
+
+Paragraf berikut adalah checkpoint sebelum publikasi scoped NEW v2, bukan status
+publikasi terkini.
 
 ISO/IMG lokal sudah lolos gate lab x86 BIOS/IDE, tetapi **belum ada push atau
 rilis NEW v1**, dan belum ada klaim semua arsitektur/hardware selesai. Permintaan

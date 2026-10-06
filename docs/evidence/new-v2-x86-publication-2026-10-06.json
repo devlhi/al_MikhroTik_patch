@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "requested_evidence_date": "2026-10-06",
+  "generated_at_utc": "2026-10-06T03:35:41.042325+00:00",
+  "status": "PUBLISHED_SCOPED_X86_PRERELEASE",
+  "build_commit": "369f5b94ba041abbd52b46783051ec56294ffc57",
+  "workflow_run": {
+    "run_id": 37407917092,
+    "workflow_id": 372261583,
+    "url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/37407917092",
+    "profile": "x86-all",
+    "create_draft_release": true,
+    "head_sha": "369f5b94ba041abbd52b46783051ec56294ffc57",
+    "jobs_summary": "patch (x86) 8m40s; release 1m4s; both passed"
+  },
+  "release": {
+    "id": 404279452,
+    "name": "NEW v2 \u2014 Ali Media Patch 7.24.4 \u2014 x86 installers + CHR (lab)",
+    "tag_name": "ali-patch-code-7.24.4-run37407917092-attempt1",
+    "target_commitish": "369f5b94ba041abbd52b46783051ec56294ffc57",
+    "draft": false,
+    "prerelease": true,
+    "html_url": "https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run37407917092-attempt1",
+    "assets_count": 21,
+    "product_count": 18,
+    "metadata_count": 3
+  },
+  "tag_object": {
+    "sha": "369f5b94ba041abbd52b46783051ec56294ffc57",
+    "type": "commit",
+    "url": "https://api.github.com/repos/devlhi/al_MikhroTik_patch/git/commits/369f5b94ba041abbd52b46783051ec56294ffc57"
+  },
+  "old_releases_parity": {
+    "latest_id": 401538288,
+    "latest_tag": "7.24.4",
+    "latest_unchanged": true,
+    "verified_old_releases": [
+      {
+        "id": 403566620,
+        "tag": "ali-patch-code-7.24.4-run37291910153-attempt1",
+        "assets": 9,
+        "metadata_tag_and_assets_unchanged": true
+      },
+      {
+        "id": 401538288,
+        "tag": "7.24.4",
+        "assets": 40,
+        "metadata_tag_and_assets_unchanged": true
+      },
+      {
+        "id": 401130489,
+        "tag": "7.23.3",
+        "assets": 40,
+        "metadata_tag_and_assets_unchanged": true
+      }
+    ]
+  },
+  "verification": {
+    "inventory": 18,
+    "metadata": 3,
+    "total_assets_verified": 21,
+    "assets": [
+      {
+        "filename": "ali-patch-code-x86-all_packages-7.24.4-patched.zip",
+        "id": 614347624,
+        "size": 30850588,
+        "sha256": "be8453fc56cd4d08747ec2643bdc05acfda0c4701e909716dc865794c8c05457",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "calea-7.24.4.npk",
+            "size": 24721
+          },
+          {
+            "filename": "container-7.24.4.npk",
+            "size": 1175697
+          },
+          {
+            "filename": "dude-7.24.4.npk",
+            "size": 1425553
+          },
+          {
+            "filename": "gps-7.24.4.npk",
+            "size": 24721
+          },
+          {
+            "filename": "iot-7.24.4.npk",
+            "size": 594065
+          },
+          {
+            "filename": "openflow-7.24.4.npk",
+            "size": 82065
+          },
+          {
+            "filename": "rose-storage-7.24.4.npk",
+            "size": 5292177
+          },
+          {
+            "filename": "routeros-7.24.4.npk",
+            "size": 20524705
+          },
+          {
+            "filename": "tr069-client-7.24.4.npk",
+            "size": 159889
+          },
+          {
+            "filename": "ups-7.24.4.npk",
+            "size": 37009
+          },
+          {
+            "filename": "user-manager-7.24.4.npk",
+            "size": 417937
+          },
+          {
+            "filename": "wireless-7.24.4.npk",
+            "size": 1163409
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+        "id": 614347615,
+        "size": 65562727,
+        "sha256": "c46dbc254274c135aa4b6c2118fe38870fe8804d039e1fd8cc783e42f8545638",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.img",
+            "size": 134217728
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+        "id": 614347610,
+        "size": 65485149,
+        "sha256": "239d2e91f50e9cd6a3edec75051d368fd73e2989d52ee923cf292ec004722897",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.qcow2",
+            "size": 67829760
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+        "id": 614347607,
+        "size": 65501613,
+        "sha256": "e88c3961be9f42f998da74937965f7683ed220414e5c83fe12312cf44d0fc625",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.vdi",
+            "size": 76547072
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+        "id": 614347608,
+        "size": 65510989,
+        "sha256": "cc046a29ff9d390967f7fed5c598b9888b2522c47688daef8db10a73e88ecb7a",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.vhd",
+            "size": 81811456
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+        "id": 614347620,
+        "size": 65539234,
+        "sha256": "f7fe8c12749baa664ed6ab308917cf3f5fc5e5ec76374c0be8b510e2e0473e27",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.vhdx",
+            "size": 109051904
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+        "id": 614347619,
+        "size": 65483998,
+        "sha256": "3e729760ff8cffe9fd6494103ec2c62192547cd8b05e725b00b9f46a44735d87",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "chr-7.24.4-patched.vmdk",
+            "size": 67567616
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.img.zip",
+        "id": 614347622,
+        "size": 40409850,
+        "sha256": "cdffdc2f2c8e226718a14c64672620d006d76504d31cc14dfd2948724346ecf3",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.img",
+            "size": 201326592
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.qcow2.zip",
+        "id": 614347621,
+        "size": 40255232,
+        "sha256": "303568dac0b6c4742d2719c0537ee0c04c075a869d1ab75a990411bf5d6963f0",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.qcow2",
+            "size": 41287680
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vdi.zip",
+        "id": 614347605,
+        "size": 40255767,
+        "sha256": "11b94e01ec82b975bf3ffd492daadb6906a37f44fa1c2700d9b879cab7fd15c8",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.vdi",
+            "size": 41944576
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vhd.zip",
+        "id": 614347614,
+        "size": 40256993,
+        "sha256": "512eea8cd432332c072f5ad38c935348f632e5c305e39d90e129dc1eba6082bf",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.vhd",
+            "size": 41955840
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vhdx.zip",
+        "id": 614347616,
+        "size": 40264185,
+        "sha256": "b671f8d2ab245b11d6c59354be880636d28fa3c5b9ff88798a069456f9bf7962",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.vhdx",
+            "size": 50331648
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-install-image-7.24.4-patched.vmdk.zip",
+        "id": 614347604,
+        "size": 40255247,
+        "sha256": "e26610e55e4bb776952ec31e883657edfea625017892aed02eb4d2e2f390bc1a",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "install-image-7.24.4-patched.vmdk",
+            "size": 41025536
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+        "id": 614347606,
+        "size": 71157760,
+        "sha256": "c2d8a26807f6dc9368af38251f1acef2e9022055fa4fdb1e3bf4bb490fdf230c",
+        "github_digest_matches": true
+      },
+      {
+        "filename": "ali-patch-code-x86-netinstall-7.24.4-patched.tar.gz",
+        "id": 614347626,
+        "size": 43593929,
+        "sha256": "d42f16244157a9987c5faf29a04491f063b696523532e2ca3d2611e2ec5205dd",
+        "github_digest_matches": true,
+        "tar_members": [
+          {
+            "filename": "netinstall-cli",
+            "size": 58394040
+          }
+        ],
+        "gzip_tar_read": "pass"
+      },
+      {
+        "filename": "ali-patch-code-x86-netinstall-7.24.4-patched.zip",
+        "id": 614347612,
+        "size": 36183206,
+        "sha256": "dcb12689bb99c118fae36740484d9e3822dfeabf27429c927179a56493aed561",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "netinstall.exe",
+            "size": 50928472
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-netinstall64-7.24.4-patched.zip",
+        "id": 614347603,
+        "size": 36220441,
+        "sha256": "4721b7b9c9de2ff902f7b79d36365f6cd1a795134b06eb226c1bb3abf7082681",
+        "github_digest_matches": true,
+        "zip_crc": "pass",
+        "members": [
+          {
+            "filename": "netinstall64.exe",
+            "size": 51002712
+          }
+        ]
+      },
+      {
+        "filename": "ali-patch-code-x86-routeros-7.24.4-patched.npk",
+        "id": 614347601,
+        "size": 20524705,
+        "sha256": "f09dd9a724d9e1f462ecb40fe5a1fbc13d51ab82af4616f2a1b344f587c4a530",
+        "github_digest_matches": true
+      },
+      {
+        "filename": "manifest.json",
+        "id": 614347609,
+        "size": 5133,
+        "sha256": "a9a53cadbe9ab89adf2bbe0049903e53e0098a7282fe54867c7e098734ae3b59",
+        "github_digest_matches": true
+      },
+      {
+        "filename": "RELEASE_NOTES.md",
+        "id": 614347618,
+        "size": 968,
+        "sha256": "02e547b12a659bd22ecdb5101e7eb8638b5e19525b756110e8244161b46a10d6",
+        "github_digest_matches": true
+      },
+      {
+        "filename": "SHA256SUMS",
+        "id": 614347623,
+        "size": 2105,
+        "sha256": "0a88c40d04d91b9676a053a637b5cce3e6b8db848f6fff355e4c9b97c540728a",
+        "github_digest_matches": true
+      }
+    ],
+    "disks_validation": {
+      "chr": {
+        "scope": "build-only all six CHR x86 archives",
+        "qemu_validated": true,
+        "boot_tested": false,
+        "activation_tested": false,
+        "assets": [
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+            "archive_sha256": "c46dbc254274c135aa4b6c2118fe38870fe8804d039e1fd8cc783e42f8545638",
+            "image": "chr-7.24.4-patched.img",
+            "image_sha256": "683fa69f35ae6d047f86c5824d90156eec99ed58c4dbf76ad9b2b3a11e1913d9",
+            "image_size": 134217728,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "img",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "raw",
+              "virtual_size": 134217728,
+              "structural_check": "unsupported-by-format",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "raw-reference"
+            }
+          },
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+            "archive_sha256": "239d2e91f50e9cd6a3edec75051d368fd73e2989d52ee923cf292ec004722897",
+            "image": "chr-7.24.4-patched.qcow2",
+            "image_sha256": "60d0ecd55e882b2cf7f3fc5b5c6ddd4d7f3dacce0f9b3bace43cc7bf21572274",
+            "image_size": 67829760,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "qcow2",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "qcow2",
+              "virtual_size": 134217728,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+            "archive_sha256": "3e729760ff8cffe9fd6494103ec2c62192547cd8b05e725b00b9f46a44735d87",
+            "image": "chr-7.24.4-patched.vmdk",
+            "image_sha256": "fb2d7052a0b3d08fdd506c5e46d62e2ef1adcfc72b12d213501135f7e711d738",
+            "image_size": 67567616,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "vmdk",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "vmdk",
+              "virtual_size": 134217728,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+            "archive_sha256": "cc046a29ff9d390967f7fed5c598b9888b2522c47688daef8db10a73e88ecb7a",
+            "image": "chr-7.24.4-patched.vhd",
+            "image_sha256": "4824399f59e0dae629612feea1069997fec0873a43d650a6eeaf254ee8f0166c",
+            "image_size": 81811456,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "vhd",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "vpc",
+              "virtual_size": 134250496,
+              "structural_check": "unsupported-by-format",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+            "archive_sha256": "f7fe8c12749baa664ed6ab308917cf3f5fc5e5ec76374c0be8b510e2e0473e27",
+            "image": "chr-7.24.4-patched.vhdx",
+            "image_sha256": "64ad1c839fcf8a8ac22c1d1ed40edd666e5e242e2f953a62d30cfaa1ac1fc5c5",
+            "image_size": 109051904,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "vhdx",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "vhdx",
+              "virtual_size": 134217728,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          {
+            "archive": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+            "archive_sha256": "e88c3961be9f42f998da74937965f7683ed220414e5c83fe12312cf44d0fc625",
+            "image": "chr-7.24.4-patched.vdi",
+            "image_sha256": "5d43bfe9f16f6506299b602a53c13e5fdac1f312732468de2dee8a5be9b6530a",
+            "image_size": 76547072,
+            "zip_crc_verified": true,
+            "header_checked": true,
+            "format": "vdi",
+            "boot_tested": false,
+            "activation_tested": false,
+            "scope": "build-only byte integrity, ZIP structure and format header",
+            "qemu": {
+              "format": "vdi",
+              "virtual_size": 134217728,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          }
+        ]
+      },
+      "install_image": {
+        "scope": "six installer containers; not installed systems",
+        "boot_tested": false,
+        "activation_tested": false,
+        "formats": {
+          "img": {
+            "format": "img",
+            "qemu": {
+              "format": "raw",
+              "virtual_size": 201326592,
+              "structural_check": "unsupported-by-format",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "raw-reference"
+            }
+          },
+          "qcow2": {
+            "format": "qcow2",
+            "qemu": {
+              "format": "qcow2",
+              "virtual_size": 201326592,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          "vmdk": {
+            "format": "vmdk",
+            "qemu": {
+              "format": "vmdk",
+              "virtual_size": 201326592,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          "vhd": {
+            "format": "vhd",
+            "qemu": {
+              "format": "vpc",
+              "virtual_size": 201383936,
+              "structural_check": "unsupported-by-format",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          "vhdx": {
+            "format": "vhdx",
+            "qemu": {
+              "format": "vhdx",
+              "virtual_size": 201326592,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          },
+          "vdi": {
+            "format": "vdi",
+            "qemu": {
+              "format": "vdi",
+              "virtual_size": 201326592,
+              "structural_check": "passed",
+              "guest_sectors_equivalent_to_raw": true,
+              "comparison": "non-strict; extra sectors must be zero"
+            }
+          }
+        }
+      }
+    },
+    "package_signatures": [
+      {
+        "source": "ali-patch-code-x86-routeros-7.24.4-patched.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!calea-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!container-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!dude-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!gps-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!iot-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!openflow-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!rose-storage-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!routeros-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!tr069-client-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!ups-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!user-manager-7.24.4.npk",
+        "signature_valid": true
+      },
+      {
+        "source": "ali-patch-code-x86-all_packages-7.24.4-patched.zip!wireless-7.24.4.npk",
+        "signature_valid": true
+      }
+    ],
+    "coverage_readback": {
+      "scope": "standalone and all-packages installer system; targeted three ELF anchors, not exhaustive package counts",
+      "readback": [
+        {
+          "component": "keyman",
+          "vendor_anchor": 0,
+          "custom_anchor": 1
+        },
+        {
+          "component": "mode",
+          "vendor_anchor": 0,
+          "custom_anchor": 1
+        },
+        {
+          "component": "loader",
+          "vendor_anchor": 1,
+          "custom_anchor": 0
+        }
+      ],
+      "all_packages_system_identical_to_standalone": false,
+      "ci_guard_success": true,
+      "limits": "Full kernel/signing replacement counts not independently recomputed; no CI runtime test",
+      "parts_comparison": [
+        {
+          "part": "HEADER",
+          "equal": true
+        },
+        {
+          "part": "NAME_INFO",
+          "equal": true
+        },
+        {
+          "part": "CHANNEL",
+          "equal": true
+        },
+        {
+          "part": "ARCHITECTURE",
+          "equal": true
+        },
+        {
+          "part": "DESCRIPTION",
+          "equal": true
+        },
+        {
+          "part": "GIT_COMMIT",
+          "equal": true
+        },
+        {
+          "part": "DEPENDENCIES",
+          "equal": true
+        },
+        {
+          "part": "NULL_BLOCK",
+          "equal": true
+        },
+        {
+          "part": "SQUASHFS",
+          "equal": true
+        },
+        {
+          "part": "INSTALL_SCRIPT",
+          "equal": true
+        },
+        {
+          "part": "FILE_CONTAINER",
+          "equal": true
+        },
+        {
+          "part": "SIGNATURE",
+          "equal": false
+        },
+        {
+          "part": "ARCHITECTURE",
+          "equal": true
+        }
+      ],
+      "all_non_signature_parts_equal": true,
+      "note": "Initial whole-wire equality assumption failed; independently signed signature part differs, all non-signature parts equal and both signatures valid."
+    },
+    "runtime_tested_on_ci_assets": false,
+    "activation_tested_on_ci_assets": false
+  },
+  "limitations": [
+    "No runtime boot, login or activation tests were performed on the newly built CI release assets.",
+    "Local lab v2 ISO SeaBIOS/UEFI install and disk-only login proofs remain distinct from new CI binaries.",
+    "Cooldown test failure test_cooldown_cannot_be_bypassed_by_new_session occurred on initial frozen regression and passed on identical repeat; root cause remains unresolved.",
+    "USB UEFI installer behavior remains unresolved (overlay written, target empty).",
+    "ARM, MIPS, and PPC modules remain detached offline prototypes; TILE is inventory-only; no non-x86 firmware is included in this release.",
+    "Bare-metal Mini PC hardware, NVMe drives, native physical SFP interfaces, and UEFI Secure Boot are unproven and untested.",
+    "Old releases and tags (7.23.3, 7.24.4, CHR lab) remain preserved and unmodified; Latest remains 7.24.4."
+  ],
+  "tests": {
+    "prior_frozen_full_initial": {
+      "total": 540,
+      "pass": 530,
+      "skip": 9,
+      "failure": 1,
+      "errors": 0
+    },
+    "prior_frozen_full_repeat": {
+      "total": 540,
+      "pass": 531,
+      "skip": 9,
+      "failure": 0,
+      "errors": 0
+    },
+    "new_windows_workflow": {
+      "total": 39,
+      "pass": 38,
+      "skip": 1,
+      "failure": 0,
+      "errors": 0,
+      "skip_reason": "xorriso unavailable"
+    },
+    "new_windows_release_assets": {
+      "total": 66,
+      "pass": 65,
+      "skip": 1,
+      "failure": 0,
+      "errors": 0,
+      "skip_reason": "POSIX read permissions"
+    },
+    "full_suite_rerun_during_publication": false
+  },
+  "attempt_notes": [
+    "Draft tag lookup failed; release-list lookup resolved unpublished draft.",
+    "WSL shell path conversion and sed parsing probes failed; absolute Python script with MSYS_NO_PATHCONV succeeded.",
+    "Full-filesystem qemu search stopped; existing qualified binary path reused.",
+    "Whole-wire system equality assertion failed due only to independent signature bytes; both signatures valid and all non-signature parts equal.",
+    "Coverage helper final console line said system identical; precise meaning is non-signature parts identical, durable evidence records wire inequality."
+  ],
+  "cache_policy": "Only pristine download input archives/ISO cached; patch outputs rebuilt at source commit, no cache deletions.",
+  "authorization": "Owner approved scoped NEW v2 x86-all publication and temporary local branches only for commit/fast-forward main/delete merged branch; push only main."
+}
