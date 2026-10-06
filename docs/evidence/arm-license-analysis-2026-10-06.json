@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "checkpoint_date": "2026-10-06",
+  "execution_timestamp_utc": "2026-10-05T18:05:26.930042+00:00",
+  "date_note": "Filename/checkpoint date follows the requested handoff label; execution timestamp is the actual host clock, not an invented next-day run.",
+  "scope": "Read-only audit of cached pristine RouterOS 7.24.4 ARM and ARM64 packages, with isolated disposable guard probes. No production/source/HANDOFF edits, signing, persistent firmware output, hardware installation, boot, activation, commit, push or release.",
+  "repository": {
+    "branch": "main",
+    "head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "live_origin_main_at_start": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "cached_remote_divergence": [0, 0],
+    "working_tree": "NOT clean: extensive existing modified and untracked local delta, including patch.py, workflow, release docs and HANDOFF. Existing changes preserved; HEAD alone does not describe audited source. This agent created/edited only docs/evidence/arm-license-analysis-2026-10-06.json; no claim that the repository became clean.",
+    "patch_py_sha256": "d77ac708925e200bfc18d2101de3fb6ac3966883341f6b71216bb3cd23569685",
+    "npk_py_sha256": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274",
+    "documents_read": ["docs/HANDOFF.md", "docs/patch-coverage.md", "docs/release-validation.md"],
+    "handoff_ownership": "Parent/coordinator owns HANDOFF; this audit intentionally does not modify it."
+  },
+  "method": {
+    "environment": "Ubuntu WSL, existing /home/djundev/.cache/mikpatch-audit/venv/bin/python, -B; optimized guard probe additionally uses -O",
+    "capstone_version": "5.0.7",
+    "vendor_cache": "/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff",
+    "prior_evidence": "docs/evidence/non-x86-key-inspection-2026-10-05.json",
+    "provenance": "Fresh hashes match prior evidence recording successful HTTPS vendor downloads. No firmware downloaded anew. Vendor signature authenticity was NOT verified by this audit.",
+    "inspection": [
+      "Parse actual NPK parts and FILE_CONTAINER; compare embedded SquashFS bytes to cached system.squashfs.",
+      "Read numeric on-image SquashFS inventory; stream keyman/mode/loader anew with unsquashfs -cat; verify equality with cached extracts and prior hashes.",
+      "Count exact configured LICENSE 32-byte literals across every unique regular inode traversed in each extracted SquashFS; skip symlinks and deduplicate hardlinks.",
+      "Revalidate six pinned candidates from previous evidence against current pristine bytes: decode raw ARM condition/opcode/register/literal-address/rotated-ADD fields, reconstruct original words privately, check store mnemonics and source/base/displacement operands using Capstone, and compare privately to configured vendor public role.",
+      "Exhaustively scan all executable PROGBITS sections for PC-relative LDR references targeting each literal pool offset, direct branch/call targets (B, BL, BLX) into the envelope, calls inside the envelope, and relocation entries in .rel.dyn/.rel.plt.",
+      "Directly run current patch_npk_package with LICENSE-only mapping to a synthetic 32-byte sentinel, capturing tool output privately. Repeat under Python -O with LICENSE and signing public roles mapped to two synthetic nonsecret sentinels. Do not read custom/private keys, call signing or save firmware. TemporaryDirectory extraction and temporary generic signing-pattern replacement are cleaned on failure."
+    ],
+    "public_roles_read": ["MIKRO_LICENSE_PUBLIC_KEY", "MIKRO_NPK_SIGN_PUBLIC_KEY"],
+    "private_or_custom_key_values_read": false,
+    "exported_key_values_or_anchor_digests": false,
+    "limitations": "No replacement instruction encoding designed or applied, no source suite rerun, no vendor signature validation, no exhaustive kernel/initramfs semantic audit, no real device or emulator runtime test."
+  },
+  "common_npk_layout": {
+    "package_name": "system",
+    "version": "7.24.4.final",
+    "nested_packages": 0,
+    "ordered_part_names": ["HEADER", "NAME_INFO", "CHANNEL", "ARCHITECTURE", "DESCRIPTION", "GIT_COMMIT", "DEPENDENCIES", "NULL_BLOCK", "SQUASHFS", "INSTALL_SCRIPT", "FILE_CONTAINER", "SIGNATURE", "ARCHITECTURE"],
+    "channel": "stable",
+    "authoritative_architecture_index": 3,
+    "signature_index": 11,
+    "signature_size": 132,
+    "trailing_architecture_index": 12,
+    "trailing_architecture_marker": "I",
+    "trailing_marker_meaning": "Unknown; not interpreted as product architecture or removed.",
+    "squashfs_version": [4, 0],
+    "squashfs_compression_id": 4,
+    "squashfs_compression": "XZ",
+    "squashfs_block_size": 524288,
+    "squashfs_mkfs_time_unix": 1789559868,
+    "file_container_paths": ["bin/bash", "boot", "boot/kernel", "UPGRADED"],
+    "all_six_target_metadata": {"type": "regular", "mode": "0755", "uid": 0, "gid": 0, "elf_class": 32, "elf_machine": 40, "elf_machine_name": "EM_ARM", "byte_order": "little", "elf_flags": 83886592}
+  },
+  "packages": [
+    {
+      "architecture": "arm",
+      "vendor_url": "https://download.mikrotik.com/routeros/7.24.4/routeros-7.24.4-arm.npk",
+      "cache_relative_path": "arm/official.npk",
+      "size": 12295830,
+      "sha256": "97bf6d35d8f4754d69ed4a8cb8f459390f84c81f69374645f3b616ac4c56bc25",
+      "part_lengths_in_order": [0, 36, 6, 3, 46, 40, 2, 3901, 9572352, 1, 2719224, 132, 1],
+      "squashfs_sha256": "f73422b6e57cde5682bf0afb7bbc9828cdd26cf5d0edd82471d353f8141cd3ce",
+      "squashfs_inode_count": 833,
+      "squashfs_inventory_entries": 833,
+      "unique_regular_inodes_scanned": 578,
+      "license_literal_hits_in_regular_inodes": 0,
+      "elf_distribution": {"ELF32_EM_ARM": 423},
+      "boot_kernel_size": 2689076,
+      "boot_kernel_sha256": "b99d30998291a5efd1023333c8ad074c23e0b53de2ff9226e5c63da7f6321101",
+      "targets": [
+        {
+          "path": "nova/bin/keyman",
+          "size": 51084,
+          "sha256": "1e76c60d04aab0551f2d5d0518f46962c3a93cdf45085bd559f622fba47bd83a",
+          "mtime_as_listed": "2026-09-16 19:34:52",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "Seven PC-relative LDR literal-pool values plus ADD-immediate arithmetic reconstruct eight dwords / one 32-byte runtime buffer; STR and STRD stores to [sp+0].",
+          "first_instruction_file_offset": 26864,
+          "last_store_file_offset": 26984,
+          "envelope_length_bytes": 124,
+          "literal_pool_file_offsets": [27128, 27132, 27136, 27140, 27144, 27148, 27152],
+          "literal_pool_exhaustively_scanned_references": {
+            "27128": [{"instruction_offset": 26864, "mnemonic": "ldr", "condition": "AL", "reg": "r6"}],
+            "27132": [{"instruction_offset": 26880, "mnemonic": "ldr", "condition": "AL", "reg": "r7"}],
+            "27136": [{"instruction_offset": 26920, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "27140": [{"instruction_offset": 26928, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "27144": [{"instruction_offset": 26932, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}],
+            "27148": [{"instruction_offset": 26956, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "27152": [{"instruction_offset": 26964, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [{"offset": 26916, "mnemonic": "bl"}],
+          "branches_into_envelope": [],
+          "derived_word_index": 3,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 26944, 26952, 26960 with rotated 8-bit immediates applied to word loaded from 27136 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        },
+        {
+          "path": "nova/bin/mode",
+          "size": 71452,
+          "sha256": "52b6136fb21df26f0ee25167b04b7f219d444721ac6c164129fbe9aa60cbe701",
+          "mtime_as_listed": "2026-09-16 19:36:04",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "Seven PC-relative LDR literal-pool values plus ADD-immediate arithmetic reconstruct eight dwords / one 32-byte runtime buffer; STR stores to [r4-840].",
+          "first_instruction_file_offset": 59732,
+          "last_store_file_offset": 59808,
+          "envelope_length_bytes": 80,
+          "literal_pool_file_offsets": [62244, 62248, 62252, 62256, 62260, 62264, 62268],
+          "literal_pool_exhaustively_scanned_references": {
+            "62244": [{"instruction_offset": 59732, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62248": [{"instruction_offset": 59744, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62252": [{"instruction_offset": 59756, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62256": [{"instruction_offset": 59780, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62260": [{"instruction_offset": 59788, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62264": [{"instruction_offset": 59796, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "62268": [{"instruction_offset": 59804, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [],
+          "branches_into_envelope": [],
+          "derived_word_index": 3,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 59764, 59768, 59772 with rotated 8-bit immediates applied to word loaded from 62252 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        },
+        {
+          "path": "nova/bin/loader",
+          "size": 79892,
+          "sha256": "b5eef87fefeb9542c4937227d11fbd2560201978269936e47303ae0870aa7939",
+          "mtime_as_listed": "2026-09-16 19:34:59",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "Canonical ten-word alternating 26/25-bit limb form of the configured LICENSE public value. Nine literal values loaded with PC-relative LDR; limb 8 derived from limb 7 through three ADD-immediate instructions; ten STR stores to [sp+264..300].",
+          "first_instruction_file_offset": 52860,
+          "last_store_file_offset": 52952,
+          "envelope_length_bytes": 96,
+          "literal_pool_file_offsets": [55824, 55828, 55832, 55836, 55840, 55844, 55848, 55852, 55856],
+          "literal_pool_exhaustively_scanned_references": {
+            "55824": [{"instruction_offset": 52860, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55828": [{"instruction_offset": 52872, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55832": [{"instruction_offset": 52884, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55836": [{"instruction_offset": 52892, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55840": [{"instruction_offset": 52900, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55844": [{"instruction_offset": 52908, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55848": [{"instruction_offset": 52916, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55852": [{"instruction_offset": 52924, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "55856": [{"instruction_offset": 52948, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [],
+          "branches_into_envelope": [],
+          "derived_word_index": 8,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 52932, 52936, 52940 with rotated 8-bit immediates applied to limb 7 loaded from 55852 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        }
+      ]
+    },
+    {
+      "architecture": "arm64",
+      "vendor_url": "https://download.mikrotik.com/routeros/7.24.4/routeros-7.24.4-arm64.npk",
+      "cache_relative_path": "arm64/official.npk",
+      "size": 13934949,
+      "sha256": "627b9a58820b3b7a754992e1330341ffb61f8e61aa72e186bcbc2c55ebc06793",
+      "part_lengths_in_order": [0, 36, 6, 5, 46, 40, 2, 3899, 10203136, 1, 3727559, 132, 1],
+      "squashfs_sha256": "cfa7a1e59adf7c51eb14c087564d689afbde729a2a8a1482f2e49f1e504bdb0f",
+      "squashfs_inode_count": 820,
+      "squashfs_inventory_entries": 820,
+      "unique_regular_inodes_scanned": 566,
+      "license_literal_hits_in_regular_inodes": 0,
+      "elf_distribution": {"ELF32_EM_ARM": 119, "ELF64_EM_AARCH64": 286},
+      "architecture_caveat": "The package genuinely includes AArch64 ELF files, but all three inspected licensing targets are ELF32 EM_ARM. Do not mistake the arm64 package label for the ISA of these individual binaries.",
+      "boot_kernel_size": 3697256,
+      "boot_kernel_sha256": "200482f270da4e17059fe573042d017160ca5b88dfd32377388c515a8cff24cb",
+      "targets": [
+        {
+          "path": "nova/bin/keyman",
+          "size": 59392,
+          "sha256": "0c4f825e1ce36f04a04c178105210f0ae1eb28967d8793c9f9a8ee546e9b67fa",
+          "mtime_as_listed": "2026-09-16 19:34:52",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "ARM32 PC-relative LDR literal pools plus ADD immediates reconstruct raw32; STR/STRD stores to [sp+0]. Not an AArch64 ADRP+ADD or MOVZ/MOVK sequence.",
+          "first_instruction_file_offset": 29256,
+          "last_store_file_offset": 29376,
+          "envelope_length_bytes": 124,
+          "literal_pool_file_offsets": [29520, 29524, 29528, 29532, 29536, 29540, 29544],
+          "literal_pool_exhaustively_scanned_references": {
+            "29520": [{"instruction_offset": 29256, "mnemonic": "ldr", "condition": "AL", "reg": "r6"}],
+            "29524": [{"instruction_offset": 29272, "mnemonic": "ldr", "condition": "AL", "reg": "r7"}],
+            "29528": [{"instruction_offset": 29312, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "29532": [{"instruction_offset": 29320, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "29536": [{"instruction_offset": 29324, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}],
+            "29540": [{"instruction_offset": 29348, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "29544": [{"instruction_offset": 29356, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [{"offset": 29308, "mnemonic": "bl"}],
+          "branches_into_envelope": [],
+          "derived_word_index": 3,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 29336, 29344, 29352 with rotated 8-bit immediates applied to word loaded from 29528 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        },
+        {
+          "path": "nova/bin/mode",
+          "size": 75568,
+          "sha256": "0e33c3ee6eb25a04f8dffab7bfb299f740fbcae09b1d4cac349646c3f7d8f1b1",
+          "mtime_as_listed": "2026-09-16 19:36:04",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "ARM32 PC-relative LDR literal pools plus ADD immediates reconstruct raw32; STR/STRD stores to [sp+0]. Not an AArch64 ADRP+ADD or MOVZ/MOVK sequence.",
+          "first_instruction_file_offset": 25964,
+          "last_store_file_offset": 26084,
+          "envelope_length_bytes": 124,
+          "literal_pool_file_offsets": [26228, 26232, 26236, 26240, 26244, 26248, 26252],
+          "literal_pool_exhaustively_scanned_references": {
+            "26228": [{"instruction_offset": 25964, "mnemonic": "ldr", "condition": "AL", "reg": "r6"}],
+            "26232": [{"instruction_offset": 25980, "mnemonic": "ldr", "condition": "AL", "reg": "r7"}],
+            "26236": [{"instruction_offset": 26020, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "26240": [{"instruction_offset": 26028, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "26244": [{"instruction_offset": 26032, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}],
+            "26248": [{"instruction_offset": 26056, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "26252": [{"instruction_offset": 26064, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [{"offset": 26016, "mnemonic": "bl"}],
+          "branches_into_envelope": [],
+          "derived_word_index": 3,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 26044, 26052, 26060 with rotated 8-bit immediates applied to word loaded from 26236 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        },
+        {
+          "path": "nova/bin/loader",
+          "size": 84016,
+          "sha256": "b636576f7ea56606e7b5e5af72bbe4a3106a82750876185db8c96978ea9c4e18",
+          "mtime_as_listed": "2026-09-16 19:35:00",
+          "license_raw32_hits": 0,
+          "signing_raw32_hits": 0,
+          "current_x86_matcher_hits": 0,
+          "representation": "ARM32 PC-relative LDR literal pools plus ADD immediates reconstruct raw32; STR/STRD stores to [sp+0]. Unlike the ARM package loader, this is an eight-word raw32 construction, not canonical ten-limb form.",
+          "first_instruction_file_offset": 43880,
+          "last_store_file_offset": 44000,
+          "envelope_length_bytes": 124,
+          "literal_pool_file_offsets": [44144, 44148, 44152, 44156, 44160, 44164, 44168],
+          "literal_pool_exhaustively_scanned_references": {
+            "44144": [{"instruction_offset": 43880, "mnemonic": "ldr", "condition": "AL", "reg": "r6"}],
+            "44148": [{"instruction_offset": 43896, "mnemonic": "ldr", "condition": "AL", "reg": "r7"}],
+            "44152": [{"instruction_offset": 43936, "mnemonic": "ldr", "condition": "AL", "reg": "r3"}],
+            "44156": [{"instruction_offset": 43944, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "44160": [{"instruction_offset": 43948, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}],
+            "44164": [{"instruction_offset": 43972, "mnemonic": "ldr", "condition": "AL", "reg": "r0"}],
+            "44168": [{"instruction_offset": 43980, "mnemonic": "ldr", "condition": "AL", "reg": "r1"}]
+          },
+          "pool_references_outside_anchor_envelope": 0,
+          "literal_pool_absolute_address_references_in_binary": 0,
+          "relocation_references_in_envelope_or_pools": 0,
+          "calls_inside_envelope": [{"offset": 43932, "mnemonic": "bl"}],
+          "branches_into_envelope": [],
+          "derived_word_index": 3,
+          "derived_word_arithmetic": "3 AL non-flag-setting ADD instructions at 43960, 43968, 43976 with rotated 8-bit immediates applied to word loaded from 44152 into r3",
+          "fresh_exact_value_and_store_revalidation": true
+        }
+      ]
+    }
+  ],
+  "bounded_matcher_feasibility_analysis": {
+    "offline_research_scope_only": "Not production-integrated, no source edits, no bypass.",
+    "literal_pool_isolation": {
+      "result": "Fresh enumeration of aligned A32 immediate PC-relative LDR encodings in executable PROGBITS finds exactly one such reference to each of 7 slots (9 in arm/loader), inside the candidate envelope. No extra direct LDR references were observed in that specific encoding class. Whole-file exact little-endian absolute pool-address searches and REL/RELA relocation-target checks also returned zero.",
+      "decoder_caution": "A single aligned immediate PC-relative LDR scan is NOT proof of the absence of indirect, computed, register-relative, or Thumb-interworked aliases. A linear 4-byte ARM disassembly sweep across .text encounters 35 to 52 decode failures per binary due to inline literal pools, embedded data, or non-ARM fragments; a full control flow graph with mapping symbols ($a, $t, $d) would be required to prove exclusive pool ownership."
+    },
+    "proposed_offline_mutation_allowlist_not_implemented": {
+      "literal_mutations": "Only the seven four-byte literal-pool words supplying raw32 indices 0,1,2,4,5,6,7 (or nine canonical limb slots supplying 0..7,9 in arm/loader). No LDR addressing, destination register, condition, stores, call, stack arithmetic, ELF tables, branch targets or file lengths may change.",
+      "arithmetic_mutations": "Only immediate encoding bits in the three existing AL non-S ADD instructions in the derived r3 chain, retaining opcode ADD, Rn=Rd=r3, condition, S bit and instruction size. Validate modified-immediate roundtrip and a delta solver; reject unencodable candidates rather than insert instructions. No solver or mutation was implemented/tested here.",
+      "expected_register_results": "For raw32: r6/r7 hold replacement words4/5, r3 stores word2 then derives word3, r0/r1 first store words0/1 then words6/7; final STRD writes r6/r7 to sp+16/+20. ARM mode instead uses r3 sequentially for words0..7 at r4-840..-812. For arm loader r3 sequentially stores canonical limbs0..9 at sp+264..300; limb8 derives from loaded limb7. Intermediate r3 values may change only when proven unobserved except final derived store.",
+      "extra_uses_and_call_limits": "ARM keyman and all three arm64 targets load r6/r7 before BL and store them after BL. Their ABI preservation and callee use are not audited: callees may save/read them even if convention preserves them. Post-construction LDM/STM reads/copies buffer content and aliases stack addresses; this must be traced. ARM mode has no call and r3 is only used by its stores and ADD chain inside the envelope, making it the simpler bounded offline candidate, not yet verified production integration.",
+      "release_constraint": "Any future package policy must demand complete pinned keyman/mode/loader treatment and separate runtime evidence, not merely exploit current per-package minimum-one coverage. No loader preservation rule or production integration is justified by this audit."
+    },
+    "instruction_budget_and_arithmetic_representability": {
+      "derived_word_bottleneck": "Seven words are loaded directly from literal pools. The eighth word is NOT stored in a pool; it is computed at runtime via three consecutive ADD instructions with rotated 8-bit immediates applied to a loaded pool word.",
+      "replacement_implication": "Potential encoding constraint only: if restricted to changing the three existing ADD immediate fields, the replacement derived-word delta must be expressible as three ARM modified-immediate constants modulo 2^32. This audit did NOT read or test the actual custom-key difference, run a solver, or prove any particular replacement unencodable. Alternative reviewed instruction plans are outside this audit; no claim that adding instructions is the only possible solution.",
+      "conclusion": "A potential offline matcher cannot assume arbitrary key representability without an encoding preflight check for the arithmetic chain."
+    },
+    "control_flow_and_calls_inside_envelope": {
+      "arm_keyman": "Contains a subroutine call 'bl' at offset 26916 inside the 124-byte envelope between the first LDR and the final store.",
+      "arm_mode": "Zero calls inside envelope.",
+      "arm_loader": "Zero calls inside envelope.",
+      "arm64_keyman": "Contains a subroutine call 'bl' at offset 29308 inside the 124-byte envelope.",
+      "arm64_mode": "Contains a subroutine call 'bl' at offset 26016 inside the 124-byte envelope.",
+      "arm64_loader": "Contains a subroutine call 'bl' at offset 43932 inside the 124-byte envelope.",
+      "impact": "In 4 of the 6 targets, subroutine calls occur while intermediate key components are in registers or on the stack. The matcher cannot treat the instruction envelope as a simple contiguous basic block."
+    }
+  },
+  "guard_and_source_findings": {
+    "production_arm_instruction_matcher": false,
+    "production_aarch64_instruction_matcher": false,
+    "source_references": {
+      "patch.py:14-113": "Only _x86_immediate_matches; ELF32 little-endian EM_386 (machine 3), eight adjacent stack MOVs. EM_ARM 40 and EM_AARCH64 183 return no match before decoding.",
+      "patch.py:116-155": "Generic replacement combines exact literals with that one x86 matcher only.",
+      "patch.py:418-434": "ARM64 kernel-format dispatch exists, but is not an ARM/AArch64 instruction matcher.",
+      "patch.py:535-561": "Only chr-x86-7.24.4 runtime policy; authoritative i386 required.",
+      "patch.py:630-720": "Package collects original kernel and SquashFS counts, rejects missing mappings before mksquashfs or assignment back into package.",
+      "patch.py:723-742": "Outer file wrapper signs/saves only after all package patch calls return."
+    },
+    "fresh_normal_probes": {
+      "architectures": ["arm", "arm64"],
+      "mapping": "LICENSE-only synthetic replacement sentinel",
+      "both_exception_type": "ValueError",
+      "both_exact_message": "no replacement for required mapping(s) 1 in system package; signing blocked",
+      "tools_called_per_package": ["unsquashfs"],
+      "both_input_and_in_memory_parts_unchanged": true
+    },
+    "fresh_optimized_probes": {
+      "architectures": ["arm", "arm64"],
+      "mapping_order": ["LICENSE", "NPK signing"],
+      "synthetic_replacement_values_only": true,
+      "python_optimized": true,
+      "both_license_counts": {"kernel": 0, "squashfs": 0, "total": 0},
+      "both_signing_counts": {"kernel": 1, "squashfs": 3, "total": 4},
+      "both_exception_type": "ValueError",
+      "both_exact_message": "no replacement for required mapping(s) 1 in system package; signing blocked",
+      "tools_called_per_package": ["unsquashfs"],
+      "input_unchanged": true,
+      "repack_sign_save_executed": false
+    },
+    "fresh_chr_policy_negative_probes": {
+      "architectures": ["arm", "arm64"],
+      "policy": "chr-x86-7.24.4",
+      "both_exception_type": "ValueError",
+      "both_exact_message": "runtime policy requires unambiguous i386 architecture"
+    },
+    "interpretation": "The licensing value is present in reconstructed form; missing literal coverage is not key absence. Signing-role hits cannot satisfy the distinct required LICENSE mapping. The guard correctly blocks both packages, including with assertions disabled."
+  },
+  "implementation_readiness": {
+    "verified_release_ready_matcher_and_runtime_policy_available_now": false,
+    "answer": "Pinned static extraction is feasible and six candidates are revalidated. That is not a verified transformation or runtime policy. Neither architecture can honestly be declared bare-metal/licensing ready from the available evidence, and no bypass is justified.",
+    "blockers": [
+      "No production ARM32 or AArch64 matcher. Needed: strict ELF/code-boundary validation and complete original-buffer matching, not independent four-byte word substitution.",
+      "Prove literal-pool ownership and all references, live register/use-def effects, aliases, relocation interactions, branch/call paths, and Thumb boundaries before modifying pools or arithmetic. Previous single PC-load reference counts are not complete alias/control-flow proof.",
+      "Derived words use ARM rotated-immediate ADD encodings; arbitrary replacement deltas are not guaranteed encodable in the same instruction budget. No replacement simulation, representability proof or instruction roundtrip tests were run.",
+      "ARM loader has canonical ten-limb form while ARM64-package loader reconstructs raw32. Need distinct representation handling and canonical/carry/encoding tests, not architecture-name assumptions.",
+      "No ARM/ARM64 paired runtime evidence determines whether loader anchors must change or be preserved. The CHR i386 loader exception cannot be copied to RouterBOARD or ARM64.",
+      "Need synthetic positive/negative/overlap/conditional/alias/malformed ELF tests, reviewed fail-closed production integration, real SquashFS metadata parity and signature checks without weakening coverage.",
+      "Need identified supported hardware, RouterBOOT version/settings, compatible recovery path and matched vendor baseline before isolated install, cold boot, login and legitimate licensing/upgrade persistence tests.",
+      "CPU ISA support is not universal board/product compatibility. No evidence validates arbitrary ARM SBC/UEFI systems, every RouterBOARD model, or every screenshot architecture. TILE, MIPS and PPC are outside this audit."
+    ]
+  },
+  "bare_metal_prerequisites": {
+    "official_sources": [
+      {"url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805390/Netinstall", "fresh_fetch": "HTTP 200 via WSL urllib; initial WebFetch network timeout was not evidence"},
+      {"url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328149/RouterOS+license+keys", "fresh_fetch": "HTTP 200 via WSL urllib; initial WebFetch network timeout was not evidence"}
+    ],
+    "official_documented_facts": [
+      "MikroTik hardware routers running RouterOS come preinstalled with a RouterOS license; ordinary owners do not need a custom activation key.",
+      "x86 PC licensing requires a license key associated with its Software ID; CHR has a different System ID/licensing product. CHR p-unlimited evidence is not RouterBOARD activation evidence.",
+      "Official licensing page describes RouterBOARD Software ID as bound to storage media, x86 Software ID to MBR, and CHR System ID to MBR and UUID. Embedded MikroTik hardware licenses cannot be moved to a new system.",
+      "Netinstall reformats the system drive and loses configuration/user files, but does not erase the RouterOS license key or reset RouterBOOT settings.",
+      "For the documented RouterBOARD Netinstall workflow, the device must enter Etherboot/network-boot mode, with appropriate architecture packages, a configured installation host and an appropriate Ethernet/L2 path. Device reset/boot methods and Etherboot port follow the specific model manual; regular and backup booter behavior matters. This is not a universal RouterBOARD-only restriction on Netinstall; x86 Netinstall is a separate supported workflow.",
+      "RouterBOOT can select network boot, or the documented reset/serial procedures can enter Etherboot. Protected RouterBOOT and other settings require model-specific review."
+    ],
+    "engineering_conclusions_not_vendor_universal_support_claims": [
+      "For a RouterBOARD deployment of these standalone ARM/ARM64 NPKs, identify the supported model and validate its RouterBOOT/recovery process. Arbitrary-board compatibility is UNVERIFIED: this audit did not inventory all DTBs, bootloaders or board drivers and does not prove their absence. A CPU architecture label alone does not establish board support. Netinstall also supports x86 installation; RouterBOARD/RouterBOOT requirements here describe the scoped RouterBOARD deployment, not every Netinstall use.",
+      "Netinstall is an installer/recovery method, not a license generator or a method that makes arbitrary ARM boards supported. NPK alone is not an ISO or complete universal disk image.",
+      "The audited standalone arm64 NPK, any CHR ARM64 disk image, and an installer ISO are distinct artifact/product scopes. No CHR ARM64 image or ISO was inspected, installed, or validated by this audit. Each requires its own documented support, provenance and runtime validation; results for this NPK cannot be transferred to them.",
+      "No RouterBOOT signature enforcement, downgrade restrictions, protected-boot behavior, or patched-package acceptance was tested. Do not weaken secure boot/signature policy to obtain a successful install."
+    ],
+    "not_performed": ["Netinstall execution", "RouterBOOT changes", "device flash/reformat", "board boot/login", "license purchase/activation", "cold-restart persistence", "upgrade tests"]
+  },
+  "release_conclusion": "Blocked for an ARM/ARM64-ready NEW v1 claim. Preserve fail-closed coverage and report exact unsupported scope. x86 image readiness is outside this audit; existing CHR evidence does not validate bare-metal ARM/ARM64 or x86 installers. No release action taken."
+}

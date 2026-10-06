@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "checkpoint_date": "2026-10-06",
+  "execution_timestamp_utc": "2026-10-06T01:51:25.983714+00:00",
+  "scope": "Detached offline instruction matcher, not firmware support. Only arm_license.py, tests/test_arm_license.py and this evidence file owned/created. No production/HANDOFF/workflow edits, remote writes, firmware signing/output or runtime tests. Full suite includes existing synthetic tests, not a firmware build.",
+  "repository": {
+    "branch": "main",
+    "head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "cached_origin_main_divergence": [0, 0],
+    "remote_fetched": false,
+    "working_tree": "Existing modified and untracked files preserved. HEAD alone does not describe tested checkout. No commit/push.",
+    "handoff_owner": "Coordinator; intentionally untouched per explicit task ownership.",
+    "source_sha256": {
+      "arm_license.py": "7e912e2ecbe9e357a851e2daa079edac924b912f514334d5507a05431bdcc955",
+      "tests/test_arm_license.py": "472baf99ea3c28f90706edc2b068b124489af6e39493b79a7db8ebaae4c78cf3",
+      "patch.py_tested_existing_local_source": "13db59e246d61811bbbb3efcf29a7425f162ac3a019161a637568bd182ef3f88"
+    }
+  },
+  "environment": {
+    "host": "Windows Git Bash -> Ubuntu WSL",
+    "python": "3.12.3",
+    "interpreter": "/home/djundev/.cache/mikpatch-audit/venv/bin/python",
+    "capstone": "5.0.7",
+    "fixture_root": "/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff",
+    "fixture_opt_in": "MIKPATCH_ARM_FIXTURES",
+    "configured_keys_read": false,
+    "key_values_or_key_digests_exported": false,
+    "private_keys_read": false,
+    "binary_values": "Existing pool/ADD values reconstructed in memory only. No raw instruction immediate values from the arithmetic chain exported; instruction templates retain only opcode/register bits. No transformed ELF saved."
+  },
+  "decision": {
+    "full_key_replacement_supported": false,
+    "bounded_improvement": "One pinned arm/mode raw32 reconstruction may change ONLY its derived fourth dword, with the other seven dwords byte-identical. Literal pools are not modified. Existing three non-flag-setting ADD immediate fields are solved exactly modulo 2^32; unrepresentable deltas return zero matches. This is useful offline machinery and a restricted positive fixture, not a deployable key replacement.",
+    "why_not_full_pool_mutation": "Stripped ELF has only .dynsym, no complete ARM/Thumb/data mapping or computed-pointer ownership proof. Unique aligned A32 LDR references and lack of absolute pointer/relocation hits do not prove exclusive pool ownership. Leaving pools immutable avoids inventing that proof.",
+    "production_detached": true,
+    "firmware_ready": false,
+    "independent_review": "Pending; no review approval claimed."
+  },
+  "implemented_contract": {
+    "whole_file_pin": "52b6136fb21df26f0ee25167b04b7f219d444721ac6c164129fbe9aa60cbe701",
+    "target": "RouterOS 7.24.4 arm/nova/bin/mode, ELF32 LE EM_ARM, ET_EXEC, flags 0x05000200",
+    "vendor_signature_authenticated": false,
+    "instruction_envelope_file_range": [59732, 59816],
+    "pool_dependency_file_ranges": [[62244,62248],[62248,62252],[62252,62256],[62256,62260],[62260,62264],[62264,62268],[62268,62272]],
+    "only_mutable_instructions": [59764, 59768, 59772],
+    "only_mutable_bits": "Bottom 12 immediate-encoding bits of each exact AL ADD r3,r3,imm instruction; opcode/register/condition/S bits preserved. No inserted instructions or size changes.",
+    "register_lifetime": "r3 stores the old third word, then three ADDs derive fourth word and STR stores it; next LDR overwrites r3 before subsequent words. Final LDM at 59812 is also checked and included in envelope. Setup lr=r4-880 and ip=r4 unchanged; LDM reads outside the key buffer r4-840..-809. No calls, branches or intermediate r3 observations inside exact arithmetic chain. S=0 preserves flags.",
+    "validation": [
+      "Whole pristine bytes SHA-256; unknown/repatched input rejected.",
+      "Strict ELF class/endianness/machine/type/version/flags/table bounds and non-overlap.",
+      "Unique RX PT_LOAD ownership for executable sections, file/virtual section and segment aliases refused.",
+      "Capstone fixed-width complete A32 decoding plus exact raw instruction fields and output ADD roundtrip.",
+      "Seven unique aligned PC-relative literal references; overlapping unaligned loads and explicit absolute pool pointers refused even though pools remain immutable.",
+      "Aligned A32 B/BL/BLX direct entry scan, entry point/function-symbol interior checks and REL/RELA envelope/pool overlap rejection.",
+      "Reconstructed eight-word original equals caller old value; other seven new words must remain identical.",
+      "Exact modular three-immediate solver including carry/wrap, no key-derived caches or logs.",
+      "OfflineMatch represents one reconstruction/count=1, three write triples, full instruction envelope and all read-only pool dependencies. preflight checks every dependency range for other mapping overlap. No automatic production statistics or application API."
+    ],
+    "control_flow_limit": "Not a generic whole-program computed-pointer/Thumb CFG proof. Indirect instruction-entry assumptions remain restricted to the pristine whole-file pin, as in existing PPC matcher style; direct checks are defense in depth. Full arbitrary pool/key mutation intentionally remains unsupported. Review must evaluate this pinned local instruction-equivalence scope, not infer universal ARM support."
+  },
+  "unsupported_targets": [
+    {"target":"arm/keyman","sha256":"1e76c60d04aab0551f2d5d0518f46962c3a93cdf45085bd559f622fba47bd83a","blocker":"BL at 26916 while r6/r7 already contain key words. Callee observation/preservation and pool ownership not proven; no profile installed."},
+    {"target":"arm64/keyman","sha256":"0c4f825e1ce36f04a04c178105210f0ae1eb28967d8793c9f9a8ee546e9b67fa","blocker":"ELF32 EM_ARM, not AArch64. BL at 29308 with live key words; no safe full transformation proof."},
+    {"target":"arm64/mode","sha256":"0e33c3ee6eb25a04f8dffab7bfb299f740fbcae09b1d4cac349646c3f7d8f1b1","blocker":"ELF32 EM_ARM. BL at 26016 with live key words; no profile installed."},
+    {"target":"arm/loader","sha256":"b5eef87fefeb9542c4937227d11fbd2560201978269936e47303ae0870aa7939","blocker":"Ten alternating 26/25-bit limbs; loader transformation/preservation and runtime policy remain unsupported."},
+    {"target":"arm64/loader","sha256":"b636576f7ea56606e7b5e5af72bbe4a3106a82750876185db8c96978ea9c4e18","blocker":"Prior evidence identifies raw32 A32 construction rather than ten limbs, with BL at 43932. Loader runtime remains unsupported, no profile installed."}
+  ],
+  "actual_validation": {
+    "focused_initial": "19 tests: 17 passed, 1 error, 1 opt-in skip. Error was test expecting adjacency beside contiguous pool slots to be nonoverlap; corrected test to only use actual outer boundaries. No production guard loosened.",
+    "focused_default_final": {"command":"python -B -m unittest discover -s tests -p test_arm_license.py -v","total":19,"passed":18,"skipped":1,"failure_error":0},
+    "focused_fixture_final": {"command":"MIKPATCH_ARM_FIXTURES=<fixture_root> python -B -m unittest discover -s tests -p test_arm_license.py -v","total":19,"passed":19,"skipped":0,"failure_error":0},
+    "focused_fixture_optimized_final": {"command":"MIKPATCH_ARM_FIXTURES=<fixture_root> python -O -B -m unittest discover -s tests -p test_arm_license.py -v","total":19,"passed":19,"skipped":0,"failure_error":0},
+    "full_suite": {"command":"MIKPATCH_ARM_FIXTURES=<fixture_root> MIKPATCH_PPC_FIXTURES=<fixture_root> python -B -m unittest discover -s tests -v","total":505,"passed":496,"skipped":9,"failure_error":0,"duration_seconds":179.897,"skips":["1 native Windows publication semantics","2 opt-in real qemu-img tests not configured","2 optional real Caddy tests not configured","4 native cmd.exe tests"]},
+    "full_suite_optimized": "Not run; focused ARM suite ran optimized.",
+    "synthetic_coverage": ["positive exact footprint and one-reconstruction count", "every dependency byte overlap", "full-key/direct-word refusal", "pin and repatch", "all truncated prefixes", "machine/class/endianness/flags", "table overflow/alias/RX ownership", "each instruction condition/opcode/register/flag mutation", "pool references and absolute aliases", "branch/call/symbol/entry and relocations", "missing/partial decoder", "all 4096 modified-immediate encodings", "modular carry/wrap/zero and unencodable delta", "production no change/no coverage"],
+    "real_fixture": "Reads pinned arm/mode, reconstructs source internally, replaces only fourth word in memory with synthetic derived arithmetic, independently reconstructs output, verifies exact allowed diff and same length, repatch refusal. All five other ARM/ARM64 targets return no match. No configured custom key used.",
+    "git_diff_check": "Passed; existing workflow/release-validation CRLF warnings only."
+  },
+  "next_steps": [
+    "Independent review of detached matcher and its deliberately restricted derived-word scope.",
+    "Do not integrate this partial match as package coverage: a full key would almost always change literal words and is deliberately rejected.",
+    "Complete ARM/Thumb/data and computed-reference analysis before any pool mutation; audit callee uses/live registers for keyman and arm64-package constructions.",
+    "Define and validate loader semantics and per-target package policy before any production integration, separately from build/signature and hardware boot/licensing evidence.",
+    "Coordinator may summarize this evidence in HANDOFF; this worker did not edit it."
+  ]
+}

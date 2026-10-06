@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-05T17:32:29.423103+00:00",
+  "scope": "Run37277711016 all-profile x86 ISO artifact retrieval and isolated BIOS QEMU install and first-boot test.",
+  "reference_head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+  "git": {
+    "branch": "main",
+    "cached_origin_main_divergence": [
+      0,
+      0
+    ],
+    "live_remote_not_checked": true,
+    "no_source_edits": true,
+    "no_handoff_edits": true
+  },
+  "safety": {
+    "physical_disk_access": false,
+    "owner_vm_access": false,
+    "source_or_keys_modified": false,
+    "network_interfaces_in_guests": 0,
+    "downloads": "Selective artifact member range download only; no release writes",
+    "external_release_actions": false,
+    "guest_login_attempted": false,
+    "activation_attempted": false,
+    "raw_console_exported": false
+  },
+  "artifact": {
+    "run_id": 37277711016,
+    "artifact_id": 11330614951,
+    "name": "ali-patch-code-x86-7.24.4",
+    "api_artifact_digest": "sha256:13ffb69e306daf179db056562850fb3dd8054b75377643d657b923b814690ba2",
+    "api_artifact_digest_verified": false,
+    "download_method": "HTTP206 selective ZIP member ranges for ISO, SHA256SUMS, and manifest.json; whole-archive download was stopped due to slow transfer rate (~0.16 MiB/s) and is not claimed as whole-digest verified.",
+    "zip_crc32_verified": true,
+    "live_read_only_api_metadata_confirmed": true,
+    "source_commit": "140b94a049798b2c1e58eceb13af64e7281f2ecf",
+    "archive_bytes": 1017398869,
+    "expired_at_metadata_check": false,
+    "download_provenance": {
+      "exclusive_output_directory": "C:/Users/AliMedia_PC/AppData/Local/Temp/all-profile-run37277711016-band8g2x",
+      "metadata_file": "C:/Users/AliMedia_PC/AppData/Local/Temp/all-profile-run37277711016-band8g2x/download-meta.json",
+      "downloaded_at_utc": "2026-10-05T17:25:44.727634+00:00",
+      "credentials_and_signed_urls_exported": false,
+      "zip_entry_count": 21,
+      "central_directory_offset": 1017396943,
+      "central_directory_bytes": 1904,
+      "iso_range_chunk_bytes": 2097152,
+      "parallel_range_workers": 8,
+      "checks": "HTTP 206 and requested range lengths checked; compressed sizes read from ZIP central directory, raw DEFLATE decompressed, uncompressed sizes and CRC32 checked. ISO SHA256 matches downloaded SHA256SUMS and manifest entry.",
+      "verification_limit": "Per-member transfer/integrity consistency only, not independent authenticity verification or verification against the whole-archive GitHub API digest. Partial whole-archive downloads were not used.",
+      "members": [
+        {
+          "name": "SHA256SUMS",
+          "local_header_offset": 642,
+          "compressed_bytes": 832,
+          "bytes": 2105,
+          "crc32": "0x632fd56b",
+          "sha256": "e2f6ed938ef70b874a2d819e48aa49de303c4e82e26afed861c029393248105d",
+          "zip_crc32_verified": true
+        },
+        {
+          "name": "manifest.json",
+          "local_header_offset": 1017395694,
+          "compressed_bytes": 1190,
+          "bytes": 4503,
+          "crc32": "0xed8a495a",
+          "sha256": "1fe149f704ae6f3a94a15642c8c54d94ad3c4385d9258d29d67f28c54a3d4a07",
+          "zip_crc32_verified": true
+        },
+        {
+          "name": "ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+          "local_header_offset": 838170815,
+          "data_offset": 838170891,
+          "compressed_bytes": 42724842,
+          "bytes": 71161856,
+          "crc32": "0x886c929d",
+          "sha256": "4e4a5577f1701189dbae31ebad9cbc52bc16ffd04943dee21d277719395faa5b",
+          "zip_crc32_verified": true
+        }
+      ]
+    },
+    "iso": {
+      "filename": "ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+      "bytes": 71161856,
+      "sha256": "4e4a5577f1701189dbae31ebad9cbc52bc16ffd04943dee21d277719395faa5b",
+      "zip_crc32": "0x886c929d",
+      "sha256sums_entry_matches": true,
+      "manifest_entry_matches": true
+    }
+  },
+  "bios_test": {
+    "machine": "pc,accel=tcg",
+    "memory_mib": 512,
+    "vcpus": 1,
+    "storage_controller": "IDE",
+    "disposable_target_format": "qcow2",
+    "disposable_target_bytes": 1073741824,
+    "backing_image": null,
+    "nic": "none",
+    "iso_readonly": true,
+    "installation_input": [
+      "a(select all packages)",
+      "i(install)",
+      "y(continue confirmation)"
+    ],
+    "installation_result": {
+      "installer_menu_45s": true,
+      "software_installed_observed": true,
+      "reboot_prompt_observed": true,
+      "open_panics_failed_observed": true
+    },
+    "post_install_disk_boot": {
+      "configuration": "Cold start new QEMU process from installed disposable disk, ISO detached, boot order c, -no-reboot",
+      "45s_indicators": {
+        "loading_system": true,
+        "starting_services": true,
+        "rebooting": true,
+        "login_prompt": false
+      },
+      "90s_indicators": {
+        "loading_system": true,
+        "starting_services": true,
+        "rebooting": true,
+        "timeout": true,
+        "login_prompt": false
+      },
+      "180s_indicators": {
+        "process_exited": true,
+        "exit_code": 0,
+        "guest_requested_reboot": "consistent_with_observations_not_confirmed_by_recorded_QMP_event",
+        "login_prompt_seen_in_sampled_screens": false
+      },
+      "boot_result": "NO_LOGIN_OBSERVED_AT_45_OR_90_SECONDS_TIMEOUT_AND_REBOOTING_TEXT_PROCESS_EXITED_BY_180_SECONDS",
+      "observation_limit": "OCR of sampled VGA screens, not continuous observation. Exit code 0 with -no-reboot is consistent with a reboot request; repeated actual reboot cycles were not observed."
+    },
+    "observations": [
+      {
+        "phase": "installation",
+        "stage": "45s",
+        "indicators": {
+          "installer_menu": true,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false,
+          "timeout": false,
+          "rebooting": false
+        },
+        "vga_sha256": "94b4ac8230fca11100bde333b6736cabcbd957d76a4dcc66febff63d6800356e"
+      },
+      {
+        "phase": "installation",
+        "stage": "after-install-key",
+        "indicators": {
+          "installer_menu": true,
+          "keep_configuration": false,
+          "continue_confirmation": true,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false,
+          "timeout": false,
+          "rebooting": false
+        },
+        "vga_sha256": "6c96ddd616461558b6684806b318373aeeb68e29b33154b9c6dd2580e75ff927"
+      },
+      {
+        "phase": "installation",
+        "stage": "after-install-wait",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": true,
+          "software_installed": true,
+          "reboot_prompt": true,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": true,
+          "internal_error": false,
+          "panics_open_error": true,
+          "no_disk": false,
+          "timeout": false,
+          "rebooting": false
+        },
+        "vga_sha256": "b9f7528e43259baaf3129b1554c763e6d461fae9acfc2ee7323a9c1895023d4e"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "45s",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": true,
+          "starting_services": true,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false,
+          "timeout": false,
+          "rebooting": true
+        },
+        "vga_sha256": "9b36004eaf467b4413c5d881ca81ac3e56ac61c3d2ae395b9de9b6bd492120ec"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "90s",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": true,
+          "starting_services": true,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false,
+          "timeout": true,
+          "rebooting": true
+        },
+        "vga_sha256": "9734ed632106b5cf0184054902561673b490a6bd8b7aa5d74fd2f5a5c5e73e3d"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "180s",
+        "qemu_exited": true,
+        "exit_code": 0
+      }
+    ],
+    "processes_stopped": true
+  },
+  "comparison_with_old_iso": {
+    "old_iso_sha256": "790a79251afc6cb8c0d66d024457e757950cdd93b51f43195472b271fb76a74b",
+    "old_iso_disk_boot": "Login prompt observed at 45s, 90s, 180s; no timeout/reboot text observed in samples",
+    "all_profile_iso_sha256": "4e4a5577f1701189dbae31ebad9cbc52bc16ffd04943dee21d277719395faa5b",
+    "all_profile_iso_disk_boot": "Loading system, starting services and rebooting text observed at 45s/90s, timeout text at 90s, no login in those samples; QEMU exited 0 by 180s under -no-reboot",
+    "comparison_limit": "Whole-image comparison, not an ISO-specific component-isolation experiment. No repeated reboot cycle demonstrated."
+  },
+  "analysis": {
+    "pipeline_difference": "Earlier working-tree inspection found generic patch.py npk calls in ISO/install-image paths and the narrow chr-x86-7.24.4 policy in the CHR path. The working tree is concurrently edited; this is static context, not proof of ISO-specific causation.",
+    "chr_historical_correlation": "Separate historical evidence in docs/evidence/chr-7.24.4-loader-anchor-experiment-2026-10-05.json records full-loader CHR no login within 240s, timeout/rebooting text and signal 11 at EIP 0x0805bfd3, versus preserved-loader CHR login at 30s. This is not an ISO component-isolation experiment.",
+    "iso_specific_loader_root_cause": "not_established",
+    "owner_error_root_cause": "not_established",
+    "causal_scope": "The new all-profile ISO completed installation but did not reach an observed login prompt during this isolated BIOS QEMU test. The installed loader hash matches the historical failing CHR variant, but causation for this ISO, VMware or Mini PC remains unproven.",
+    "fat_layout_correction": "The prior claim that writing a FAT32 superfloppy explains the owner's bogus-reserved-sector error is retracted. The owner's exact IMG, flashing method, boot mode and controller are unknown; the local layout does not establish that cause."
+  },
+  "uefi_test": {
+    "performed": false,
+    "blocker": "OVMF/EDK2 firmware not found in checked local roots; no UEFI runtime result claimed"
+  },
+  "installed_component_hashes": {
+    "source_disk": "/home/djundev/.cache/mikpatch-audit/all-iso-run37277711016-8jgyrf50/disposable.qcow2",
+    "method": "Offline qemu-img conversion to a scratch raw copy; read-only debugfs dump /var/pdb/system/image at partition offset 65570*512; unsquashfs -cat from embedded hsqs payload; SHA256 over component bytes",
+    "installed_package_bytes": 20524705,
+    "nova/bin/loader": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401",
+    "nova/bin/keyman": "64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd",
+    "nova/bin/mode": "786a3309f7ad779d672da546217ed1fb1e6e49b0b21f6606fd4047c0a51eeeda",
+    "historical_comparison": {
+      "loader_reference": "docs/evidence/chr-7.24.4-loader-anchor-experiment-2026-10-05.json",
+      "loader_matches_full_variant": true,
+      "loader_matches_preserved_variant": false,
+      "preserved_loader_sha256": "792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7",
+      "keyman_mode_reference": "docs/evidence/chr-7.24.4-final-build-2026-10-05.json",
+      "keyman_and_mode_match_recorded_after_hashes": true,
+      "keyman_and_mode_match_recorded_before_hashes": false,
+      "limit": "Comparison against existing recorded hashes only; vendor/CHR fixture bytes were not independently re-extracted or authenticated in this step."
+    }
+  },
+  "final_validation": {
+    "evidence_json_parse": "passed before adding this validation record",
+    "downloaded_iso_sha256sums_manifest_rehashed": "all three sizes and SHA256 values match download-meta.json",
+    "old_evidence_fat_causal_retraction_present": true,
+    "unit_suite_rerun": false,
+    "unit_suite_reason": "Evidence-only edits; no source changes in this task",
+    "scratch_retention_limit": "Downloaded binaries and private runtime captures remain in temporary/cache directories; durable evidence contains sanitized observations, provenance and hashes, not full firmware or raw guest logs."
+  },
+  "limits": [
+    "No claim that QEMU equals hardware or VMware",
+    "No network interfaces used",
+    "No login credentials entered and no activation attempted",
+    "No source or workflow files modified",
+    "No changes to docs/HANDOFF.md"
+  ]
+}

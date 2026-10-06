@@ -1,17 +1,40 @@
-"""Regression checks for the pinned multi-arch release workflow (no firmware build)."""
+"""Workflow regressions; optional real ISO packer tests use synthetic files only."""
 import json
 import re
+import shlex
+import shutil
+import struct
+import subprocess
+import sys
+import tempfile
+import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc"]
+ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc", "tile"]
 
 
 def workflow():
-    return yaml.safe_load((ROOT / ".github/workflows/patch7.yml").read_text(encoding="utf-8"))
+    config = yaml.safe_load((ROOT / ".github/workflows/patch7.yml").read_text(encoding="utf-8"))
+    # Assertions must never print embedded key values, even on a failing test.
+    config["env"] = {key: value for key, value in config["env"].items()
+                     if key == "PINNED_VERSION"}
+    return config
+
+
+def condition_selected(condition, profile, arch, cache_hit="false", has_new_version="true"):
+    condition = condition.replace("inputs.build_profile", repr(profile))
+    condition = condition.replace("matrix.arch", repr(arch))
+    condition = condition.replace("steps.get_latest.outputs.has_new_version", repr(has_new_version))
+    condition = re.sub(r"steps\.cache_\w+\.outputs\.cache-hit", repr(cache_hit), condition)
+    condition = condition.replace("&&", " and ").replace("||", " or ")
+    if not re.fullmatch(r"[a-z0-9'()=!\s-]+|True", condition):
+        raise ValueError("Unsupported test condition grammar")
+    return eval(condition, {"__builtins__": {}}, {})
 
 
 class WorkflowTests(unittest.TestCase):
@@ -31,25 +54,52 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(profile["type"], "choice")
         self.assertIs(profile["required"], True)
         self.assertEqual(profile["default"], "all")
-        self.assertEqual(profile["options"], ["all", "chr-x86"])
+        self.assertEqual(profile["options"], ["all", "chr-x86", "x86-all"])
 
     def test_matrix_covers_all_repo_architectures(self):
         expression = workflow()["jobs"]["patch"]["strategy"]["matrix"]["arch"]
         match = re.fullmatch(
-            r"\$\{\{ fromJSON\(inputs\.build_profile == 'chr-x86' && '([^']+)' "
+            r"\$\{\{ fromJSON\(\(inputs\.build_profile == 'chr-x86' "
+            r"\|\| inputs\.build_profile == 'x86-all'\) && '([^']+)' "
             r"\|\| '([^']+)'\) \}\}", expression)
         self.assertIsNotNone(match, "Matrix must select only constant JSON arrays")
         self.assertEqual(json.loads(match[1]), ["x86"])
         self.assertEqual(json.loads(match[2]), ALL_ARCHS)
 
+    def test_architecture_suffix_allowlist_matches_full_matrix_and_fails_closed(self):
+        run = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
+                   if s.get("id") == "get_latest")
+        self.assertEqual(re.findall(r'matrix\.arch \}\}" == "([a-z0-9]+)"', run), ALL_ARCHS)
+        self.assertIn('elif [ "${{ matrix.arch }}" == "tile" ]; then\n  ARCH=\'-tile\'', run)
+        self.assertIn("else\n  printf '%s\\n' 'Unsupported architecture' >&2\n  exit 1\nfi", run)
+
+    def test_tile_selects_only_generic_package_products(self):
+        steps = workflow()["jobs"]["patch"]["steps"]
+        for cache_hit in ("true", "false"):
+            selected = [s for s in steps if condition_selected(
+                s.get("if", "True"), "all", "tile", cache_hit)]
+            products = [s for s in selected if s["name"].startswith(("Cache ", "Get ", "Patch "))]
+            self.assertEqual(len(products), 2 if cache_hit == "true" else 3)
+            self.assertTrue(all(s["name"].split()[1].startswith("routeros-") for s in products))
+            patch = next(s for s in products if s["name"].startswith("Patch "))
+            self.assertIn('patch.py npk routeros-$LATEST_VERSION$ARCH-patched.npk', patch["run"])
+            self.assertNotIn("--runtime-policy", patch["run"])
+            self.assertNotIn("--terminal-banner", patch["run"])
+
+    def test_release_requires_successful_entire_matrix(self):
+        release = workflow()["jobs"]["release"]
+        self.assertEqual(release["needs"], "patch")
+        self.assertEqual(release["if"], "success() && inputs.create_draft_release == true")
+        self.assertNotIn("always()", release["if"])
+
     def test_profile_validation_precedes_build_and_rejects_unknown_values(self):
         first = workflow()["jobs"]["patch"]["steps"][0]
         self.assertEqual(first["env"]["BUILD_PROFILE"], "${{ inputs.build_profile }}")
         self.assertIn('case "$BUILD_PROFILE" in', first["run"])
-        self.assertIn('all|chr-x86) ;;', first["run"])
+        self.assertIn('all|chr-x86|x86-all) ;;', first["run"])
         self.assertRegex(first["run"], r'\*\).*exit 1')
 
-    def test_all_non_chr_product_steps_are_all_profile_only(self):
+    def test_non_chr_product_steps_enable_full_product_profiles(self):
         steps = workflow()["jobs"]["patch"]["steps"]
         product_steps = [s for s in steps if s["name"].startswith(("Cache ", "Get ", "Patch "))]
         self.assertEqual(len(product_steps), 17)
@@ -59,7 +109,8 @@ class WorkflowTests(unittest.TestCase):
                     self.assertNotIn("build_profile", step["if"])
                     self.assertIn("(matrix.arch == 'x86' || matrix.arch == 'arm64')", step["if"])
                 else:
-                    self.assertTrue(step["if"].startswith("inputs.build_profile == 'all' && "))
+                    self.assertTrue(step["if"].startswith("(inputs.build_profile == 'all' || "
+                                                           "inputs.build_profile == 'x86-all') && "))
                 self.assertIn("steps.get_latest.outputs.has_new_version == 'true'", step["if"])
 
     def test_chr_profile_runs_only_chr_and_shared_steps(self):
@@ -69,19 +120,12 @@ class WorkflowTests(unittest.TestCase):
             "Validate build profile", "Checkout", "Setup Python", "Install dependencies",
             "Select pinned RouterOS version", "Stage branded release assets", "Upload branded artifacts",
         }
-        for profile, archs in (("all", ALL_ARCHS), ("chr-x86", ["x86"])):
+        for profile, archs in (("all", ALL_ARCHS), ("chr-x86", ["x86"]), ("x86-all", ["x86"])):
             for arch in archs:
                 for cache_hit in ("true", "false"):
                     selected = []
                     for step in steps:
-                        condition = step.get("if", "True")
-                        condition = condition.replace("inputs.build_profile", repr(profile))
-                        condition = condition.replace("matrix.arch", repr(arch))
-                        condition = condition.replace("steps.get_latest.outputs.has_new_version", "'true'")
-                        condition = re.sub(r"steps\.cache_\w+\.outputs\.cache-hit", repr(cache_hit), condition)
-                        condition = condition.replace("&&", " and ").replace("||", " or ")
-                        self.assertRegex(condition, r"^[a-z0-9'()=!\s-]+$|^True$")
-                        if eval(condition, {"__builtins__": {}}, {}):
+                        if condition_selected(step.get("if", "True"), profile, arch, cache_hit):
                             selected.append(step["name"])
                     with self.subTest(profile=profile, arch=arch, cache_hit=cache_hit):
                         self.assertTrue(shared.issubset(selected))
@@ -96,6 +140,26 @@ class WorkflowTests(unittest.TestCase):
                             self.assertTrue(any(name.startswith("Patch routeros-") for name in products)
                                             if arch != "x86" else
                                             any(name.startswith("Patch install-image-") for name in products))
+
+    def test_x86_all_preserves_every_full_x86_gate(self):
+        steps = workflow()["jobs"]["patch"]["steps"]
+        for cache_hit in ("true", "false"):
+            for has_new in ("true", "false"):
+                selected = {}
+                for profile in ("all", "x86-all"):
+                    selected[profile] = [s["name"] for s in steps if condition_selected(
+                        s.get("if", "True"), profile, "x86", cache_hit, has_new)]
+                self.assertEqual(selected["all"], selected["x86-all"])
+                if has_new == "true":
+                    products = [name.split()[1] for name in selected["x86-all"]
+                                if name.startswith("Patch ")]
+                    self.assertEqual(products, [
+                        "mikrotik-${{", "install-image-${{", "chr-${{", "netinstall"])
+                    self.assertEqual(any(name.startswith("Get refind")
+                                         for name in selected["x86-all"]), cache_hit == "false")
+                else:
+                    self.assertFalse(any(name.startswith(("Cache ", "Get ", "Patch ", "Upload "))
+                                         for name in selected["x86-all"]))
 
     def test_chr_build_uses_strict_npk_guard_and_six_zipped_formats(self):
         step = next(s for s in workflow()["jobs"]["patch"]["steps"]
@@ -123,7 +187,7 @@ fi
 sudo umount /dev/nbd0p2'''
         self.assertIn(expected, step["run"])
 
-    def test_runtime_policy_occurs_only_on_chr_internal_npk_command(self):
+    def test_runtime_policy_is_scoped_to_chr_and_x86_installer_commands(self):
         config = workflow()
         flagged = []
         for job_name, job in config["jobs"].items():
@@ -131,14 +195,18 @@ sudo umount /dev/nbd0p2'''
                 for line in step.get("run", "").splitlines():
                     if "--runtime-policy" in line:
                         flagged.append((job_name, step["name"], line.strip()))
-        self.assertEqual(flagged, [(
+        self.assertEqual(len(flagged), 4)
+        self.assertEqual([name.split()[1].split('-${{')[0] for _, name, _ in flagged],
+                         ['mikrotik', 'mikrotik', 'install-image', 'chr'])
+        self.assertEqual(flagged[-1], (
             "patch", "Patch chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img",
             "sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 "
             "--terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image",
-        )])
+        ))
         # Also reject policy injection through env or elsewhere outside run blocks.
         serialized = yaml.safe_dump(config)
-        self.assertEqual(serialized.count("--runtime-policy"), 1)
+        self.assertEqual(serialized.count("--runtime-policy"), 4)
+        self.assertEqual(serialized.count("x86-installer-7.24.4"), 3)
         self.assertEqual(serialized.count("chr-x86-7.24.4"), 2)
         self.assertEqual(serialized.count("--terminal-banner"), 1)
         self.assertEqual(serialized.count("chr-x86-7.24.4-ali-media-patch"), 1)
@@ -146,7 +214,7 @@ sudo umount /dev/nbd0p2'''
                    if s['name'].startswith('Patch chr-'))
         self.assertLess(run.index('--terminal-banner'), run.index('qemu-img convert'))
 
-    def test_both_profiles_select_the_same_x86_chr_policy_step(self):
+    def test_all_profiles_select_the_same_x86_chr_policy_step(self):
         config = workflow()
         step = next(s for s in config["jobs"]["patch"]["steps"]
                     if s["name"].startswith("Patch chr-"))
@@ -158,7 +226,7 @@ sudo umount /dev/nbd0p2'''
         self.assertIn('echo "LATEST_VERSION=$LATEST_VERSION" >> "$GITHUB_ENV"', selector)
         self.assertEqual(re.findall(r"^LATEST_VERSION=(.*)$", selector, re.MULTILINE),
                          ["$PINNED_VERSION"])
-        # Matrix/profile selection is checked above; neither profile can bypass
+        # Matrix/profile selection is checked above; no profile can bypass
         # this shared CHR step or resolve a version from an upstream latest feed.
         self.assertEqual(config["env"]["PINNED_VERSION"], "7.24.4")
 
@@ -185,7 +253,7 @@ sudo umount /dev/nbd0p2'''
         run = step["run"]
         export = run[run.index('# Only x86 exports ISO packages.'):]
         self.assertIn('if [ "${{ matrix.arch }}" == "x86" ]; then', export)
-        self.assertIn('sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk', export)
+        self.assertIn('sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *', export)
         self.assertEqual(export.count('sudo zip '), 1)
         self.assertLess(export.index('sudo zip '), export.index('\nfi'))
         self.assertIn('\nfi\nsudo rm -rf new_iso/', export)
@@ -193,6 +261,98 @@ sudo umount /dev/nbd0p2'''
     def test_matrix_does_not_cancel_other_architectures(self):
         strategy = workflow()["jobs"]["patch"]["strategy"]
         self.assertIs(strategy.get("fail-fast"), False)
+
+    @staticmethod
+    def x86_iso_command():
+        run = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
+                   if s["name"].startswith("Patch mikrotik-"))
+        # Read the actual x86 packer invocation rather than a duplicate test command.
+        command = re.search(r"^  sudo (xorriso -as mkisofs .*?new_iso/)$", run,
+                            re.MULTILINE | re.DOTALL)
+        if command is None:
+            raise ValueError("x86 ISO command must use xorriso mkisofs emulation")
+        return shlex.split(command[1].replace("\\\n", " "))
+
+    def test_x86_iso_load_sizes_are_explicit_and_scoped_to_boot_entries(self):
+        args = self.x86_iso_command()
+        self.assertEqual(args[:3], ["xorriso", "-as", "mkisofs"])
+        split = args.index("-eltorito-alt-boot")
+        bios, efi = args[:split], args[split + 1:]
+        self.assertEqual(bios[bios.index("-b") + 1], "isolinux/isolinux.bin")
+        self.assertEqual(bios[bios.index("-c") + 1], "isolinux/boot.cat")
+        self.assertEqual(bios[bios.index("-boot-load-size") + 1], "4")
+        self.assertIn("-boot-info-table", bios)
+        self.assertEqual(efi[efi.index("-e") + 1], "efiboot.img")
+        self.assertLess(efi.index("-e"), efi.index("-boot-load-size"))
+        self.assertEqual(efi[efi.index("-boot-load-size") + 1], "0")
+        self.assertEqual(args.count("-boot-load-size"), 2)
+        self.assertIn("-no-emul-boot", bios)
+        self.assertIn("-no-emul-boot", efi)
+        self.assertNotIn("-boot-info-table", efi)
+        dependencies = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
+                            if "apt-get install" in s.get("run", ""))
+        self.assertIn("xorriso", dependencies)
+
+    @unittest.skipUnless(shutil.which("xorriso"), "xorriso not available")
+    def test_real_x86_iso_catalog_keeps_bios_four_and_full_efi_image(self):
+        # No firmware, signing or FAT tooling: catalog semantics depend on image
+        # size, not filesystem contents. 34 MiB => 69632 sectors, which formerly
+        # wrapped to 4096 in genisoimage's uint16 count. Include either side of
+        # the 32 MiB boundary so the fix cannot depend on overflow or one size.
+        for image_size in (1024 * 1024, 32 * 1024 * 1024, 34 * 1024 * 1024):
+            with self.subTest(image_size=image_size), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                tree = root / "new_iso"
+                (tree / "isolinux").mkdir(parents=True)
+                (tree / "isolinux/isolinux.bin").write_bytes(bytes(4096))
+                with (tree / "efiboot.img").open("wb") as image:
+                    image.truncate(image_size)
+                iso = root / "test.iso"
+                args = self.x86_iso_command()
+                args[args.index("-o") + 1] = str(iso)
+                args[args.index("-V") + 1] = "Synthetic ISO regression"
+                args[-1] = str(tree)
+                subprocess.run(args, check=True, capture_output=True, timeout=60)
+                with iso.open("rb") as stream:
+                    # Locate El Torito via ISO9660 descriptors, never a fixed
+                    # catalog LBA or an offset copied from a vendor ISO.
+                    catalog_lba = None
+                    for lba in range(16, 80):
+                        stream.seek(lba * 2048)
+                        descriptor = stream.read(2048)
+                        self.assertEqual(descriptor[1:7], b"CD001\x01")
+                        if descriptor[0] == 0 and descriptor[7:39].rstrip(b"\0") == b"EL TORITO SPECIFICATION":
+                            self.assertIsNone(catalog_lba, "duplicate boot descriptor")
+                            catalog_lba = struct.unpack_from("<I", descriptor, 71)[0]
+                        if descriptor[0] == 255:
+                            break
+                    self.assertIsNotNone(catalog_lba, "missing El Torito descriptor")
+                    stream.seek(catalog_lba * 2048)
+                    catalog = stream.read(2048)
+                self.assertEqual(catalog[:2], b"\x01\x00")  # validation: BIOS
+                self.assertEqual(catalog[30:32], b"\x55\xaa")
+                self.assertEqual(sum(struct.unpack("<16H", catalog[:32])) & 0xffff, 0)
+                bios = catalog[32:64]
+                self.assertEqual(bios[:2], b"\x88\x00")  # bootable, no emulation
+                self.assertEqual(struct.unpack_from("<H", bios, 6)[0], 4)
+                section = catalog[64:96]
+                self.assertEqual(section[:2], b"\x91\xef")  # last section, EFI
+                self.assertEqual(struct.unpack_from("<H", section, 2)[0], 1)
+                efi = catalog[96:128]
+                self.assertEqual(efi[:2], b"\x88\x00")
+                expected_efi_sectors = (image_size // 512) if (image_size // 512) <= 0xffff else 0
+                self.assertEqual(struct.unpack_from("<H", efi, 6)[0], expected_efi_sectors)
+                # Verify that the whole EFI file remains in the ISO and the
+                # boot catalog points to its full byte-identical extent.
+                extracted = root / "efi-readback.img"
+                subprocess.run(["xorriso", "-osirrox", "on", "-indev", str(iso),
+                                "-extract", "/efiboot.img", str(extracted)],
+                               check=True, capture_output=True, timeout=60)
+                self.assertEqual(extracted.stat().st_size, image_size)
+                self.assertEqual(extracted.read_bytes(), (tree / "efiboot.img").read_bytes())
+                with iso.open("rb") as stream:
+                    stream.seek(struct.unpack_from("<I", efi, 8)[0] * 2048)
+                    self.assertEqual(stream.read(image_size), extracted.read_bytes())
 
     def test_dependencies_include_squashfs_tools(self):
         run = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
@@ -286,6 +446,8 @@ sudo umount /dev/nbd0p2'''
         self.assertIn("semua arsitektur", publish["with"]["name"])
         self.assertIn("inputs.build_profile == 'chr-x86'", publish["with"]["name"])
         self.assertIn("CHR x86 only, six formats", publish["with"]["name"])
+        self.assertIn("inputs.build_profile == 'x86-all'", publish["with"]["name"])
+        self.assertIn("x86 only, full product set (18 artifacts)", publish["with"]["name"])
         self.assertIn("untested", publish["with"]["name"])
         self.assertIn("github.run_id", publish["with"]["tag_name"])
         self.assertEqual(publish["with"]["body_path"], "dist/RELEASE_NOTES.md")
@@ -345,14 +507,18 @@ sudo umount /dev/nbd0p2'''
                     f"all_packages{suffix}-7.24.4.zip": base + f"all_packages-{arch}-7.24.4.zip",
                 })
 
-    def test_x86_package_outputs_are_derived_from_iso(self):
+    def test_x86_package_outputs_use_standalone_policy_and_patched_iso_archive(self):
         steps = workflow()["jobs"]["patch"]["steps"]
         step = next(s for s in steps if s.get("name", "").startswith("Patch mikrotik-"))
-        self.assertIn("matrix.arch == 'x86'", step["if"])
-        self.assertIn("sudo cp new_iso/routeros-$LATEST_VERSION*.npk routeros-$LATEST_VERSION$ARCH-patched.npk", step["run"])
-        self.assertIn("sudo cp new_iso/*.npk all_packages_iso$ARCH-$LATEST_VERSION/", step["run"])
-        self.assertIn("cd all_packages_iso$ARCH-$LATEST_VERSION/", step["run"])
-        self.assertIn("sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *.npk", step["run"])
+        run = step['run']
+        self.assertIn('if [ "${{ matrix.arch }}" == "x86" ]; then\n  sudo -E python3 -B - new_iso', run)
+        self.assertIn('https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION.npk', run)
+        self.assertIn('python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.4', run)
+        export = run[run.index('# Only x86 exports ISO packages.'):]
+        self.assertIn("-iname '*.npk' -exec cp -t all_packages_iso$ARCH-$LATEST_VERSION/ {} +", export)
+        self.assertIn('sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *', export)
+        self.assertNotIn('patch.py', export)
+        self.assertNotIn('--runtime-policy', export)
 
     def test_refind_download_uses_canonical_sourceforge_mirror_with_retries(self):
         step = next(s for s in workflow()["jobs"]["patch"]["steps"]
@@ -376,7 +542,7 @@ sudo umount /dev/nbd0p2'''
                     if tokens and tokens[0] == "curl":
                         commands.append((job_name, step.get("name"), tokens))
 
-        self.assertEqual(len(commands), 11)
+        self.assertEqual(len(commands), 12)
         self.assertEqual({job for job, _, _ in commands}, {"patch", "release"})
         for job, step, tokens in commands:
             with self.subTest(job=job, step=step, output=tokens[-2:]):
@@ -390,6 +556,232 @@ sudo umount /dev/nbd0p2'''
                 output = tokens[tokens.index("--output") + 1]
                 self.assertTrue(output and not output.startswith("-"))
                 self.assertNotIn("-o", tokens)
+
+
+def installer_selector_sources():
+    steps = workflow()['jobs']['patch']['steps']
+    return [re.search(r"<<'PY'\n(.*?)\nPY", step['run'], re.DOTALL).group(1)
+            for step in steps if step['name'].startswith(('Patch mikrotik-', 'Patch install-image-'))]
+
+
+class InstallerSelectorTests(unittest.TestCase):
+    ADDONS = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
+              'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
+    PIN = '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+
+    def run_selector(self, context='new_iso', mutation=None, version='7.24.4', fail=False):
+        # Execute exact workflow Python, replacing ONLY parsing, hashes, subprocess
+        # with inert synthetic doubles; no firmware, credentials or signing.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / context
+            root.mkdir()
+            ids = types.SimpleNamespace(NAME_INFO=1, ARCHITECTURE=2, SIGNATURE=3)
+            packages = {}
+            names = self.ADDONS | {'system'}
+            if context == 'install-image':
+                names = names - {'user-manager'}
+            for index, name in enumerate(sorted(names)):
+                path = root / ('ROUTEROS.NPK' if name == 'system' else f'{index}.npk')
+                path.write_bytes(b'SYNTHETIC, NOT FIRMWARE')
+                info = types.SimpleNamespace(name=name, version='7.24.4.final')
+                parts = [types.SimpleNamespace(id=1, data=info),
+                         types.SimpleNamespace(id=2, data=b'i386'),
+                         types.SimpleNamespace(id=3, data=b'signature'),
+                         types.SimpleNamespace(id=2, data=b'I')]
+                class Package(list):
+                    _packages = []
+                    _has_pkg = False
+                packages[str(path)] = Package(parts)
+            if mutation:
+                mutation(root, packages)
+            def part(package, part_id):
+                matches = [p for p in package if p.id == part_id]
+                if len(matches) != 1:
+                    raise ValueError('missing or duplicate NPK part')
+                return matches[0]
+            npk = types.ModuleType('npk')
+            npk.NpkPartID = ids
+            npk.NovaPackage = types.SimpleNamespace(load=lambda path: packages[path])
+            patch = types.ModuleType('patch')
+            patch._part = part
+            calls = []
+            def run(command, check):
+                calls.append(command)
+                self.assertIs(check, True)
+                if fail is True or (fail == 'system' and '--runtime-policy' in command):
+                    import subprocess
+                    raise subprocess.CalledProcessError(1, command)
+            with mock.patch.dict(sys.modules, {'npk': npk, 'patch': patch}), \
+                    mock.patch.object(sys, 'argv', ['-', str(root), version]), \
+                    mock.patch('hashlib.sha256', return_value=types.SimpleNamespace(hexdigest=lambda: self.PIN)), \
+                    mock.patch('subprocess.run', side_effect=run):
+                try:
+                    exec(compile(installer_selector_sources()[0], '<workflow-selector>', 'exec'), {})
+                except Exception as error:
+                    return calls, error
+            return calls, None
+
+    def test_both_workflow_selectors_are_identical_and_read_only(self):
+        sources = installer_selector_sources()
+        self.assertEqual(len(sources), 2)
+        self.assertEqual(sources[0], sources[1])
+        self.assertIn('package._packages or package._has_pkg', sources[0])
+        self.assertIn('_part(package, NpkPartID.NAME_INFO)', sources[0])
+        self.assertNotIn('package[NpkPartID', sources[0])
+        self.assertNotIn('assert ', sources[0])
+        self.assertNotIn('save(', sources[0])
+
+    def test_exact_iso_and_fat_inventory_select_only_system_policy(self):
+        for context, count in (('new_iso', 12), ('install-image', 11)):
+            with self.subTest(context=context):
+                calls, error = self.run_selector(context)
+                self.assertIsNone(error)
+                self.assertEqual(len(calls), count)
+                flagged = [c for c in calls if '--runtime-policy' in c]
+                self.assertEqual(len(flagged), 1)
+                self.assertTrue(flagged[0][4].endswith('ROUTEROS.NPK'))
+                self.assertEqual(flagged[0][-2:], ['--runtime-policy', 'x86-installer-7.24.4'])
+                self.assertTrue(all(c[:4] == [sys.executable, '-B', 'patch.py', 'npk'] for c in calls))
+                self.assertTrue(all(len(c) == 5 for c in calls if c not in flagged))
+
+    def test_unknown_missing_duplicate_and_multipackage_fail_before_any_patch(self):
+        def mutate_name(name):
+            return lambda root, packages: setattr(next(iter(packages.values()))[0].data, 'name', name)
+        def missing(root, packages):
+            next(root.glob('*.NPK')).unlink()
+        def duplicate_info(root, packages):
+            pkg = next(iter(packages.values()))
+            pkg.append(pkg[0])
+        def multipackage(root, packages):
+            next(iter(packages.values()))._packages = [object()]
+        def feature_marker(root, packages):
+            next(iter(packages.values()))._has_pkg = True
+        def wrong_version(root, packages):
+            next(iter(packages.values()))[0].data.version = '7.24.5.final'
+        def wrong_arch(root, packages):
+            next(iter(packages.values()))[1].data = b'arm'
+        def duplicate_arch(root, packages):
+            next(iter(packages.values())).append(types.SimpleNamespace(id=2, data=b'i386'))
+        for mutation in (mutate_name('unknown'), mutate_name('system'), missing,
+                         duplicate_info, multipackage, feature_marker, wrong_version,
+                         wrong_arch, duplicate_arch):
+            with self.subTest(mutation=mutation):
+                calls, error = self.run_selector(mutation=mutation)
+                self.assertIsInstance(error, ValueError)
+                self.assertEqual(calls, [])
+
+    def test_wrong_context_or_version_and_unqualified_system_fail_closed(self):
+        for context, version in (('other', '7.24.4'), ('new_iso', '7.24.5')):
+            calls, error = self.run_selector(context=context, version=version)
+            self.assertIsInstance(error, ValueError)
+            self.assertEqual(calls, [])
+        with mock.patch.object(self, 'PIN', '0' * 64):
+            calls, error = self.run_selector()
+            self.assertIsInstance(error, ValueError)
+            self.assertEqual(calls, [])
+
+    def test_full_fat_shell_rejects_bad_inputs_before_any_boot_or_npk_write(self):
+        import os
+        import shlex
+        import shutil
+        import subprocess
+        bash = shutil.which('bash')
+        if bash is None:
+            self.skipTest('requires bash for full-step ordering regression')
+        step = next(s for s in workflow()['jobs']['patch']['steps']
+                    if s['name'].startswith('Patch install-image-'))
+        # All sudo operations are inert except the selector, whose exact stdin
+        # runs with synthetic parser/hash/subprocess doubles. No mounts or writes
+        # to firmware occur; attempted boot/NPK writes are recorded, not executed.
+        runner_source = '''import hashlib, json, os, sys, types
+from pathlib import Path
+log = Path('attempts.log')
+def record(text):
+    with log.open('a') as f:
+        f.write(text + '\\n')
+scenario = os.environ['SELECTOR_SCENARIO']
+ids = types.SimpleNamespace(NAME_INFO=1, ARCHITECTURE=2, SIGNATURE=3)
+class Package(list):
+    _packages = []
+    _has_pkg = False
+def load(path):
+    name = Path(path).stem
+    info = types.SimpleNamespace(name=name, version='7.24.4.final')
+    if scenario == 'metadata' and name == 'calea':
+        info.version = '7.24.5.final'
+    return Package([types.SimpleNamespace(id=1, data=info),
+                    types.SimpleNamespace(id=2, data=b'i386'),
+                    types.SimpleNamespace(id=3, data=b'signature'),
+                    types.SimpleNamespace(id=2, data=b'I')])
+def part(package, ident):
+    matches = [p for p in package if p.id == ident]
+    if len(matches) != 1:
+        raise ValueError('missing or duplicate part')
+    return matches[0]
+npk = types.ModuleType('npk')
+npk.NovaPackage = types.SimpleNamespace(load=load)
+npk.NpkPartID = ids
+patch = types.ModuleType('patch')
+patch._part = part
+sys.modules.update(npk=npk, patch=patch)
+pin = '0' * 64 if scenario == 'wire' else '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+hashlib.sha256 = lambda data: types.SimpleNamespace(hexdigest=lambda: pin)
+import subprocess
+subprocess.run = lambda command, check: record('NPK ' + json.dumps(command))
+sys.argv = ['-', 'install-image', os.environ['LATEST_VERSION']]
+record('selector-start')
+exec(compile(sys.stdin.read(), '<full-step-selector>', 'exec'), {})
+record('selector-done')
+'''
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            runner = root / 'inert-selector.py'
+            runner.write_text(runner_source)
+            image = root / 'install-image'
+            image.mkdir()
+            harness = '''set -e
+sudo() {
+  printf 'sudo %s\\n' "$*" >> attempts.log
+  if [ "$1" = "-E" ] && [ "$2" = "python3" ] && [ "$3" = "-B" ] && [ "$4" = "-" ]; then
+    ''' + shlex.quote(Path(sys.executable).as_posix()) + (' -O' if sys.flags.optimize else '') + ' -B ' + shlex.quote(runner.as_posix()) + '''
+  fi
+}
+'''
+            for scenario in ('incomplete', 'metadata', 'wire', 'version', 'valid'):
+                with self.subTest(scenario=scenario):
+                    for path in image.iterdir():
+                        path.unlink()
+                    names = {'calea'} if scenario == 'incomplete' else (self.ADDONS - {'user-manager'}) | {'system'}
+                    for name in names:
+                        (image / f'{name}.npk').write_bytes(b'SYNTHETIC NOT FIRMWARE')
+                    (root / 'attempts.log').write_text('')
+                    env = {**os.environ, 'SELECTOR_SCENARIO': scenario,
+                           'LATEST_VERSION': '7.24.5' if scenario == 'version' else '7.24.4',
+                           'ARCH': '', 'PYTHONDONTWRITEBYTECODE': '1'}
+                    result = subprocess.run([bash], input=(harness + step['run']).encode(),
+                                            cwd=root, env=env, capture_output=True, timeout=30)
+                    attempts = (root / 'attempts.log').read_text().splitlines()
+                    writes = [line for line in attempts if line.startswith(('NPK ', 'sudo cp '))
+                              or 'patch.py kernel' in line]
+                    if scenario == 'valid':
+                        self.assertEqual(result.returncode, 0, result.stderr.decode())
+                        self.assertEqual(sum(line.startswith('NPK ') for line in writes), 11)
+                        self.assertTrue(any('BOOTX64.EFI' in line for line in writes))
+                        self.assertTrue(any('patch.py kernel' in line for line in writes))
+                        done = attempts.index('selector-done')
+                        self.assertTrue(all(attempts.index(line) > done for line in writes
+                                            if not line.startswith('NPK ')))
+                    else:
+                        self.assertNotEqual(result.returncode, 0)
+                        self.assertIn('selector-start', attempts)
+                        self.assertEqual(writes, [], 'rejection must precede all firmware write attempts')
+
+    def test_patch_subprocess_failure_propagates_without_retry_or_generic_fallback(self):
+        import subprocess
+        calls, error = self.run_selector(fail='system')
+        self.assertIsInstance(error, subprocess.CalledProcessError)
+        self.assertTrue(any('--runtime-policy' in c for c in calls))
+        self.assertFalse(any(len(c) == 5 and c[4].endswith('ROUTEROS.NPK') for c in calls))
 
 
 if __name__ == "__main__":

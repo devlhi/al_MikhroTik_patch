@@ -1,0 +1,1182 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-05T18:17:03.160544+00:00",
+  "reference_head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+  "scope": "x86 installed-disk component isolation and lab licensing; no production implementation, ISO rebuilding or publication",
+  "git": {
+    "branch": "main",
+    "HEAD_and_live_remote_main_equal_at_start": true,
+    "cached_divergence": [
+      0,
+      0
+    ],
+    "preexisting_edits_untouched": true,
+    "HANDOFF_not_edited_per_task_ownership": true
+  },
+  "safety": {
+    "physical_disk_access": false,
+    "owner_vm_access": false,
+    "network_interfaces": 0,
+    "keys_changed": false,
+    "source_edits": false,
+    "remote_writes": false,
+    "software_ids_or_license_blocks_exported": false,
+    "raw_console_exported_to_evidence": false,
+    "activation_console_persisted": false,
+    "probe_prelogin_captures": "private scratch only; no activation IDs or license console captured"
+  },
+  "input_inventory": {
+    "scratch": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi",
+    "inputs": {
+      "all": {
+        "path": "/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/all-profile-run37277711016-band8g2x/ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+        "bytes": 71161856,
+        "sha256": "4e4a5577f1701189dbae31ebad9cbc52bc16ffd04943dee21d277719395faa5b",
+        "entries": {
+          "/CALEA_7_.NPK": [
+            35735552,
+            24721
+          ],
+          "/CONTAINE.NPK": [
+            35762176,
+            1175697
+          ],
+          "/DEFPACKS.": [
+            36939776,
+            48
+          ],
+          "/DUDE_7_2.NPK": [
+            36941824,
+            1425553
+          ],
+          "/EFIBOOT.IMG": [
+            73728,
+            35651584
+          ],
+          "/GPS_7_24.NPK": [
+            38369280,
+            24721
+          ],
+          "/IOT_7_24.NPK": [
+            38395904,
+            594065
+          ],
+          "/ISOLINUX/BOOT.CAT": [
+            71680,
+            2048
+          ],
+          "/ISOLINUX/ISOLINUX.BIN": [
+            35725312,
+            9652
+          ],
+          "/ISOLINUX/ISOLINUX.CFG": [
+            66813952,
+            97
+          ],
+          "/ISOLINUX/LINUX.": [
+            66816000,
+            4036832
+          ],
+          "/LICENSE.TXT": [
+            38991872,
+            132009
+          ],
+          "/OPENFLOW.NPK": [
+            39124992,
+            82065
+          ],
+          "/ROSE_STO.NPK": [
+            39208960,
+            5292177
+          ],
+          "/ROUTEROS.NPK": [
+            44503040,
+            20524705
+          ],
+          "/TR069_CL.NPK": [
+            65028096,
+            159889
+          ],
+          "/UPS_7_24.NPK": [
+            65189888,
+            37009
+          ],
+          "/USER_MAN.NPK": [
+            65228800,
+            417937
+          ],
+          "/WIRELESS.NPK": [
+            65648640,
+            1163409
+          ]
+        },
+        "system": {
+          "name": "system",
+          "version": "7.24.4.final",
+          "npk_sha256": "1afc33fa3230d7a76659561720a2b6a41d2ef2d3081b39e4e0d10137b33f42e3",
+          "parts": [
+            [
+              "HEADER",
+              0
+            ],
+            [
+              "NAME_INFO",
+              null
+            ],
+            [
+              "CHANNEL",
+              6
+            ],
+            [
+              "ARCHITECTURE",
+              4
+            ],
+            [
+              "DESCRIPTION",
+              46
+            ],
+            [
+              "GIT_COMMIT",
+              40
+            ],
+            [
+              "DEPENDENCIES",
+              2
+            ],
+            [
+              "NULL_BLOCK",
+              3900
+            ],
+            [
+              "SQUASHFS",
+              16601088
+            ],
+            [
+              "INSTALL_SCRIPT",
+              1
+            ],
+            [
+              "FILE_CONTAINER",
+              3919363
+            ],
+            [
+              "SIGNATURE",
+              132
+            ],
+            [
+              "ARCHITECTURE",
+              1
+            ]
+          ],
+          "archs": [
+            "i386",
+            "I"
+          ]
+        }
+      },
+      "local-vendor-named": {
+        "path": "/mnt/c/Users/AliMedia_PC/Downloads/mikrotik-7.24.4.iso",
+        "bytes": 174282752,
+        "sha256": "05990fa7c8b4f45e369a193d26d668a08747fe6972c8e3289d39ca5fde96c0fb",
+        "entries": {
+          "/CALEA_7_24_4.NPK": [
+            67217408,
+            24721
+          ],
+          "/CONTAINER_7_24_4.NPK": [
+            67244032,
+            1163409
+          ],
+          "/DEFPACKS.": [
+            68409344,
+            48
+          ],
+          "/DUDE_7_24_4.NPK": [
+            68411392,
+            1409169
+          ],
+          "/EFIBOOT.IMG": [
+            69632,
+            67108864
+          ],
+          "/GPS_7_24_4.NPK": [
+            69822464,
+            24721
+          ],
+          "/IOT_7_24_4.NPK": [
+            69849088,
+            589969
+          ],
+          "/ISOLINUX/BOOT.CAT": [
+            67584,
+            2048
+          ],
+          "/ISOLINUX/INITRAMFS.XZ": [
+            70440960,
+            37437548
+          ],
+          "/ISOLINUX/ISOLINUX.BIN": [
+            67178496,
+            38912
+          ],
+          "/ISOLINUX/ISOLINUX.CFG": [
+            107880448,
+            306
+          ],
+          "/ISOLINUX/LDLINUX.C32": [
+            107882496,
+            118676
+          ],
+          "/ISOLINUX/LIBUTIL.C32": [
+            108001280,
+            23736
+          ],
+          "/ISOLINUX/LINUX.": [
+            108025856,
+            4036832
+          ],
+          "/ISOLINUX/MENU.C32": [
+            112064512,
+            26084
+          ],
+          "/ISOLINUX/VMLINUZ.": [
+            112091136,
+            14513152
+          ],
+          "/NETINSTALL_7_24_4.NPK": [
+            126605312,
+            77969
+          ],
+          "/OPENFLOW_7_24_4.NPK": [
+            126685184,
+            82065
+          ],
+          "/OPTION_7_24_4.NPK": [
+            126769152,
+            2379921
+          ],
+          "/PYTHON3_7_24_4.NPK": [
+            129150976,
+            16994449
+          ],
+          "/ROSE_STORAGE_7_24_4.NPK": [
+            146147328,
+            5251217
+          ],
+          "/ROUTEROS_7_24_4.NPK": [
+            151400448,
+            20804182
+          ],
+          "/TR069_CLIENT_7_24_4.NPK": [
+            172206080,
+            159889
+          ],
+          "/UPS_7_24_4.NPK": [
+            172367872,
+            37009
+          ],
+          "/USER_MANAGER_7_24_4.NPK": [
+            172406784,
+            413841
+          ],
+          "/WIRELESS_7_24_4.NPK": [
+            172822528,
+            1151121
+          ]
+        },
+        "system": {
+          "name": "system",
+          "version": "7.24.4.final",
+          "npk_sha256": "b5786f81092abdc77cb5cb6a173ee7e9e3d8affa793732047227073c3314053e",
+          "parts": [
+            [
+              "HEADER",
+              0
+            ],
+            [
+              "NAME_INFO",
+              null
+            ],
+            [
+              "CHANNEL",
+              6
+            ],
+            [
+              "ARCHITECTURE",
+              4
+            ],
+            [
+              "DESCRIPTION",
+              46
+            ],
+            [
+              "GIT_COMMIT",
+              40
+            ],
+            [
+              "DEPENDENCIES",
+              2
+            ],
+            [
+              "NULL_BLOCK",
+              3900
+            ],
+            [
+              "SQUASHFS",
+              16678912
+            ],
+            [
+              "INSTALL_SCRIPT",
+              1
+            ],
+            [
+              "FILE_CONTAINER",
+              4121016
+            ],
+            [
+              "SIGNATURE",
+              132
+            ],
+            [
+              "ARCHITECTURE",
+              1
+            ]
+          ],
+          "archs": [
+            "i386",
+            "I"
+          ]
+        }
+      }
+    }
+  },
+  "component_hashes_remeasured": {
+    "all_iso_system": {
+      "nova/bin/loader": {
+        "bytes": 84220,
+        "sha256": "e6169de330a3a8c39c513140a99e7605dcc138e10bfa7c1b1b05181011122401"
+      },
+      "nova/bin/keyman": {
+        "bytes": 55444,
+        "sha256": "64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd"
+      },
+      "nova/bin/mode": {
+        "bytes": 75688,
+        "sha256": "786a3309f7ad779d672da546217ed1fb1e6e49b0b21f6606fd4047c0a51eeeda"
+      },
+      "nova/bin/sys2": {
+        "bytes": 289948,
+        "sha256": "809f78beb72981a35a3c3cd1936096344487edfed67b2e4add93e1e8c5375187"
+      },
+      "nova/bin/installer": {
+        "bytes": 125084,
+        "sha256": "bf14614c44e5e6a251734dc47900045df216ec5b1121579c1785aa86648fad9b"
+      }
+    },
+    "vendor_iso_system": {
+      "nova/bin/loader": {
+        "bytes": 87092,
+        "sha256": "55e5249c34d384817001ec41adcbc3bf86d8f0863a3b6d5931acf77feea6454b"
+      },
+      "nova/bin/keyman": {
+        "bytes": 55444,
+        "sha256": "63cfdd07e507f35351dabf936d5c39cc71e9871e923d009acfa2dfd0b37d7b50"
+      },
+      "nova/bin/mode": {
+        "bytes": 202396,
+        "sha256": "aadcc83180084ce36d5238c445c31a11b339842aaf93545ea76ca4e365ccce05"
+      },
+      "nova/bin/sys2": {
+        "bytes": 289948,
+        "sha256": "57e660af59fc2997ce97b5731837117d69b3a427f7b79325ce4687a6c30d545b"
+      },
+      "nova/bin/installer": {
+        "bytes": 125084,
+        "sha256": "15ef81a2cc41d6c7998509e91048d1360648d1a7023147310bc24cb00d65fdbb"
+      }
+    },
+    "vendor_chr_system": {
+      "nova/bin/loader": {
+        "bytes": 84220,
+        "sha256": "792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7"
+      },
+      "nova/bin/keyman": {
+        "bytes": 55444,
+        "sha256": "ace0e5fa8de1fdd4098540102b59ae0ab734f2c8bc9bf13a0c86103c2b419ac0"
+      },
+      "nova/bin/mode": {
+        "bytes": 75688,
+        "sha256": "f55ae4709fcdf62227fba0985aee8429058d1543d048751cedd86485cd67102a"
+      },
+      "nova/bin/sys2": {
+        "bytes": 289948,
+        "sha256": "719e9ca06cfc9939d72677f62917f8c07111fc7696f7a91d7b974ee6e2b486b8"
+      },
+      "nova/bin/installer": {
+        "bytes": 125084,
+        "sha256": "08c5e749d93995ebf7d64377d02d69217ec6bbe91f3ade122e9f0ff2f456f5fd"
+      }
+    }
+  },
+  "component_mapping_probe": {
+    "all": {
+      "description": "Main package with most of services and drivers",
+      "vendor_signature_valid": false,
+      "custom_signature_valid": true,
+      "container_names": [
+        "bin/bash",
+        "bin/milo",
+        "boot",
+        "boot/EFI",
+        "boot/EFI/BOOT",
+        "boot/EFI/BOOT/BOOTX64.EFI",
+        "boot/map",
+        "UPGRADED"
+      ],
+      "files": {
+        "loader": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 0,
+          "diff_ranges": []
+        },
+        "keyman": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 0,
+          "diff_ranges": []
+        },
+        "mode": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 0,
+          "diff_ranges": []
+        },
+        "sys2": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 0,
+          "diff_ranges": []
+        },
+        "installer": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 0,
+          "diff_ranges": []
+        }
+      }
+    },
+    "iso-named": {
+      "description": "Main package with most of services and drivers",
+      "vendor_signature_valid": false,
+      "custom_signature_valid": false,
+      "container_names": [
+        "bin/bash",
+        "bin/milo",
+        "boot",
+        "boot/EFI",
+        "boot/EFI/BOOT",
+        "boot/EFI/BOOT/BOOTX64.EFI",
+        "boot/map",
+        "UPGRADED"
+      ],
+      "files": {
+        "loader": {
+          "replacements": [
+            1,
+            0
+          ],
+          "matches_all_after_generic_patch": false,
+          "length_equal_all": false,
+          "differing_byte_count": 55,
+          "diff_ranges": [
+            [
+              24,
+              27
+            ],
+            [
+              48,
+              49
+            ],
+            [
+              340,
+              344
+            ],
+            [
+              345,
+              347
+            ],
+            [
+              349,
+              352
+            ],
+            [
+              353,
+              358
+            ],
+            [
+              360,
+              362
+            ],
+            [
+              364,
+              365
+            ],
+            [
+              368,
+              370
+            ],
+            [
+              29806,
+              29810
+            ],
+            [
+              29816,
+              29820
+            ],
+            [
+              29826,
+              29830
+            ],
+            [
+              29836,
+              29840
+            ],
+            [
+              29846,
+              29850
+            ],
+            [
+              29856,
+              29860
+            ],
+            [
+              29863,
+              29867
+            ],
+            [
+              29870,
+              29874
+            ]
+          ]
+        },
+        "keyman": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": false,
+          "length_equal_all": true,
+          "differing_byte_count": 35,
+          "diff_ranges": [
+            [
+              30302,
+              30306
+            ],
+            [
+              30312,
+              30316
+            ],
+            [
+              30322,
+              30326
+            ],
+            [
+              30332,
+              30336
+            ],
+            [
+              30342,
+              30346
+            ],
+            [
+              30352,
+              30356
+            ],
+            [
+              30359,
+              30363
+            ],
+            [
+              30366,
+              30370
+            ],
+            [
+              49914,
+              49917
+            ]
+          ]
+        },
+        "mode": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": false,
+          "length_equal_all": false,
+          "differing_byte_count": 70811,
+          "diff_ranges": "too_many"
+        },
+        "sys2": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": false,
+          "length_equal_all": true,
+          "differing_byte_count": 35,
+          "diff_ranges": [
+            [
+              249192,
+              249195
+            ],
+            [
+              288768,
+              288800
+            ]
+          ]
+        },
+        "installer": {
+          "replacements": [
+            0,
+            0
+          ],
+          "matches_all_after_generic_patch": false,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              123904,
+              123936
+            ]
+          ]
+        }
+      }
+    },
+    "chr-vendor": {
+      "description": "Main package with most of services and drivers",
+      "vendor_signature_valid": false,
+      "custom_signature_valid": false,
+      "container_names": [
+        "bin/bash",
+        "bin/milo",
+        "boot",
+        "boot/EFI",
+        "boot/EFI/BOOT",
+        "boot/EFI/BOOT/BOOTX64.EFI",
+        "boot/map",
+        "UPGRADED"
+      ],
+      "files": {
+        "loader": {
+          "replacements": [
+            1,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              29806,
+              29810
+            ],
+            [
+              29816,
+              29820
+            ],
+            [
+              29826,
+              29830
+            ],
+            [
+              29836,
+              29840
+            ],
+            [
+              29846,
+              29850
+            ],
+            [
+              29856,
+              29860
+            ],
+            [
+              29863,
+              29867
+            ],
+            [
+              29870,
+              29874
+            ]
+          ]
+        },
+        "keyman": {
+          "replacements": [
+            1,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              30302,
+              30306
+            ],
+            [
+              30312,
+              30316
+            ],
+            [
+              30322,
+              30326
+            ],
+            [
+              30332,
+              30336
+            ],
+            [
+              30342,
+              30346
+            ],
+            [
+              30352,
+              30356
+            ],
+            [
+              30359,
+              30363
+            ],
+            [
+              30366,
+              30370
+            ]
+          ]
+        },
+        "mode": {
+          "replacements": [
+            1,
+            0
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              24099,
+              24103
+            ],
+            [
+              24109,
+              24113
+            ],
+            [
+              24119,
+              24123
+            ],
+            [
+              24129,
+              24133
+            ],
+            [
+              24139,
+              24143
+            ],
+            [
+              24149,
+              24153
+            ],
+            [
+              24156,
+              24160
+            ],
+            [
+              24163,
+              24167
+            ]
+          ]
+        },
+        "sys2": {
+          "replacements": [
+            0,
+            1
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              288768,
+              288800
+            ]
+          ]
+        },
+        "installer": {
+          "replacements": [
+            0,
+            1
+          ],
+          "matches_all_after_generic_patch": true,
+          "length_equal_all": true,
+          "differing_byte_count": 32,
+          "diff_ranges": [
+            [
+              123904,
+              123936
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "pristine_qualification": {
+    "source": "retained CHR vendor system NPK sha46de2e3d...; NOT exact original installer vendor ISO",
+    "vendor_signature_verification": false,
+    "authenticity_limit": "Existing verifier rejects vendor input; retained HTTPS provenance and hashes, not cryptographic authenticity proof",
+    "equivalence": "All582 pristine regular files generic-mapped equal observed installer ISO package files exactly; source and observed SquashFS metadata inventories equal; patched pristine FILE_CONTAINER payloads equal observed package payloads",
+    "rejected_local_vendor_named_iso": "174282752-byte Downloads/mikrotik-7.24.4.iso differs in loader/mode sizes and many bytes; neither vendor nor configured custom signature validates; NOT used for A/B"
+  },
+  "construction": {
+    "source": "/home/djundev/.cache/mikpatch-audit/final-production-7m5_vbt0/vendor.npk",
+    "source_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+    "scope": "Scratch component-isolation, NOT use of CHR runtime policy; pristine SFS compared exhaustively with installed ISO SFS before any signing. Installed package envelope and FILE_CONTAINER retained unchanged. Exact original installer pristine ISO unavailable.",
+    "variants": {
+      "A-full": {
+        "package_sha256": "d05e63a968a0da094ffa3b19e04526c7361a3b6289314ab0eaf1de56952b4bb8",
+        "custom_signature_valid": true,
+        "metadata_parity": true,
+        "scope": "real component replacement counts, scratch composer not production package policy",
+        "replacements": [
+          {
+            "mapping_index": 1,
+            "kernel": 0,
+            "squashfs": 3,
+            "total": 3
+          },
+          {
+            "mapping_index": 2,
+            "kernel": 2,
+            "squashfs": 3,
+            "total": 5
+          }
+        ],
+        "per_target_license": {
+          "nova/bin/loader": 1,
+          "nova/bin/keyman": 1,
+          "nova/bin/mode": 1
+        },
+        "preserved_anchor_counted_as_coverage": false
+      },
+      "B-loader-preserved": {
+        "package_sha256": "440a3610a5a275bb7f9d6c414f4d7bfa6ed5bbf3feed2c6909e2221403b70060",
+        "custom_signature_valid": true,
+        "metadata_parity": true,
+        "scope": "real component replacement counts, scratch composer not production package policy",
+        "replacements": [
+          {
+            "mapping_index": 1,
+            "kernel": 0,
+            "squashfs": 2,
+            "total": 2
+          },
+          {
+            "mapping_index": 2,
+            "kernel": 2,
+            "squashfs": 3,
+            "total": 5
+          }
+        ],
+        "per_target_license": {
+          "nova/bin/loader": 0,
+          "nova/bin/keyman": 1,
+          "nova/bin/mode": 1
+        },
+        "preserved_anchor_counted_as_coverage": false
+      }
+    },
+    "pristine_transforms_to_observed_all_regular_files": 582,
+    "pristine_vs_observed_metadata_equal": true,
+    "kernel_container_payload_equality": {
+      "bin/bash": true,
+      "bin/milo": true,
+      "boot": true,
+      "boot/EFI": true,
+      "boot/EFI/BOOT": true,
+      "boot/EFI/BOOT/BOOTX64.EFI": true,
+      "boot/map": true,
+      "UPGRADED": true
+    },
+    "ab_different_regular_files": [
+      "nova/bin/loader"
+    ],
+    "ab_loader_changed_bytes": 32
+  },
+  "disposable_disk_pair": {
+    "base_path": "/home/djundev/.cache/mikpatch-audit/all-iso-run37277711016-8jgyrf50/disposable.qcow2",
+    "base_sha256_before": "0461a6e193671155833a67aae108dea0fd7fb12aa237d7ae8c80395de93a208e",
+    "partition_start": 33571840,
+    "partition_end": 1071644672,
+    "installed_original_matches_iso_package": true,
+    "disks": {
+      "A-full": {
+        "path": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/A-full.raw",
+        "sha256_preboot": "0919905e69a78630df7af06aed9d4a9d4d268002235c549a59c13ab781bf91c8",
+        "readback_package_sha256": "d05e63a968a0da094ffa3b19e04526c7361a3b6289314ab0eaf1de56952b4bb8",
+        "outside_system_partition_identical": true,
+        "boot_partition_identical": true,
+        "original_npk_inode_mode_uid_gid_times_restored": true
+      },
+      "B-loader-preserved": {
+        "path": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/B-loader-preserved.raw",
+        "sha256_preboot": "bc59ba2e922ed58bf560d2c7664ee89491ecc292a34f6fef6c020406b937c93c",
+        "readback_package_sha256": "440a3610a5a275bb7f9d6c414f4d7bfa6ed5bbf3feed2c6909e2221403b70060",
+        "outside_system_partition_identical": true,
+        "boot_partition_identical": true,
+        "original_npk_inode_mode_uid_gid_times_restored": true
+      }
+    },
+    "base_sha256_after": "0461a6e193671155833a67aae108dea0fd7fb12aa237d7ae8c80395de93a208e"
+  },
+  "boot_probe": {
+    "A-full": {
+      "candidate": "A-full",
+      "disk_source": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/A-full.raw",
+      "disk_sha256": "0919905e69a78630df7af06aed9d4a9d4d268002235c549a59c13ab781bf91c8",
+      "overlay": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/probe-A-full/disposable.qcow2",
+      "qemu_configuration": {
+        "machine": "pc,accel=tcg",
+        "memory_mib": 512,
+        "vcpus": 1,
+        "storage_controller": "IDE",
+        "nic": "none",
+        "bios": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/bios-256k.bin",
+        "no_reboot": true
+      },
+      "samples": [
+        {
+          "seconds": 30,
+          "qemu_status": "running",
+          "serial_len": 0,
+          "ocr_indicators": {
+            "login_prompt": false,
+            "loading_system": true,
+            "starting_services": true,
+            "rebooting": true
+          },
+          "vga_sha256": "4495104e07513bd7ea41ab8260dc8421db2a32472032979c092406942f2eb80e"
+        },
+        {
+          "seconds": 45,
+          "qemu_status": "running",
+          "serial_len": 0,
+          "ocr_indicators": {
+            "login_prompt": false,
+            "loading_system": true,
+            "starting_services": true,
+            "rebooting": true
+          },
+          "vga_sha256": "46e2b91047ae92ed3523adb2645a1c8b3439b1810005421875db5dd5ecd9d95f"
+        },
+        {
+          "seconds": 60,
+          "qemu_status": "running",
+          "serial_len": 0,
+          "ocr_indicators": {
+            "login_prompt": false,
+            "loading_system": true,
+            "starting_services": true,
+            "rebooting": true
+          },
+          "vga_sha256": "4495104e07513bd7ea41ab8260dc8421db2a32472032979c092406942f2eb80e"
+        },
+        {
+          "seconds": 90,
+          "qemu_exited": true,
+          "exit_code": 0
+        }
+      ],
+      "termination": "QEMU exited0 under -no-reboot by90s, consistent with reboot/halt; no QMP event captured"
+    },
+    "B-loader-preserved": {
+      "candidate": "B-loader-preserved",
+      "disk_source": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/B-loader-preserved.raw",
+      "disk_sha256": "bc59ba2e922ed58bf560d2c7664ee89491ecc292a34f6fef6c020406b937c93c",
+      "overlay": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/probe-B-loader-preserved/disposable.qcow2",
+      "qemu_configuration": {
+        "machine": "pc,accel=tcg",
+        "memory_mib": 512,
+        "vcpus": 1,
+        "storage_controller": "IDE",
+        "nic": "none",
+        "bios": "/home/djundev/.cache/mikpatch-audit/tools/usr/share/seabios/bios-256k.bin",
+        "no_reboot": true
+      },
+      "samples": [
+        {
+          "seconds": 30,
+          "qemu_status": "running",
+          "serial_len": 52,
+          "ocr_indicators": {
+            "login_prompt": true,
+            "loading_system": false,
+            "starting_services": false,
+            "rebooting": false
+          },
+          "vga_sha256": "dd53c12cdde1eae4cbe1a2aede31ed51b85f88a8ecb8393233a0fa8e9a2bd21b"
+        }
+      ],
+      "termination": "Host QMP quit after login sample; NOT clean guest shutdown",
+      "reached_login_prompt": true,
+      "first_login_seconds": 30
+    }
+  },
+  "license_trial": {
+    "network_devices": 0,
+    "physical_disk_access": false,
+    "owner_vm_contacted": false,
+    "raw_console_persisted": false,
+    "identifiers_exported": false,
+    "activation_attempted": true,
+    "overlay": "/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi/activation-disposable-2.qcow2",
+    "states": [
+      {
+        "stage": "reboot_1",
+        "product": "ros",
+        "level": "6",
+        "identifier_equal": true
+      },
+      {
+        "stage": "reboot_2",
+        "product": "ros",
+        "level": "6",
+        "identifier_equal": true
+      },
+      {
+        "stage": "cold_start",
+        "product": "ros",
+        "level": "6",
+        "identifier_equal": true
+      }
+    ],
+    "boot_login": true,
+    "license_field_names": [
+      "software-id",
+      "nlevel",
+      "features",
+      "expires-in"
+    ],
+    "identified_product": "ros",
+    "product": "ros",
+    "identifier_kind": "Software ID",
+    "level_before": "not-present",
+    "resource_confirmation": {
+      "version_7_24_4": true,
+      "board_x86": true,
+      "board_chr": false
+    },
+    "local_signature_and_id_valid": true,
+    "explicit_acceptance_prompt": false,
+    "rejection_indicator": false,
+    "clean_shutdown": true,
+    "activation_persistent": true,
+    "final_close_was_already_stopped": true
+  },
+  "earlier_license_attempt": {
+    "activation_attempted": false,
+    "boot_login": true,
+    "blocker": "level_missing in strict initial parser; stopped before generation/import",
+    "resolution": "fresh overlay, actual Software ID plus board-name x86 plus version7.24.4 verified; absent initial numeric level recorded not-present rather than guessed free/0"
+  },
+  "causal_conclusion": {
+    "result": "Within this installed x86 disk, BIOS/IDE/TCG configuration and controlled pair, loader LICENSE immediate replacement is causal for loss of observed boot/login: A failed, B reached login30s and actual CLI login subsequently succeeded. Only loader bytes differ among582 regular files; required SFS/signature serialized bytes also differ.",
+    "mechanism_not_proven": "No crash signal/EIP or continuous reboot loop captured. Exit0 under -no-reboot alone does not establish reset cause. No generalization to owner VMware, baremetal, other versions/architectures."
+  },
+  "proposed_separate_contract": {
+    "proposed_name": "x86-installer-7.24.4; explicit opt-in distinct from chr-x86-7.24.4",
+    "allowlist": "Single system7.24.4.final; exact observed authoritative i386 before signature and sole I marker after; mandatory parts unique. NPK metadata shared with CHR is insufficient product discriminator: require explicit installer context plus pinned validated source payload/component fingerprints; confirm runtime x86 Software ID independently.",
+    "loader": "Exactly one decoder-validated ELF32 i386 LICENSE instruction anchor at regular nonaliased nova/bin/loader; preserve only that anchor, never counted as coverage. No whole-file blind copy/reversal from a signed patched package. Preflight all mappings and overlap on pristine bytes before preservation.",
+    "real_coverage": "keyman and mode each >=1 LICENSE; all other mapping replacements remain active; system per-mapping total>0 guard unchanged. Observed A=3LICENSE/5sign, B=2LICENSE/5sign; sign2kernel+3SquashFS, no LICENSE kernel matches. Treat those exact counts as pinned7.24.4 fixture expectation, not broad product assumption.",
+    "metadata_and_signatures": "Reuse strict metadata machinery: uid/gid0/0, modes, mtimes, device metadata, symlink/hardlink topology, source SquashFSv4 mkfs-time. Child-only umask0, no-xattrs remains explicit limitation. Repack+readback parity and independently verify both custom signature algorithms. Distinct payloads must NOT claim identical signatures.",
+    "licensing": "Observed guest product ros, board-name x86, Software ID; use generate_ros not CHR generator. Initial numeric nlevel absent; after lab paste nlevel6 observed after two reboots and clean shutdown/new-process cold restart with same ID, all ID comparison in memory only. Explicit acceptance string absent, so rely on observed postboot state rather than invented success prompt.",
+    "tests_required": [
+      "Positive pinned real x86 fixture with actual2/5 coverage and vendor input hash provenance",
+      "Reject wrong product context/version/architecture, multipackage or missing/duplicate parts before signing/save",
+      "Reject missing/ambiguous loader anchor, aliases/symlinks, overlap, missing keyman/mode real LICENSE matches",
+      "Normal and -O fail-closed regression; no preserved-anchor coverage; unchanged generic and CHR policy behavior",
+      "Real SquashFS metadata and full-file equality checks; no signature/output on failure",
+      "Production ISO and install-image from identified pristine inputs; verify NPK and boot kernels align, BIOS install then disk boot plus Software ID activation/reboots/cold persistence",
+      "Separate UEFI firmware test and physical hardware checks before UEFI/baremetal claims"
+    ]
+  },
+  "remaining_blockers": [
+    "Exact original pristine installer ISO not recovered; local vendor-named ISO explicitly unsuitable. Scratch component proof does not deliver a rebuilt install ISO.",
+    "Separate production x86 policy/workflow plumbing and regression tests not implemented in this evidence-only ownership. Do not publish failed generic installer or blindly pass CHR policy.",
+    "No xorriso/isoinfo or OVMF installed in checked environment; no installs performed; no UEFI proof.",
+    "No physical SSD, MiniPC, network device/driver or ARM/TILE runtime evidence. These remain separate gates.",
+    "Unit suite not rerun: no production changes; actual runtime/signature/metadata tests above are new."
+  ],
+  "scratch_harnesses": [
+    {
+      "name": "x86-installer-investigate.py",
+      "sha256": "2eede6fcebc7d3cecfeddf324d00c127e68e47702239fa8dfb0dab983530e160",
+      "source": "import pathlib,sys,json,hashlib,subprocess,os,tempfile,struct,contextlib,io\nR=pathlib.Path('/mnt/c/laragon/www/mikpatch'); sys.path.insert(0,str(R))\nfrom npk import NovaPackage,NpkPartID,NpkFileContainer\nimport patch\nOUT=pathlib.Path(tempfile.mkdtemp(prefix='x86-installer-runtime-',dir='/home/djundev/.cache/mikpatch-audit')); os.chmod(OUT,0o700)\ndef sha(d): return hashlib.sha256(d).hexdigest()\ndef iso_files(p):\n data=p.read_bytes(); b=data[16*2048:17*2048]; assert b[1:6]==b'CD001'\n root=b[156:]; result={}\n def walk(rec,prefix):\n  off=int.from_bytes(rec[2:6],'little')*2048; size=int.from_bytes(rec[10:14],'little'); pos=off\n  while pos<off+size:\n   n=data[pos]\n   if not n: pos=(pos//2048+1)*2048; continue\n   r=data[pos:pos+n]; pos+=n; name=r[33:33+r[32]]\n   if name in [b'\\0',b'\\1']: continue\n   name=name.decode('ascii').split(';')[0]; path=prefix+'/'+name\n   if r[25]&2: walk(r,path)\n   else: result[path]=(int.from_bytes(r[2:6],'little')*2048,int.from_bytes(r[10:14],'little'))\n walk(root,''); return data,result\nreport={'scratch':str(OUT),'inputs':{}}\nfor label,p in [('all',pathlib.Path('/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/all-profile-run37277711016-band8g2x/ali-patch-code-x86-mikrotik-7.24.4-patched.iso')),('local-vendor-named',pathlib.Path('/mnt/c/Users/AliMedia_PC/Downloads/mikrotik-7.24.4.iso'))]:\n try:\n  data,files=iso_files(p); report['inputs'][label]={'path':str(p),'bytes':len(data),'sha256':sha(data),'entries':files}\n  for name,(offset,size) in files.items():\n   if 'ROUTEROS' in name.upper() and name.upper().endswith('.NPK'):\n    dest=OUT/(label+'.npk'); dest.write_bytes(data[offset:offset+size]); npk=NovaPackage.load(str(dest)); info=patch._part(npk,NpkPartID.NAME_INFO).data\n    report['inputs'][label]['system']={'name':info.name,'version':info.version,'npk_sha256':sha(dest.read_bytes()),'parts':[(x.id.name,len(x.data) if isinstance(x.data,bytes) else None) for x in npk],'archs':[x.data.decode('ascii') for x in npk if x.id==NpkPartID.ARCHITECTURE]}\n except Exception as e: report['inputs'][label]={'inspection_error':type(e).__name__}\n(OUT/'inventory.json').write_text(json.dumps(report,indent=2)); print(json.dumps(report,indent=2))\n"
+    },
+    {
+      "name": "x86-installer-mapcheck.py",
+      "sha256": "3d1bfdccf0c21748e6e9ebf2c2974b4b579336faf87277535d07e46e98b4ef93",
+      "source": "import pathlib,sys,re,json,contextlib,io,subprocess,hashlib\nR=pathlib.Path('/mnt/c/laragon/www/mikpatch'); sys.path.insert(0,str(R)); import patch\nfrom npk import NovaPackage,NpkPartID,NpkFileContainer\nS=pathlib.Path('/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi')\nkeys={n:bytes.fromhex(v) for n,v in re.findall(r'\\b((?:MIKRO|CUSTOM)_[A-Z_]+KEY):\\s*([0-9a-fA-F]+)',(R/'.github/workflows/patch7.yml').read_text())}\nmapping={keys['MIKRO_LICENSE_PUBLIC_KEY']:keys['CUSTOM_LICENSE_PUBLIC_KEY'],keys['MIKRO_NPK_SIGN_PUBLIC_KEY']:keys['CUSTOM_NPK_SIGN_PUBLIC_KEY']}\nreport={}\nfor label,p in [('all',S/'all.npk'),('iso-named',S/'local-vendor-named.npk'),('chr-vendor',pathlib.Path('/home/djundev/.cache/mikpatch-audit/final-production-7m5_vbt0/vendor.npk'))]:\n pkg=NovaPackage.load(str(p)); report[label]={'description':patch._part(pkg,NpkPartID.DESCRIPTION).data.decode(errors='replace'),'vendor_signature_valid':pkg.verify(keys['MIKRO_LICENSE_PUBLIC_KEY'],keys['MIKRO_NPK_SIGN_PUBLIC_KEY']),'custom_signature_valid':pkg.verify(keys['CUSTOM_LICENSE_PUBLIC_KEY'],keys['CUSTOM_NPK_SIGN_PUBLIC_KEY']),'container_names':[x.name.decode() for x in NpkFileContainer.unserialize_from(patch._part(pkg,NpkPartID.FILE_CONTAINER).data)],'files':{}}\n root=S/({'all':'extracted_all','iso-named':'extracted_vendor_iso','chr-vendor':'extracted_vendor_chr'}[label])/'root'\n for name in ['loader','keyman','mode','sys2','installer']:\n  b=(root/'nova/bin'/name).read_bytes(); stats={}\n  with contextlib.redirect_stdout(io.StringIO()): out=patch._replace_keys(b,mapping,name,stats)\n  dest=(S/'extracted_all/root/nova/bin'/name).read_bytes(); ranges=[]; diffs=[i for i,(a,c) in enumerate(zip(b,dest)) if a!=c]\n  for i in diffs:\n   if ranges and ranges[-1][1]==i: ranges[-1][1]=i+1\n   else:ranges.append([i,i+1])\n  report[label]['files'][name]={'replacements':[stats.get(k,0) for k in mapping],'matches_all_after_generic_patch':out==dest,'length_equal_all':len(b)==len(dest),'differing_byte_count':len(diffs),'diff_ranges':ranges if len(ranges)<50 else 'too_many'}\n(S/'mapcheck.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))\n"
+    },
+    {
+      "name": "x86-installer-ab.py",
+      "sha256": "bbf816185606332f09f558ff6716111b98b3f2453d3579ea1606bdca43e13cc4",
+      "source": "import pathlib,sys,re,hashlib,json,os,subprocess,tempfile,contextlib,io,stat,struct\nR=pathlib.Path('/mnt/c/laragon/www/mikpatch');sys.path.insert(0,str(R));import patch\nfrom npk import NovaPackage,NpkPartID,NpkFileContainer\nS=pathlib.Path('/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi');os.umask(0o077)\nV=pathlib.Path('/home/djundev/.cache/mikpatch-audit/final-production-7m5_vbt0/vendor.npk')\nT=pathlib.Path('/home/djundev/.cache/mikpatch-audit/tools');env=os.environ.copy();env['LD_LIBRARY_PATH']=str(T/'usr/lib/x86_64-linux-gnu');env['QEMU_MODULE_DIR']=str(T/'usr/lib/x86_64-linux-gnu/qemu')\ndef sha(b):return hashlib.sha256(b).hexdigest()\ndef run(a):\n p=subprocess.run([str(x) for x in a],capture_output=True,env=env,timeout=120);assert p.returncode==0,'tool failed '+str(a[0]);return p.stdout\nkeys={n:bytes.fromhex(v) for n,v in re.findall(r'\\b((?:MIKRO|CUSTOM)_[A-Z_]+KEY):\\s*([0-9a-fA-F]+)',(R/'.github/workflows/patch7.yml').read_text())}\nL=keys['MIKRO_LICENSE_PUBLIC_KEY'];mapping={L:keys['CUSTOM_LICENSE_PUBLIC_KEY'],keys['MIKRO_NPK_SIGN_PUBLIC_KEY']:keys['CUSTOM_NPK_SIGN_PUBLIC_KEY']};patch._validate_key_dict(mapping)\nv=NovaPackage.load(str(V));a=NovaPackage.load(str(S/'all.npk'))\nassert sha(V.read_bytes())=='46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'\nassert not v._packages and not a._packages\nfor p in [v,a]:\n assert patch._part(p,NpkPartID.NAME_INFO).data.name=='system';assert patch._part(p,NpkPartID.NAME_INFO).data.version=='7.24.4.final'\n assert [x.data for x in p if x.id==NpkPartID.ARCHITECTURE]==[b'i386',b'I']\nfor label,pkg in [('pristine',v),('observed',a)]:\n f=S/(label+'.sfs');f.write_bytes(patch._part(pkg,NpkPartID.SQUASHFS).data)\n patch._run_tools(['unsquashfs','-d',str(S/(label+'-root')),str(f)],S,preserve_modes=True)\nreport={'source':str(V),'source_sha256':sha(V.read_bytes()),'scope':'Scratch component-isolation, NOT use of CHR runtime policy; pristine SFS compared exhaustively with installed ISO SFS before any signing. Installed package envelope and FILE_CONTAINER retained unchanged. Exact original installer pristine ISO unavailable.','variants':{}}\nsource_meta=patch._squashfs_metadata(S/'pristine.sfs',S);source_tree=patch._tree_metadata(S/'pristine-root');tm=patch._squashfs_time((S/'pristine.sfs').read_bytes())\ndef files(root):return {p.relative_to(root).as_posix():p.read_bytes() for p in root.rglob('*') if p.is_file() and not p.is_symlink()}\nsource_files=files(S/'pristine-root');observed_files=files(S/'observed-root');assert source_files.keys()==observed_files.keys()\nexpected={};counts={k:0 for k in mapping}\nwith contextlib.redirect_stdout(io.StringIO()):\n for path,b in source_files.items():expected[path]=patch._replace_keys(b,mapping,path,counts)\nassert expected==observed_files,'Pristine generic transform differs from installed ISO files; stop'\nreport['pristine_transforms_to_observed_all_regular_files']=len(expected)\nreport['pristine_vs_observed_metadata_equal']=source_meta==patch._squashfs_metadata(S/'observed.sfs',S)\n# Independently patch pristine FILE_CONTAINER to establish real kernel coverage; do not claim preserved observed kernel as replacement.\nfc=NpkFileContainer.unserialize_from(patch._part(v,NpkPartID.FILE_CONTAINER).data);ks={k:0 for k in mapping}\nwith contextlib.redirect_stdout(io.StringIO()):\n for item in fc:\n  if item.name in [b'boot/EFI/BOOT/BOOTX64.EFI',b'boot/kernel',b'boot/initrd.rgz']:item.data=bytes(patch.patch_kernel(item.data,mapping,ks))\nfc_observed=NpkFileContainer.unserialize_from(patch._part(a,NpkPartID.FILE_CONTAINER).data)\nreport['kernel_container_payload_equality']={i.name.decode():i.data==j.data for i,j in zip(fc,fc_observed)}\nassert all(report['kernel_container_payload_equality'].values()),'container contents differ'\nfor label,preserve in [('A-full',False),('B-loader-preserved',True)]:\n root=S/(label+'-root');patch._run_tools(['unsquashfs','-d',str(root),str(S/'pristine.sfs')],S,preserve_modes=True)\n stats={k:0 for k in mapping};specific={}\n with contextlib.redirect_stdout(io.StringIO()):\n  for path,b in source_files.items():\n   f=root/path;st=f.stat();assert not f.is_symlink() and st.st_nlink==1,'requires unique regular files'\n   local={};out=patch._replace_keys(b,mapping,path,local,L if preserve and path=='nova/bin/loader' else None)\n   for k,c in local.items():stats[k]+=c\n   if path in ['nova/bin/loader','nova/bin/keyman','nova/bin/mode']:specific[path]=local.get(L,0)\n   if out!=b:f.write_bytes(out);os.chmod(f,stat.S_IMODE(st.st_mode));os.utime(f,ns=(st.st_atime_ns,st.st_mtime_ns))\n assert specific['nova/bin/keyman']>=1 and specific['nova/bin/mode']>=1\n assert all(stats[k]+ks[k]>0 for k in mapping),'coverage guard failed'\n assert patch._tree_metadata(root)==source_tree\n image=S/(label+'.sfs');patch._run_tools(['mksquashfs',str(root),str(image),'-quiet','-noappend','-comp','xz','-no-xattrs','-b','256k','-all-root','-mkfs-time',str(tm)],S)\n assert patch._squashfs_metadata(image,S)==source_meta;assert patch._squashfs_time(image.read_bytes())==tm\n reread=S/(label+'-verify');patch._run_tools(['unsquashfs','-d',str(reread),str(image)],S,preserve_modes=True);assert patch._tree_metadata(reread)==source_tree;assert files(reread)==files(root)\n pkg=NovaPackage.load(str(S/'all.npk'));pkg[NpkPartID.SQUASHFS].data=image.read_bytes()\n pkg.sign(keys['CUSTOM_LICENSE_PRIVATE_KEY'],keys['CUSTOM_NPK_SIGN_PRIVATE_KEY']);dest=S/(label+'.npk');pkg.save(str(dest));out=NovaPackage.load(str(dest));assert out.verify(keys['CUSTOM_LICENSE_PUBLIC_KEY'],keys['CUSTOM_NPK_SIGN_PUBLIC_KEY'])\n # Every envelope part except mandatory new SFS/signature must remain exact.\n def part_bytes(p):return p.data if isinstance(p.data,bytes) else p.data.serialize()\n assert [(p.id,part_bytes(p)) for p in out if p.id not in [NpkPartID.SQUASHFS,NpkPartID.SIGNATURE]]==[(p.id,part_bytes(p)) for p in a if p.id not in [NpkPartID.SQUASHFS,NpkPartID.SIGNATURE]]\n report['variants'][label]={'package_sha256':sha(dest.read_bytes()),'custom_signature_valid':True,'metadata_parity':True,'scope':'real component replacement counts, scratch composer not production package policy','replacements':[{'mapping_index':n,'kernel':ks[k],'squashfs':stats[k],'total':ks[k]+stats[k]} for n,k in enumerate(mapping,1)],'per_target_license':specific,'preserved_anchor_counted_as_coverage':False}\nfa=files(S/'A-full-verify');fb=files(S/'B-loader-preserved-verify');report['ab_different_regular_files']=[p for p in fa if fa[p]!=fb[p]];assert report['ab_different_regular_files']==['nova/bin/loader'];assert fb['nova/bin/loader']==source_files['nova/bin/loader'];assert fa==observed_files\nreport['ab_loader_changed_bytes']=sum(x!=y for x,y in zip(fa['nova/bin/loader'],fb['nova/bin/loader']))\n(S/'ab-build.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))\n"
+    },
+    {
+      "name": "x86-installer-diskpair.py",
+      "sha256": "7956bd337a7451afa49baac257c512d8e90ba1e89fb981cda69b1d38eb39c665",
+      "source": "import pathlib,sys,json,os,hashlib,subprocess,struct,re,shutil\nR=pathlib.Path('/mnt/c/laragon/www/mikpatch');sys.path.insert(0,str(R));from npk import NovaPackage\nS=pathlib.Path('/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi');T=pathlib.Path('/home/djundev/.cache/mikpatch-audit/tools');base=pathlib.Path('/home/djundev/.cache/mikpatch-audit/all-iso-run37277711016-8jgyrf50/disposable.qcow2');os.umask(0o077)\nenv=os.environ.copy();env['LD_LIBRARY_PATH']=str(T/'usr/lib/x86_64-linux-gnu');env['QEMU_MODULE_DIR']=str(T/'usr/lib/x86_64-linux-gnu/qemu')\ndef sha(p):\n h=hashlib.sha256()\n with p.open('rb') as f:\n  for b in iter(lambda:f.read(1024*1024),b''):h.update(b)\n return h.hexdigest()\ndef run(a):\n p=subprocess.run([str(x) for x in a],capture_output=True,env=env,timeout=120);assert p.returncode==0,'tool failed';return p.stdout\nbefore=sha(base);raw=S/'retained-base.raw';run([T/'usr/bin/qemu-img','convert','-f','qcow2','-O','raw',base,raw]);d=raw.read_bytes();assert d[512:520]==b'EFI PART';table,count,size=struct.unpack_from('<QII',d,584);parts=[]\nfor i in range(count):\n e=d[table*512+i*size:table*512+(i+1)*size]\n if any(e[:16]):\n  f,l=struct.unpack_from('<QQ',e,32);parts.append((f*512,(l+1)*512))\nassert len(parts)==2 and parts[1][0]==65570*512\nstart,end=parts[1];p2=S/'base-p2.img';p2.write_bytes(d[start:end]);old=S/'installed-original.npk';run(['debugfs','-R',f'dump /var/pdb/system/image {old}',p2]);assert old.read_bytes()==(S/'all.npk').read_bytes()\nst=run(['debugfs','-R','stat /var/pdb/system/image',p2]).decode();fields={n:re.search(r'\\b'+n+r':\\s+0x([0-9a-f]+)',st).group(1) for n in ['ctime','atime','mtime']};assert re.search(r'User:\\s+0\\s+Group:\\s+0',st)\nreport={'base_path':str(base),'base_sha256_before':before,'partition_start':start,'partition_end':end,'installed_original_matches_iso_package':True,'disks':{}}\nfor label in ['A-full','B-loader-preserved']:\n p=S/(label+'-p2.img');shutil.copyfile(p2,p);src=S/(label+'.npk')\n for cmd in [f'rm /var/pdb/system/image',f'write {src} /var/pdb/system/image','set_inode_field /var/pdb/system/image mode 0100644','set_inode_field /var/pdb/system/image uid 0','set_inode_field /var/pdb/system/image gid 0']+[f'set_inode_field /var/pdb/system/image {n} 0x{value}' for n,value in fields.items()]:run(['debugfs','-w','-R',cmd,p])\n back=S/(label+'-installed-readback.npk');run(['debugfs','-R',f'dump /var/pdb/system/image {back}',p]);assert back.read_bytes()==src.read_bytes()\n disk=S/(label+'.raw');shutil.copyfile(raw,disk)\n with disk.open('r+b') as f:f.seek(start);f.write(p.read_bytes())\n with disk.open('rb') as f:assert f.read(start)==d[:start];f.seek(end);assert f.read()==d[end:]\n report['disks'][label]={'path':str(disk),'sha256_preboot':sha(disk),'readback_package_sha256':sha(back),'outside_system_partition_identical':True,'boot_partition_identical':True,'original_npk_inode_mode_uid_gid_times_restored':True}\nreport['base_sha256_after']=sha(base);assert before==report['base_sha256_after'];(S/'diskpair.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))\n"
+    },
+    {
+      "name": "x86-installer-probe.py",
+      "sha256": "f2dfaab407a90f15e82fa1a391bc24964857d2c7d2f2469374a6f664e8bcd246",
+      "source": "import datetime,hashlib,json,os,pathlib,socket,struct,subprocess,tempfile,time,zlib,shutil\nS=pathlib.Path('/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi')\nT=pathlib.Path('/home/djundev/.cache/mikpatch-audit/tools')\nQEMU=T/'usr/bin/qemu-system-x86_64'\nBIOS=T/'usr/share/seabios/bios-256k.bin'\nVGABIOS=T/'usr/share/seabios/vgabios-stdvga.bin'\nQEMU_SHARE=T/'usr/share/qemu'\nenv=os.environ.copy()\nenv['LD_LIBRARY_PATH']=f\"{T/'usr/lib/x86_64-linux-gnu'}:{T/'usr/lib'}\"\nenv['QEMU_MODULE_DIR']=str(T/'usr/lib/x86_64-linux-gnu/qemu')\n\ndef sha(p):\n    h=hashlib.sha256()\n    with p.open('rb') as f:\n        for b in iter(lambda:f.read(1024*1024),b''): h.update(b)\n    return h.hexdigest()\n\ndef png_from_ppm(ppm,png):\n    data=ppm.read_bytes(); magic,w,h,maxval,pixels=data.split(None,4)\n    if magic!=b'P6' or maxval!=b'255': raise ValueError('unsupported_ppm')\n    w,h=int(w),int(h)\n    if len(pixels)!=w*h*3: raise ValueError('ppm_size')\n    def chunk(kind,body): return struct.pack('>I',len(body))+kind+body+struct.pack('>I',zlib.crc32(kind+body)&0xffffffff)\n    scan=b''.join(b'\\0'+pixels[y*w*3:(y+1)*w*3] for y in range(h))\n    png.write_bytes(b'\\x89PNG\\r\\n\\x1a\\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(scan))+chunk(b'IEND',b''))\n\ndef ocr_ppm(ppm):\n    p=subprocess.run(['tesseract',str(ppm),'stdout','--psm','6'],capture_output=True,text=True)\n    return p.stdout.strip() if p.returncode==0 else ''\n\ndef run_probe(disk_path, label):\n    out_dir = S / f\"probe-{label}\"\n    out_dir.mkdir(parents=True, exist_ok=True)\n    overlay = out_dir / 'disposable.qcow2'\n    # Create fresh qcow2 overlay backed by raw disk\n    subprocess.run([str(T/'usr/bin/qemu-img'), 'create', '-f', 'qcow2', '-F', 'raw', '-b', str(disk_path), str(overlay)], env=env, check=True, capture_output=True)\n    \n    serial_file = out_dir / 'serial.txt'\n    stderr_file = out_dir / 'stderr.txt'\n    report = {\n        'candidate': label,\n        'disk_source': str(disk_path),\n        'disk_sha256': sha(disk_path),\n        'overlay': str(overlay),\n        'qemu_configuration': {\n            'machine': 'pc,accel=tcg',\n            'memory_mib': 512,\n            'vcpus': 1,\n            'storage_controller': 'IDE',\n            'nic': 'none',\n            'bios': str(BIOS),\n            'no_reboot': True\n        },\n        'samples': [],\n        'termination': None\n    }\n    \n    with tempfile.TemporaryDirectory(prefix='mikpatch-qmp-') as sockets:\n        qmp_sock_path = pathlib.Path(sockets) / 'qmp.sock'\n        argv = [\n            str(QEMU),\n            '-machine', 'pc,accel=tcg',\n            '-m', '512',\n            '-smp', '1',\n            '-nic', 'none',\n            '-bios', str(BIOS),\n            '-L', str(QEMU_SHARE),\n            '-drive', f'file={overlay},format=qcow2,if=ide',\n            '-vga', 'none',\n            '-device', f'VGA,romfile={VGABIOS}',\n            '-display', 'none',\n            '-serial', f'file:{serial_file}',\n            '-qmp', f'unix:{qmp_sock_path},server=on,wait=off',\n            '-monitor', 'none',\n            '-no-reboot'\n        ]\n        with open(stderr_file, 'wb') as errors:\n            proc = subprocess.Popen(argv, env=env, stdout=subprocess.DEVNULL, stderr=errors)\n            sock = None\n            stream = None\n            try:\n                for _ in range(100):\n                    if qmp_sock_path.exists(): break\n                    if proc.poll() is not None: break\n                    time.sleep(0.1)\n                \n                if proc.poll() is not None:\n                    report['termination'] = f\"early_exit_code_{proc.poll()}\"\n                    return report\n                \n                sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)\n                sock.settimeout(10)\n                sock.connect(str(qmp_sock_path))\n                stream = sock.makefile('rwb', buffering=0)\n                json.loads(stream.readline()) # Greeting\n                \n                counter = 0\n                def qmp_cmd(name, args=None):\n                    nonlocal counter\n                    counter += 1\n                    msg = {'execute': name, 'id': counter}\n                    if args: msg['arguments'] = args\n                    stream.write(json.dumps(msg).encode() + b'\\n')\n                    while True:\n                        line = stream.readline()\n                        if not line: return None\n                        reply = json.loads(line)\n                        if reply.get('id') == counter:\n                            return reply.get('return')\n                \n                qmp_cmd('qmp_capabilities')\n                started = time.monotonic()\n                for target in [30, 45, 60, 90, 120, 180]:\n                    now = time.monotonic()\n                    wait_time = target - (now - started)\n                    if wait_time > 0:\n                        # Poll in small increments to detect early exit\n                        step_end = time.monotonic() + wait_time\n                        while time.monotonic() < step_end:\n                            if proc.poll() is not None:\n                                break\n                            time.sleep(0.5)\n                    \n                    poll_code = proc.poll()\n                    if poll_code is not None:\n                        report['samples'].append({\n                            'seconds': target,\n                            'qemu_exited': True,\n                            'exit_code': poll_code\n                        })\n                        report['termination'] = f\"guest_triggered_reboot_or_halt_exit_code_{poll_code}\"\n                        break\n                    \n                    ppm = out_dir / f\"vga-{target:03}.ppm\"\n                    png = out_dir / f\"vga-{target:03}.png\"\n                    qmp_cmd('screendump', {'filename': str(ppm)})\n                    png_from_ppm(ppm, png)\n                    ocr_text = ocr_ppm(ppm)\n                    serial_bytes = serial_file.read_bytes() if serial_file.exists() else b''\n                    \n                    has_login = ('Login:' in ocr_text or 'login:' in ocr_text or\n                                 b'Login:' in serial_bytes or b'login:' in serial_bytes)\n                    has_loading = 'loading' in ocr_text.lower() or 'system' in ocr_text.lower()\n                    has_starting = 'starting' in ocr_text.lower() or 'services' in ocr_text.lower()\n                    has_rebooting = 'rebooting' in ocr_text.lower()\n                    \n                    report['samples'].append({\n                        'seconds': target,\n                        'qemu_status': qmp_cmd('query-status').get('status', 'unknown'),\n                        'serial_len': len(serial_bytes),\n                        'ocr_indicators': {\n                            'login_prompt': has_login,\n                            'loading_system': has_loading,\n                            'starting_services': has_starting,\n                            'rebooting': has_rebooting\n                        },\n                        'vga_png': str(png),\n                        'vga_sha256': sha(png)\n                    })\n                    if has_login:\n                        report['reached_login_prompt'] = True\n                        report['first_login_seconds'] = target\n                        break\n                \n                if proc.poll() is None:\n                    qmp_cmd('quit')\n                    proc.wait(timeout=15)\n                    report['termination'] = 'completed_observation_quit_cleanly'\n            except Exception as e:\n                report['error'] = str(e)\n            finally:\n                if proc.poll() is None:\n                    proc.terminate()\n                    try: proc.wait(timeout=5)\n                    except subprocess.TimeoutExpired: proc.kill(); proc.wait()\n                if stream: stream.close()\n                if sock: sock.close()\n    return report\n\nresults = {}\nprint(\"Running probe on Candidate A (full loader replacement)...\")\nresults['A-full'] = run_probe(S / 'A-full.raw', 'A-full')\nprint(\"Candidate A finished. Termination:\", results['A-full'].get('termination'))\n\nprint(\"Running probe on Candidate B (loader preserved)...\")\nresults['B-loader-preserved'] = run_probe(S / 'B-loader-preserved.raw', 'B-loader-preserved')\nprint(\"Candidate B finished. Termination:\", results['B-loader-preserved'].get('termination'))\n\n(S / 'ab-probe-results.json').write_text(json.dumps(results, indent=2))\nprint(json.dumps(results, indent=2))\n"
+    },
+    {
+      "name": "x86-installer-license-trial.py",
+      "sha256": "85ce0f7da3a36f956f44e31251d9c622d0ebfabc45f5a79c009f5dd1cd18f36a",
+      "source": "import pathlib,sys,os,json,re,subprocess,socket,time,contextlib,io,importlib.util\nR=pathlib.Path('/mnt/c/laragon/www/mikpatch');S=pathlib.Path('/home/djundev/.cache/mikpatch-audit/x86-installer-runtime-d9ws0dyi');T=pathlib.Path('/home/djundev/.cache/mikpatch-audit/tools');os.umask(0o077)\nhelper=pathlib.Path('/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005/final-runtime-production/activate_final_vmdk.py')\nspec=importlib.util.spec_from_file_location('prior_guest',helper);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)\nenv=os.environ.copy();env['LD_LIBRARY_PATH']=str(T/'usr/lib/x86_64-linux-gnu');env['QEMU_MODULE_DIR']=str(T/'usr/lib/x86_64-linux-gnu/qemu')\nprobe=json.loads((S/'ab-probe-results.json').read_text());assert probe['B-loader-preserved'].get('reached_login_prompt'),'boot gate failed'\noverlay=S/'activation-disposable-2.qcow2';assert not overlay.exists();subprocess.run([str(T/'usr/bin/qemu-img'),'create','-f','qcow2','-F','raw','-b',str(S/'B-loader-preserved.raw'),str(overlay)],env=env,check=True,capture_output=True)\nreport={'network_devices':0,'physical_disk_access':False,'owner_vm_contacted':False,'raw_console_persisted':False,'identifiers_exported':False,'activation_attempted':False,'overlay':str(overlay),'states':[]}\ng=mod.Guest(overlay,env)\ndef state():\n g.send('/system license print\\r');s=g.receive(mod.PROMPT,30)\n ros=re.search(r'software-id:\\s*([A-Z0-9]{4}-[A-Z0-9]{4})',s,re.I);chrid=re.search(r'system-id:\\s*([A-Za-z0-9+/]{11})',s,re.I)\n assert bool(ros)^bool(chrid),'product_identifier_ambiguous'\n kind='ros' if ros else 'chr';identifier=(ros or chrid).group(1)\n level=re.search(r'(?:nlevel|level):\\s*([a-z0-9-]+)',s,re.I)\n report['license_field_names']=re.findall(r'^\\s*([a-z-]+):',s,re.M)\n report['identified_product']=kind\n return kind,identifier,level.group(1).lower() if level else 'not-present'\ntry:\n g.launch();report['boot_login']=True;kind,ident,before=state();report.update(product=kind,identifier_kind='Software ID' if kind=='ros' else 'System ID',level_before=before)\n g.send('/system resource print\\r');res=g.receive(mod.PROMPT,30)\n report['resource_confirmation']={field: bool(re.search(pattern,res,re.I)) for field,pattern in [('version_7_24_4',r'version:\\s*7\\.24\\.4'),('board_x86',r'board-name:\\s*x86\\b'),('board_chr',r'board-name:\\s*CHR\\b')]}\n assert report['resource_confirmation']['version_7_24_4'],'version_mismatch'\n assert (kind=='ros' and report['resource_confirmation']['board_x86']) or (kind=='chr' and report['resource_confirmation']['board_chr']),'product_board_unconfirmed'\n sys.path.insert(0,str(R));from scripts import license_util\n keys=dict(re.findall(r'\\b(CUSTOM_LICENSE_(?:PRIVATE|PUBLIC)_KEY):\\s*([0-9a-fA-F]+)',(R/'.github/workflows/patch7.yml').read_text()))\n with contextlib.redirect_stdout(io.StringIO()):license_text=(license_util.generate_ros if kind=='ros' else license_util.generate_chr)(ident,keys['CUSTOM_LICENSE_PRIVATE_KEY'])\n parsed=license_util.parse(license_text,keys['CUSTOM_LICENSE_PUBLIC_KEY']);assert parsed['License valid']=='True' and parsed['Software ID' if kind=='ros' else 'System ID']==ident\n report['local_signature_and_id_valid']=True;report['activation_attempted']=True\n response=b''\n for line in license_text.strip().splitlines():\n  g.send(line+'\\r');time.sleep(.2)\n  while True:\n   try:response+=g.serial.recv(65536)\n   except socket.timeout:break\n g.send('\\r');time.sleep(.5)\n while True:\n  try:response+=g.serial.recv(65536)\n  except socket.timeout:break\n text=mod.clean(response);report['explicit_acceptance_prompt']=bool(re.search('You must reboot before new key takes effect',text,re.I));report['rejection_indicator']=bool(re.search('invalid key|invalid license|failed|not valid',text,re.I))\n if report['explicit_acceptance_prompt']:g.send('n\\r');g.receive(mod.PROMPT,20)\n expected='6' if kind=='ros' else 'p-unlimited'\n for n in [1,2]:\n  g.reboot();k,i,lev=state();report['states'].append({'stage':'reboot_'+str(n),'product':k,'level':lev,'identifier_equal':i==ident});assert k==kind and i==ident and lev==expected,'reboot_persistence_failed'\n g.shutdown();report['clean_shutdown']=True;g.launch();k,i,lev=state();report['states'].append({'stage':'cold_start','product':k,'level':lev,'identifier_equal':i==ident});assert k==kind and i==ident and lev==expected,'cold_persistence_failed';report['activation_persistent']=True;g.shutdown()\nexcept Exception as e:\n report['blocked_step']=type(e).__name__;report['blocker']=str(e) if str(e) in ['console_timeout','serial_closed','product_identifier_ambiguous','level_missing','version_mismatch','product_board_unconfirmed','reboot_persistence_failed','cold_persistence_failed'] else 'validation_or_console_failure'\nfinally:\n report['final_close_was_already_stopped']=g.close();(S/'license-trial.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))\n"
+    },
+    {
+      "name": "prior_guest_dependency_activate_final_vmdk.py",
+      "sha256": "d3de4412c8c344818972a772e64f08c7e539d457625bd7f40d9f28c93e0fefa1",
+      "source": "\"\"\"Prepared final VMDK-backed isolated probe; requires separate explicit runtime go.\nConsole/System ID/license live only in memory. Overlay stays outside dist.\n\"\"\"\nimport argparse\nimport contextlib\nimport hashlib\nimport io\nimport json\nimport os\nfrom pathlib import Path\nimport re\nimport socket\nimport subprocess\nimport sys\nimport tempfile\nimport time\n\nREPO = Path('/mnt/c/laragon/www/mikpatch')\nTOOLS = Path('/home/djundev/.cache/mikpatch-audit/tools')\nLAB = Path('/mnt/c/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-lab-20261005')\nDELIVERY = REPO/'dist/chr-x86-7.24.4-runtime-fix'\n\n\ndef sha(p):\n    h = hashlib.sha256()\n    with Path(p).open('rb') as f:\n        for b in iter(lambda: f.read(1024*1024), b''):\n            h.update(b)\n    return h.hexdigest()\n\n\ndef require(value, code):\n    if not value:\n        raise RuntimeError(code)\n\n\ndef clean(raw):\n    return re.sub(r'\\x1b\\[[0-?]*[ -/]*[@-~]', '', raw.decode('latin-1')).replace('\\r', '')\n\n\nPROMPT = r'\\[[^\\]\\r\\n]+@[^\\]\\r\\n]+\\]\\s*[^\\r\\n]*>'\nKNOWN_LEVELS = {'free', 'p1', 'p10', 'p-unlimited'}\n\n\nclass Guest:\n    def __init__(self, overlay, env):\n        self.overlay, self.env = overlay, env\n        self.process = self.serial = self.qsock = self.work = None\n        self.counter = 0\n\n    def receive(self, pattern, timeout=60):\n        data = b''\n        end = time.monotonic()+timeout\n        while time.monotonic() < end:\n            try:\n                chunk = self.serial.recv(65536)\n            except socket.timeout:\n                continue\n            require(bool(chunk), 'serial_closed')\n            data += chunk\n            if re.search(pattern, clean(data), re.I):\n                while True:\n                    try:\n                        chunk = self.serial.recv(65536)\n                        if not chunk:\n                            break\n                        data += chunk\n                    except socket.timeout:\n                        break\n                return clean(data)\n        raise RuntimeError('console_timeout')\n\n    def send(self, text):\n        self.serial.sendall(text.encode())\n\n    def qmp(self, name):\n        self.counter += 1\n        self.qsock.sendall(json.dumps({'execute': name, 'id': self.counter}).encode()+b'\\n')\n        data = b''\n        while True:\n            data += self.qsock.recv(8192)\n            while b'\\n' in data:\n                line, data = data.split(b'\\n', 1)\n                if not line.strip():\n                    continue\n                response = json.loads(line)\n                if response.get('id') == self.counter:\n                    require('error' not in response, 'qmp_failed')\n                    return\n\n    def launch(self):\n        require(self.process is None, 'prior_process_not_closed')\n        self.work = tempfile.TemporaryDirectory(prefix='chr-final-serial-')\n        serial_path, qmp_path = Path(self.work.name)/'serial.sock', Path(self.work.name)/'qmp.sock'\n        args = [str(TOOLS/'usr/bin/qemu-system-x86_64'), '-machine', 'pc,accel=tcg',\n                '-m', '512', '-smp', '1', '-nic', 'none',\n                '-bios', str(TOOLS/'usr/share/seabios/bios-256k.bin'),\n                '-L', str(TOOLS/'usr/share/qemu'), '-drive',\n                f'file={self.overlay},format=qcow2,if=ide', '-vga', 'none', '-device',\n                f'VGA,romfile={TOOLS / \"usr/share/seabios/vgabios-stdvga.bin\"}',\n                '-display', 'none', '-serial', f'unix:{serial_path},server=on,wait=off',\n                '-qmp', f'unix:{qmp_path},server=on,wait=off', '-monitor', 'none']\n        self.process = subprocess.Popen(args, env=self.env, stdout=subprocess.DEVNULL,\n                                        stderr=subprocess.DEVNULL)\n        for _ in range(100):\n            if serial_path.exists() and qmp_path.exists():\n                break\n            require(self.process.poll() is None, 'qemu_early_exit')\n            time.sleep(.1)\n        self.serial = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)\n        self.serial.settimeout(.5)\n        self.serial.connect(str(serial_path))\n        self.qsock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)\n        self.qsock.settimeout(5)\n        self.qsock.connect(str(qmp_path))\n        self.qsock.recv(8192)\n        self.qmp('qmp_capabilities')\n        self.login()\n\n    def login(self):\n        self.receive(r'login:', 90)\n        self.send('admin\\r')\n        self.receive(r'password:', 20)\n        self.send('\\r')\n        response = self.receive(r'new password|Do you want to see|'+PROMPT, 40)\n        if 'Do you want to see' in response:\n            self.send('n\\r')\n            response = self.receive(r'new password|'+PROMPT, 30)\n        if 'new password' in response.lower():\n            self.serial.sendall(b'\\x03')\n            response = self.receive(PROMPT, 30)\n        require(bool(re.search(PROMPT, response)), 'login_prompt_missing')\n\n    def state(self):\n        self.send('/system license print\\r')\n        # Echo cannot satisfy this: require actual field values, then CLI prompt.\n        response = self.receive(r'system-id:\\s*[A-Za-z0-9+/]{11}[\\s\\S]*level:\\s*[a-z0-9-]+[\\s\\S]*'+PROMPT, 30)\n        identifier = re.search(r'system-id:\\s*([A-Za-z0-9+/]{11})', response, re.I)\n        level = re.search(r'\\blevel:\\s*([a-z0-9-]+)', response, re.I)\n        require(bool(identifier and level), 'license_fields_missing')\n        require(level.group(1).lower() in KNOWN_LEVELS, 'unknown_level')\n        return identifier.group(1), level.group(1).lower()\n\n    def reboot(self):\n        self.send('/system reboot\\r')\n        self.receive(r'Reboot, yes\\?|\\[y/N\\]|\\[Y/n\\]', 30)\n        self.send('y\\r')\n        self.login()\n\n    def shutdown(self):\n        self.send('/system shutdown\\r')\n        self.receive(r'Shutdown, yes\\?|\\[y/N\\]|\\[Y/n\\]', 30)\n        self.send('y\\r')\n        self.process.wait(timeout=40)\n        self.close()\n\n    def close(self):\n        clean_exit = self.process is None or self.process.poll() is not None\n        if not clean_exit:\n            try:\n                self.qmp('quit')\n                self.process.wait(timeout=10)\n            except Exception:\n                self.process.terminate()\n                self.process.wait(timeout=10)\n        for sock in [self.serial, self.qsock]:\n            if sock:\n                sock.close()\n        if self.work:\n            self.work.cleanup()\n        self.process = self.serial = self.qsock = self.work = None\n        return clean_exit\n\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument('--execute-approved-activation', action='store_true', required=True)\n    parser.add_argument('--expected-vmdk-sha256', required=True)\n    args = parser.parse_args()\n    os.umask(0o077)\n    build = json.loads((DELIVERY/'build-evidence.json').read_text())\n    base = DELIVERY/'chr-7.24.4-patched.vmdk'\n    require(sha(base) == args.expected_vmdk_sha256 == build['vmdk_sha256'], 'wrong_vmdk')\n    for file, fingerprint in build['code_sha256'].items():\n        require(sha(REPO/file) == fingerprint, 'code_changed_since_build')\n    output = Path(tempfile.mkdtemp(prefix='final-vmdk-activation-', dir=LAB))\n    overlay = output/'disposable.qcow2'\n    env = os.environ.copy()\n    env['LD_LIBRARY_PATH'] = str(TOOLS/'usr/lib/x86_64-linux-gnu')\n    env['QEMU_MODULE_DIR'] = str(TOOLS/'usr/lib/x86_64-linux-gnu/qemu')\n    result = subprocess.run([str(TOOLS/'usr/bin/qemu-img'), 'create', '-f', 'qcow2',\n                             '-F', 'vmdk', '-b', str(base), str(overlay)],\n                            env=env, capture_output=True)\n    require(result.returncode == 0, 'overlay_creation_failed')\n    report = {'schema_version': 1, 'source_vmdk_sha256': args.expected_vmdk_sha256,\n              'harness_sha256': sha(__file__), 'network_devices': 0,\n              'owner_vm_contacted': False, 'password_changed': False,\n              'base_format': 'vmdk', 'overlay_path': str(overlay),\n              'raw_console_persisted': False, 'activation_verified': False,\n              'configuration': {'machine': 'pc,accel=tcg', 'memory_mib': 512,\n                                'vcpus': 1, 'disk': 'IDE', 'bios': 'SeaBIOS'}}\n    guest = Guest(overlay, env)\n    try:\n        guest.launch()\n        identifier, before = guest.state()\n        report.update(boot_login=True, level_before=before)\n        require(before == 'free', 'fresh_overlay_not_free')\n        sys.path.insert(0, str(REPO))\n        from scripts import license_util\n        workflow = (REPO/'.github/workflows/patch7.yml').read_text()\n        keys = dict(re.findall(r'\\b(CUSTOM_LICENSE_(?:PRIVATE|PUBLIC)_KEY):\\s*([0-9a-fA-F]+)', workflow))\n        with contextlib.redirect_stdout(io.StringIO()):\n            license_text = license_util.generate_chr(identifier, keys['CUSTOM_LICENSE_PRIVATE_KEY'])\n        verified = license_util.parse(license_text, keys['CUSTOM_LICENSE_PUBLIC_KEY'])\n        require(verified['License valid'] == 'True' and verified['System ID'] == identifier,\n                'local_license_validation_failed')\n        report['local_signature_and_id_valid'] = True\n        # Proven documented CHR global multiline paste; no rejected command detour.\n        response_bytes = b''\n        for line in license_text.strip().splitlines():\n            guest.send(line+'\\r')\n            time.sleep(.2)\n            while True:\n                try:\n                    response_bytes += guest.serial.recv(65536)\n                except socket.timeout:\n                    break\n        guest.send('\\r')\n        time.sleep(.5)\n        while True:\n            try:\n                response_bytes += guest.serial.recv(65536)\n            except socket.timeout:\n                break\n        response = clean(response_bytes)\n        report['explicit_acceptance_prompt_observed'] = bool(re.search(r'You must reboot before new key takes effect', response, re.I))\n        if report['explicit_acceptance_prompt_observed']:\n            guest.send('n\\r')\n            guest.receive(PROMPT, 20)\n        for number in [1, 2]:\n            guest.reboot()\n            current_id, level = guest.state()\n            report[f'level_after_reboot_{number}'] = level\n            report[f'id_equal_after_reboot_{number}'] = current_id == identifier\n            require(level == 'p-unlimited' and current_id == identifier,\n                    'reboot_level_or_id_failed')\n        guest.shutdown()\n        report['first_clean_shutdown'] = True\n        # Same host process keeps original ID in memory only while QEMU is replaced.\n        guest.launch()\n        cold_id, cold_level = guest.state()\n        report.update(level_after_cold_restart=cold_level,\n                      id_equal_after_cold_restart=cold_id == identifier,\n                      new_qemu_process_same_overlay=True)\n        require(cold_level == 'p-unlimited' and cold_id == identifier, 'cold_level_or_id_failed')\n        guest.shutdown()\n        report.update(second_clean_shutdown=True, activation_verified=True,\n                      status='p_unlimited_two_reboots_and_cold_restart_verified',\n                      acceptance_basis='Actual exact p-unlimited levels and ID equality, not prompt inference')\n    except Exception as exc:\n        # Never persist raw response, ID/license/key or exception payload.\n        report.update(status='probe_incomplete_or_failed', error_type=type(exc).__name__)\n    finally:\n        report['host_cleanup_prior_guest_already_exited'] = guest.close()\n        report['base_sha256_after'] = sha(base)\n        report['base_unchanged'] = report['base_sha256_after'] == args.expected_vmdk_sha256\n        if not report['base_unchanged']:\n            report['activation_verified'] = False\n        serialized = json.dumps(report, indent=2)+'\\n'\n        for name, value in locals().get('keys', {}).items():\n            require(value.lower() not in serialized.lower(), 'key_redaction_failed')\n        for sensitive in [locals().get('identifier'), locals().get('license_text')]:\n            require(not sensitive or sensitive not in serialized, 'identifier_or_license_redaction_failed')\n        (output/'sanitized-result.json').write_text(serialized)\n        print(serialized)\n    return 0 if report['activation_verified'] else 1\n\n\nif __name__ == '__main__':\n    try:\n        sys.exit(main())\n    except Exception as exc:\n        print(json.dumps({'activation_verified': False, 'error_type': type(exc).__name__}))\n        sys.exit(1)\n",
+      "usage": "Imported Guest class only; main not executed"
+    }
+  ],
+  "validation": {
+    "sanitized_no_configured_key_material": true,
+    "original_iso_and_retained_disk_rehashed_unchanged": true,
+    "harness_limit": "Embedded scratch code includes initial coarse OCR/loading flags and host-QMP-quit labels; corrected interpretation above governs, not unreviewed raw labels. No raw activation text included."
+  }
+}

@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-05T17:03:57.042169+00:00",
+  "scope": "Local installer environment probe and old-release ISO BIOS install/disk-only boot. Not run37277711016 runtime evidence.",
+  "reference_head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+  "git": {
+    "branch": "main",
+    "cached_origin_main_divergence": [
+      0,
+      0
+    ],
+    "live_remote_not_checked": true,
+    "existing_edits_untouched": true
+  },
+  "safety": {
+    "physical_disk_access": false,
+    "owner_vm_access": false,
+    "source_or_keys_modified": false,
+    "network_interfaces_in_guests": 0,
+    "downloads": false,
+    "external_release_actions": false,
+    "guest_login_attempted": false,
+    "activation_attempted": false,
+    "raw_console_exported": false,
+    "handoff_modified": false
+  },
+  "environment": {
+    "qemu_version": "8.2.2",
+    "qemu_root": "/home/djundev/.cache/mikpatch-audit/tools",
+    "required_environment": {
+      "LD_LIBRARY_PATH": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu:/home/djundev/.cache/mikpatch-audit/tools/usr/lib",
+      "QEMU_MODULE_DIR": "/home/djundev/.cache/mikpatch-audit/tools/usr/lib/x86_64-linux-gnu/qemu"
+    },
+    "initial_failure": "fatal: could not load module for type tcg-accel-ops; resolved by local QEMU_MODULE_DIR",
+    "seabios_available": true,
+    "unsquashfs_available": true,
+    "mksquashfs_available": true,
+    "tesseract_available": true,
+    "xorriso_available": false,
+    "isoinfo_available": false,
+    "ovmf_found": false,
+    "ovmf_checked_roots": [
+      "/usr/share/OVMF",
+      "/usr/share/ovmf",
+      "/usr/share/qemu",
+      "/home/djundev/.cache/mikpatch-audit/tools/usr/share"
+    ],
+    "gh_executable": "C:/Users/AliMedia_PC/AppData/Local/Temp/mikpatch-github-cli/gh.exe",
+    "gh_session_helper_path": "C:/Users/AliMedia_PC/AppData/Local/Temp/mikpatch_gh_session.py",
+    "gh_authentication_or_live_artifact_access_tested": false
+  },
+  "all_profile_artifact": {
+    "run_id": 37277711016,
+    "locally_found": false,
+    "searched": [
+      "repo/dist",
+      "WSL audit cache",
+      "WSL /tmp and /var/tmp",
+      "relevant filenames in Downloads"
+    ],
+    "historical_evidence": "docs/evidence/all-profile-build-2026-10-05.json",
+    "historical_artifact_id": 11330614951,
+    "historical_size": 1017398869,
+    "historical_digest": "13ffb69e306daf179db056562850fb3dd8054b75377643d657b923b814690ba2",
+    "historical_x86_job": "success",
+    "current_downloadability": "not_checked",
+    "runtime_tested": false
+  },
+  "tested_iso": {
+    "path": "C:/Users/AliMedia_PC/Downloads/ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+    "bytes": 71161856,
+    "sha256": "790a79251afc6cb8c0d66d024457e757950cdd93b51f43195472b271fb76a74b",
+    "provenance": "Matches historical release asset604788941 size and digest in existing chr-ci-release-validation evidence; not current all-profile artifact",
+    "source_hash_unchanged_after": true,
+    "format": "ISO9660 CD image"
+  },
+  "bios_test": {
+    "machine": "pc,accel=tcg",
+    "memory_mib": 512,
+    "vcpus": 1,
+    "storage_controller": "IDE",
+    "disposable_target_format": "qcow2",
+    "disposable_target_bytes": 1073741824,
+    "backing_image": null,
+    "nic": "none",
+    "iso_readonly": true,
+    "installation_input": [
+      "a(select all packages)",
+      "i(install)",
+      "y(continue confirmation)"
+    ],
+    "post_install_boot": "Cold start new QEMU process from same target disk, ISO detached, boot order c",
+    "login_prompt_seen_seconds": [
+      45,
+      90,
+      180
+    ],
+    "loading_system_stall_reproduced": false,
+    "observations": [
+      {
+        "phase": "installation",
+        "stage": "45s",
+        "indicators": {
+          "installer_menu": true,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false
+        },
+        "vga_sha256": "94b4ac8230fca11100bde333b6736cabcbd957d76a4dcc66febff63d6800356e"
+      },
+      {
+        "phase": "installation",
+        "stage": "after-install-key",
+        "indicators": {
+          "installer_menu": true,
+          "keep_configuration": false,
+          "continue_confirmation": true,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false
+        },
+        "vga_sha256": "6c96ddd616461558b6684806b318373aeeb68e29b33154b9c6dd2580e75ff927"
+      },
+      {
+        "phase": "installation",
+        "stage": "after-install-wait",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": true,
+          "software_installed": true,
+          "reboot_prompt": true,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": false,
+          "kernel_panic": false,
+          "formatting": true,
+          "internal_error": false,
+          "panics_open_error": true,
+          "no_disk": false
+        },
+        "vga_sha256": "b9f7528e43259baaf3129b1554c763e6d461fae9acfc2ee7323a9c1895023d4e"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "45s",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": true,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false
+        },
+        "vga_sha256": "700dfa9121e1fd2afca9a17ab06cecaff575b48142c29c2b97e3d2c36ec302d1"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "90s",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": true,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false
+        },
+        "vga_sha256": "aed0336823b4d649f763278ec6858bc861a7b9109c799af9d130378753d4dcea"
+      },
+      {
+        "phase": "installed-disk-boot",
+        "stage": "180s",
+        "indicators": {
+          "installer_menu": false,
+          "keep_configuration": false,
+          "continue_confirmation": false,
+          "software_installed": false,
+          "reboot_prompt": false,
+          "loading_system": false,
+          "starting_services": false,
+          "login_prompt": true,
+          "kernel_panic": false,
+          "formatting": false,
+          "internal_error": false,
+          "panics_open_error": false,
+          "no_disk": false
+        },
+        "vga_sha256": "700dfa9121e1fd2afca9a17ab06cecaff575b48142c29c2b97e3d2c36ec302d1"
+      }
+    ],
+    "processes_stopped": true
+  },
+  "comparison_media": {
+    "path": "C:/Users/AliMedia_PC/Downloads/mikrotik-7.24.4.iso",
+    "bytes": 174282752,
+    "sha256": "05990fa7c8b4f45e369a193d26d668a08747fe6972c8e3289d39ca5fde96c0fb",
+    "origin_or_pristine_status": "unverified",
+    "iso9660_and_7_24_4_package_names_verified": true,
+    "bios_45s_ocr_installer_menu": false,
+    "longer_boot_or_install_tested": false,
+    "failure_cause": "not_determined"
+  },
+  "install_image_static": {
+    "path": "C:/Users/AliMedia_PC/Downloads/Compressed/install-image-7.24.4/install-image-7.24.4.img",
+    "sha256": "96a5ec012c67d65bf00890dcb0469ff969409ab3e229deaf64a79379bdfadada",
+    "bytes": 134217728,
+    "format": "Raw FAT32 volume at byte0 (superfloppy), not a GPT-partitioned CHR disk",
+    "bpb": {
+      "bytes_per_sector": 512,
+      "sectors_per_cluster": 1,
+      "reserved_sectors": 32,
+      "number_of_fats": 2,
+      "fat_size_sectors": 2017,
+      "total_sectors": 262144,
+      "root_cluster": 2
+    },
+    "gpt_header": false,
+    "fat32_marker": true,
+    "safe_root_names": [
+      "LDLINUX SYS",
+      "EFI",
+      "LINUX",
+      "LDLINUX C32",
+      "SYSLINUXCFG",
+      "1       NPK",
+      "2       NPK",
+      "3       NPK"
+    ],
+    "fdisk_caution": "fdisk interpreted boot-code bytes as out-of-bounds DOS partition entries; these are not verified actual partitions. FAT32 BPB spans exactly the image size.",
+    "owner_error_root_cause": "not_established",
+    "causal_limit": "This local FAT32 layout does not explain or establish the cause of the owner's bogus-reserved-sector error. The owner's exact image, flashing method, boot mode, and storage controller are unknown. The prior final-report causal sentence is retracted; it was not supported by this test.",
+    "runtime_tested": false
+  },
+  "disk_layouts": [
+    {
+      "path": "/home/djundev/.cache/mikpatch-audit/x86-bios-install-ti07gz1b/installed-readback.raw",
+      "bytes": 1073741824,
+      "gpt_header": true,
+      "mbr_signature": true,
+      "partitions": [
+        {
+          "index": 1,
+          "start_sector": 34,
+          "end_sector": 65569,
+          "name": "RouterOS Boot",
+          "fat32": false,
+          "fat16": false,
+          "ext_magic": true
+        },
+        {
+          "index": 2,
+          "start_sector": 65570,
+          "end_sector": 2093055,
+          "name": "RouterOS",
+          "fat32": false,
+          "fat16": false,
+          "ext_magic": true
+        }
+      ]
+    },
+    {
+      "path": "/home/djundev/.cache/mikpatch-audit/chr-caption-six-formats-4resfwel/containers/chr-7.24.4-patched.img",
+      "bytes": 134217728,
+      "gpt_header": true,
+      "mbr_signature": true,
+      "partitions": [
+        {
+          "index": 1,
+          "start_sector": 34,
+          "end_sector": 65569,
+          "name": "RouterOS Boot",
+          "fat32": false,
+          "fat16": false,
+          "ext_magic": true
+        },
+        {
+          "index": 2,
+          "start_sector": 65570,
+          "end_sector": 258047,
+          "name": "RouterOS",
+          "fat32": false,
+          "fat16": false,
+          "ext_magic": true
+        }
+      ]
+    }
+  ],
+  "loader_conclusion": {
+    "current_workflow_static": "ISO/install-image invoke generic patch.py npk; narrow chr-x86-7.24.4 runtime policy applies to CHR.",
+    "existing_paired_chr_evidence": "docs/evidence/chr-7.24.4-loader-anchor-experiment-2026-10-05.json reports full-loader variant no login within240s, starting services then timeout/reboot, versus preserved-loader variant login at30s. Historical CHR evidence, not this installer test.",
+    "all_profile_loader_causes_owner_load_system": "not_established",
+    "old_iso_test": "Successful disk-only boot to login does not validate the newer all-profile generic-loader candidate, nor identify owner ISO or hardware behavior."
+  },
+  "remaining_prerequisites": [
+    "Exact run37277711016 x86 ISO/install-image download or a locally available hash-identified copy for current-candidate tests",
+    "Verified same-version pristine comparator for a causal A/B test",
+    "OVMF firmware for UEFI tests; use per-test disposable VARS copy",
+    "xorriso/isoinfo if fuller ISO boot-catalog inspection or rebuilding is needed (not required for existing BIOS ISO execution)"
+  ],
+  "limits": [
+    "No QEMU equals hardware or VMware claim",
+    "No authenticated login/activation/throughput/upgrade validation",
+    "OCR boolean absence at sampled times is not absence throughout boot",
+    "No source suite rerun because no source was changed",
+    "Installed ext-family magic observed; exact ext version and GPT CRC were not verified",
+    "Do not convert an image container and assume product, boot mode, filesystem or partition layout is changed"
+  ],
+  "scratch_root": "/home/djundev/.cache/mikpatch-audit/x86-bios-install-ti07gz1b"
+}

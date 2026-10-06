@@ -1,0 +1,136 @@
+{
+  "checkpoint_date": "2026-10-06",
+  "timestamp_note": "Filename follows requested checkpoint; actual tool execution UTC was 2026-10-05 (vendor Date and local Python agree).",
+  "reference_commit": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+  "git": {
+    "branch": "main",
+    "cached_origin_main_equals_head": true,
+    "live_origin_main_equals_head": true,
+    "live_check_method": "git ls-remote origin refs/heads/main; no fetch or remote write",
+    "preexisting_edits_preserved": true
+  },
+  "scope": "Read-only vendor HTTP metadata, bounded static MIPS analysis, existing offline PPC tests. Only this evidence file is written. No source/HANDOFF edits, firmware generation, signing, installs, hardware access, remote writes or key values exported. PPC test transformations are memory-only synthetic diagnostic substitutions; no firmware output.",
+  "parent_handoff_action": "Integrate these findings into parent-owned HANDOFF; this worker does not own HANDOFF edits.",
+  "inputs": [
+    "docs/HANDOFF.md",
+    "docs/patch-coverage.md",
+    "docs/non-x86-findings.md",
+    "docs/evidence/non-x86-key-inspection-2026-10-05.json",
+    "ppc_license.py",
+    "tests/test_ppc_license.py",
+    ".github/workflows/patch7.yml",
+    "scripts/release_assets.py"
+  ],
+  "screenshot_scope": {
+    "labels_as_supplied": ["ARM64?", "ARM", "MIPSBE", "MMIPS", "SMIPS", "TILE", "X86"],
+    "image_reinspected": false,
+    "pipeline_architectures": ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc"],
+    "reconciliation": "TILE is requested but absent from pipeline; PPC is an additional existing pipeline architecture, not a substitute for TILE. ARM64 OCR uncertainty remains owner-supplied."
+  },
+  "tile_vendor_availability": {
+    "verdict": "Available at pinned 7.24.4; pipeline support missing, NOT absent vendor product/version.",
+    "system_npk": {
+      "url": "https://download.mikrotik.com/routeros/7.24.4/routeros-7.24.4-tile.npk",
+      "head_http_status": 200,
+      "content_length": 16927105,
+      "last_modified": "Wed, 16 Sep 2026 15:34:37 GMT",
+      "etag": "d0291338fe41534299e7033e6c695341",
+      "range_http_status": 206,
+      "content_range": "bytes 0-4095/16927105",
+      "bytes_read_first_probe": 4096,
+      "second_probe": "206 bytes 0-255/16927105; 256 bytes read at 2026-10-05T18:04:19.635445+00:00",
+      "container_magic": "0xbad0f11e",
+      "declared_payload_length": 16927097,
+      "package_name": "system",
+      "name_info_version": "7.24.4.final",
+      "architecture_part": "tile",
+      "version_decoder": "NAME_INFO bytes: revision, build, minor, major; build 102 decoded final, revision high bit unset",
+      "full_hash_or_signature_verified": false
+    },
+    "all_packages": {
+      "url": "https://download.mikrotik.com/routeros/7.24.4/all_packages-tile-7.24.4.zip",
+      "method": "HEAD only",
+      "http_status": 200,
+      "content_length": 10595595,
+      "last_modified": "Wed, 16 Sep 2026 15:34:32 GMT",
+      "etag": "a5fed7e60f4cfe1874721cbb7d85d9de",
+      "zip_inventory_inspected": false
+    },
+    "product_distinction": {
+      "tile_vendor_example": {
+        "url": "https://mikrotik.com/product/CCR1036-8G-2Splus",
+        "architecture": "TILE",
+        "cpu": "TLR4-03680",
+        "operating_system": "RouterOS",
+        "observation": "Vendor page obtained via curl IPv4; page currently advertises 7.24.5. That current version is NOT used as evidence for pinned 7.24.4 availability."
+      },
+      "ppc_vendor_example": {
+        "url": "https://mikrotik.com/product/RB1100AHx2",
+        "architecture": "PPC",
+        "cpu": "P202ASSE2KFB",
+        "vendor_test_cpu_label": "P2020",
+        "cpu_cores": 2,
+        "nominal_frequency_mhz": 1066
+      },
+      "conclusion": "TILE and PPC are distinct architecture/product families, even on older RouterBOARD/CCR hardware. Do not route TILE through PPC matcher, rename it PPC, or drop pinned version/coverage guard. Actual TILE ELF ISA/encoding has not been inspected."
+    },
+    "lowest_risk_next_step": "Explicitly register TILE as requested but not ready in parent scope tracking. With separate authorization, acquire pristine TILE NPK into isolated scratch, retain provenance/hash, inspect container/ELF and runtime targets read-only first. Do not add a build-success claim or enable partial signing merely by adding a matrix label."
+  },
+  "mips_delay_slot_v0": {
+    "method": "Hash-check cached keyman/mode/loader against prior durable evidence. Capstone MIPS32 decoder with ELF byte order; use owning executable section VA/file bias. Decode anchor and short post-call window, follow direct JAL to PLT stub, resolve GOT target through .rel.plt/.dynsym/.dynstr. Read lib/libc.so via unsquashfs -cat into memory only and inspect memcpy entry. No immediate key values emitted.",
+    "targets": [
+      {"arch": "mipsbe", "file": "keyman", "anchor_start": 25916, "jal_offset": 26020, "delay_store_offset": 26024, "plt_stub_offset": 52832, "post_return_v0_kill_offset": 26036},
+      {"arch": "mipsbe", "file": "mode", "anchor_start": 59528, "jal_offset": 59632, "delay_store_offset": 59636, "plt_stub_offset": 70896, "post_return_v0_kill_offset": 59644},
+      {"arch": "mmips", "file": "keyman", "anchor_start": 28956, "jal_offset": 29060, "delay_store_offset": 29064, "plt_stub_offset": 52992, "post_return_v0_kill_offset": 29076},
+      {"arch": "mmips", "file": "mode", "anchor_start": 59720, "jal_offset": 59824, "delay_store_offset": 59828, "plt_stub_offset": 71184, "post_return_v0_kill_offset": 59836}
+    ],
+    "smips": "Same keyman/mode/loader hashes and decoded offsets as mipsbe; fresh hash comparison succeeded for all 9 MIPS target files.",
+    "relocation": "All four distinct JAL destinations resolve through .rel.plt relocation type 127 to memcpy. Stub: LUI t7; LW t9; JR t9; ADDIU t8 in JR delay slot. This stub neither consumes nor kills v0.",
+    "libc": [
+      {"arch": "mipsbe", "size": 278792, "sha256": "b188156494e9c870c69d367e71eaf22f53ed7b81522cc878e9c8726b855f214b", "memcpy_offset": 207156, "memcpy_symbol_size": 1152},
+      {"arch": "mmips", "size": 278952, "sha256": "fe02b7107c9e18f52b2f53b887ebfc47628caf01335d55fb5beeea0e1a587179", "memcpy_offset": 207172, "memcpy_symbol_size": 1152},
+      {"arch": "smips", "size": 278792, "sha256": "b188156494e9c870c69d367e71eaf22f53ed7b81522cc878e9c8726b855f214b", "memcpy_offset": 207156, "memcpy_symbol_size": 1152}
+    ],
+    "libc_entry": "One exported memcpy symbol per libc; first instruction MOVE v0,a0 overwrites v0 before any use. Next instruction MOVE v1,a0.",
+    "conclusion": "The narrow static concern that the real memcpy body consumes the final anchor word in v0 is resolved for these pinned cached libc bodies: JAL delay-slot SW occurs before callee entry and memcpy immediately kills v0. This is NOT a complete matcher/runtime safety proof; dynamic loader/lazy-binding path and alternate symbol resolution were not traced. Do not leave the local callee unresolved in parent notes, but do not claim production readiness.",
+    "remaining_blockers": [
+      "No production or offline MIPS matcher/tests exist in inspected tree. Exact pinned envelope, strict ELF ownership, decoder boundaries, relocation/alias/direct or indirect entry and all-mapping overlap preflight still need implementation/review.",
+      "LUI/ADDIU requires signed low-half compensation: high=((word+0x8000)>>16)&0xffff, low=word&0xffff; ORI uses unsigned low half. Need synthetic boundary/carry/wrap tests, preserve opcodes/registers/arg setup and delay-slot store. No replacement was proposed or applied here.",
+      "MIPSBE/SMIPS keyman/mode use ADDIU on words 0,6,7; MMIPS uses ADDIU on words 0,1,5,7. Mixed ORI and ADDIU layouts must not be conflated.",
+      "Ten-limb loader anchor is not a supported transformation or a validated preservation policy. Its verifier/startup role and external uses remain unknown.",
+      "No identified 7.24.4 physical board boot/login/activation/persistence evidence found. Historical bootloop warnings are reports, not newly reproduced defects."
+    ],
+    "lowest_risk_next_step": "Bounded read-only trace of the pinned dynamic linker/resolver and loader uses before production work. If subsequently authorized, develop pinned offline-only synthetic MIPS matcher tests for signed carry, endianness, delay slot, register leaks and malformed/overlap rejection; keep production detached until complete product policy and independent review exist."
+  },
+  "ppc": {
+    "matcher": "ppc_license.py accepts exactly two pristine whole-ELF hashes, keyman/mode only. ELF32 big-endian EM_PPC. Eight LIS/ORI/STW stores count as one 32-byte anchor; fixed interleaved setup and final r9 kill included. Relocation/direct-entry/metadata checks and decoder required; indirect-entry assumptions restricted to whole-file pins.",
+    "fresh_verification": "24 tests pass, 0 skip/failure/error in normal and -O with MIKPATCH_PPC_FIXTURES pointed to existing vendor cache. Pinned source reconstruction and memory-only synthetic substitution validated; production _replace_keys remains unchanged/zero instruction coverage, partial package cannot sign/save.",
+    "production_status": "Deliberately detached from patch.py; not a firmware feature. Loader unsupported and no PPC preservation policy.",
+    "coverage_contract_correction": "Current generic guard requires >=1 replacement for EACH mapping across entire system package, NOT every verifier/file. A keyman-only integration could satisfy the minimum and still leave mode/loader semantically unsupported. This is why earlier production integration was removed; completeness needs explicit product-scoped fail-closed policy, not guard bypass or inflated coverage.",
+    "blockers": ["Ten alternating 26/25-bit loader limbs lack reviewed transform/preservation policy and runtime-use analysis.", "Two-file matcher success is not package/kernel/initramfs completeness, bootability or activation.", "No identified PPC 7.24.4 board boot evidence found; historical status is untested."],
+    "lowest_risk_next_step": "Retain offline matcher as-is and inspect pristine PPC loader/callers/dependencies read-only to establish role and register/control-flow/use safety. Only then design independently reviewed complete policy; never plug two-file minimum coverage into production as universal PPC support."
+  },
+  "architecture_product_status_matrix": [
+    {"architecture": "x86", "products_in_pipeline": ["system NPK", "all-packages", "ISO", "six install-image formats", "six CHR formats", "NetInstall Win32/Win64/Linux"], "vendor_available": "prior workflow/evidence", "in_pipeline": true, "status": "Delegated x86 agent; inherited CHR scoped evidence only, no new verification here", "runtime": "Prior local CHR QEMU boot/login/activation/persistence; owner VMware success report lacks identified image/hash recheck. Installed ISO disk BIOS gate previously failed. Physical SSD/Mini PC success unknown.", "unknowns": "Current parallel-agent result, ISO fix, physical-board behavior. Not production/universal support."},
+    {"architecture": "arm64", "products_in_pipeline": ["system NPK", "all-packages", "ISO", "six CHR formats"], "vendor_available": "prior HTTPS standalone NPK", "in_pipeline": true, "status": "Delegated ARM agent; inherited targets ELF32 EM_ARM, not proof of full product ISA", "runtime": "No board/CHR boot evidence established here", "unknowns": "Parallel results, standalone versus ISO/CHR embedded binaries, alias/arithmetic and loader policy"},
+    {"architecture": "arm", "products_in_pipeline": ["system NPK", "all-packages"], "vendor_available": "prior HTTPS NPK", "in_pipeline": true, "status": "Delegated ARM agent; inherited anchor discovery only", "runtime": "No identified board boot evidence; historical bootloop report", "unknowns": "Parallel results, shared literal pools/dependent arithmetic, loader limbs"},
+    {"architecture": "mipsbe", "products_in_pipeline": ["system NPK", "all-packages"], "vendor_available": "prior HTTPS NPK/cache", "in_pipeline": true, "status": "Blocked; big-endian EM_MIPS; anchor found, no matcher", "runtime": "No identified pinned board boot evidence", "unknowns": "Resolver path, full envelope safety, loader policy, board boot/activation"},
+    {"architecture": "mmips", "products_in_pipeline": ["system NPK", "all-packages"], "vendor_available": "prior HTTPS NPK/cache", "in_pipeline": true, "status": "Blocked; little-endian EM_MIPS; anchor found, no matcher", "runtime": "No identified pinned board boot evidence", "unknowns": "Carry/opcode layout differs from MIPSBE; resolver, loader, board boot/activation"},
+    {"architecture": "smips", "products_in_pipeline": ["system NPK", "all-packages"], "vendor_available": "prior HTTPS NPK/cache", "in_pipeline": true, "status": "Blocked; big-endian EM_MIPS; three targets identical to MIPSBE does not imply equal board/kernel compatibility", "runtime": "No identified pinned board boot evidence", "unknowns": "Resolver, loader, board-specific resources/boot/activation"},
+    {"architecture": "ppc", "products_in_pipeline": ["system NPK", "all-packages"], "vendor_available": "prior HTTPS NPK/cache", "in_pipeline": true, "status": "Offline two-file matcher tested, production detached", "runtime": "No identified pinned board boot evidence", "unknowns": "Loader policy, full package completeness, board boot/activation"},
+    {"architecture": "tile", "products_verified_available": ["system NPK 7.24.4.final tile", "all-packages ZIP HEAD availability"], "vendor_available": true, "in_pipeline": false, "status": "Requested architecture omitted from workflow matrix, suffix selection and release_assets allowlist/inventory", "runtime": "No identified build/board boot evidence", "unknowns": "ELF ISA/key representations/loader policy and kernel/signature/runtime behavior; no ISO/CHR product claimed"}
+  ],
+  "verification_boundaries": [
+    "Matrix product names describe existing repo inventory, not verified ready firmware. Vendor HTTPS availability/local hashes do not establish vendor cryptographic signature authenticity.",
+    "No new ARM/x86 analysis performed; inherited findings explicitly separate tool results from owner reports and remain subject to parallel agent updates.",
+    "Full suite not rerun; focused PPC tests only. No full-cache completeness or exhaustive board evidence absence proof; conclusions limited to inspected repo records/cache.",
+    "Version remains 7.24.4 and coverage guards intact. No generalization of CHR x86 loader preservation to other architecture/product. Signing/build != boot/login != activation."
+  ],
+  "failed_or_retried_operations": [
+    "WebFetch vendor pages timed out; curl IPv4 read-only page retrieval succeeded.",
+    "Initial WSL PPC command failed Git Bash path conversion (exit127), corrected using MSYS_NO_PATHCONV=1 and explicit repo cwd; two final PPC test runs succeeded.",
+    "First exploratory ELF unpack helper failed ValueError; discarded. Corrected section-metadata/GOT relocation resolver established memcpy symbol without assumed PLT index.",
+    "NpkNameInfo.unserialize helper lookup failed AttributeError; corrected direct bounded NAME_INFO version decoding used above.",
+    "Long initial evidence-write shell command truncated with SyntaxError; no output file created. Replaced by dedicated Write tool."
+  ]
+}

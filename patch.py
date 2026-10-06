@@ -306,7 +306,8 @@ def patch_pe(data: bytes, key_dict: dict, stats: dict | None = None):
 
 
 def patch_netinstall(key_dict: dict, input_file, output_file=None):
-    netinstall = open(input_file, 'rb').read()
+    with open(input_file, 'rb') as source:
+        netinstall = source.read()
     if netinstall[:2] == b'MZ':
         import pefile
         ROUTEROS_BOOT = {
@@ -331,6 +332,8 @@ def patch_netinstall(key_dict: dict, input_file, output_file=None):
                             size = sub_resource.directory.entries[0].data.struct.Size
                             data = pe.get_data(rva, size)
                             _size = struct.unpack('<I', data[:4])[0]
+                            if len(data) != size or _size > size - 4:
+                                raise ValueError('NetInstall bootloader exceeds resource size')
                             _data = data[4:4+_size]
                             try:
                                 if _data[:2] == b'MZ':
@@ -340,8 +343,10 @@ def patch_netinstall(key_dict: dict, input_file, output_file=None):
                                 else:
                                     raise Exception(f'unknown bootloader format {_data[:4].hex().upper()}')
                             except Exception as e:
-                                print(f'patch {bootloader["arch"]}({sub_resource.id}) bootloader failed {e}')
-                                new_data = _data
+                                raise ValueError(
+                                    f'NetInstall bootloader {sub_resource.id} patch failed') from e
+                            if len(new_data) > len(_data):
+                                raise ValueError('NetInstall bootloader exceeds resource size')
                             new_data = struct.pack(
                                 "<I", _size) + new_data.ljust(len(_data), b'\0')
                             new_data = new_data.ljust(size, b'\0')
@@ -399,11 +404,15 @@ def patch_netinstall(key_dict: dict, input_file, output_file=None):
                 else:
                     raise Exception(f'unknown bootloader format {data[:4].hex().upper()}')
             except Exception as e:
-                print(f'patch {name.decode()}({id}) bootloader failed {e}')
-                new_data = data
+                raise ValueError(f'NetInstall bootloader {id} patch failed') from e
+            if len(data) != data_size or len(new_data) > len(data):
+                raise ValueError('NetInstall bootloader exceeds embedded size')
             new_data = new_data.ljust(len(data), b'\0')
             netinstall = netinstall.replace(data, new_data)
-        open(output_file or input_file, 'wb').write(netinstall)
+        with open(output_file or input_file, 'wb') as destination:
+            destination.write(netinstall)
+    else:
+        raise ValueError('unknown NetInstall format')
 
 
 def patch_kernel(data: bytes, key_dict, stats: dict | None = None):
@@ -436,6 +445,12 @@ def patch_squashfs(path, key_dict, stats: dict | None = None,
             if (any(parent.is_symlink() for parent in (file, file.parent, file.parent.parent))
                     or not file.is_file() or file.stat().st_nlink != 1):
                 raise ValueError('runtime policy requires regular unlinked files: ' + relative)
+        if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+            import hashlib
+            for relative, expected in _X86_INSTALLER_COMPONENT_SHA256.items():
+                if hashlib.sha256((Path(path) / relative).read_bytes()).hexdigest() != expected:
+                    raise ValueError('x86-installer runtime policy requires qualified pristine component: '
+                                     + relative)
     license_counts = {}
     # Multiple directory entries can reference one inode: unsquashfs keeps
     # SquashFS hardlinks as hardlinked extracted files. Read and patch each
@@ -513,6 +528,28 @@ def _validate_key_dict(key_dict):
 
 
 _CHR_RUNTIME_POLICY = 'chr-x86-7.24.4'
+_X86_INSTALLER_RUNTIME_POLICY = 'x86-installer-7.24.4'
+# Caller-declared installed-x86 path, NOT product autodetection. The evidence
+# qualifies this retained pristine source by exact 582-file/metadata equality
+# after generic mapping against the old installer ISO. It does not authenticate
+# vendor signatures or establish readiness for another ISO or physical hardware.
+# docs/evidence/x86-installer-runtime-investigation-20261005T181703Z-9c41b8a2.json
+_X86_INSTALLER_SOURCE_SHA256 = '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+_X86_INSTALLER_COMPONENT_SHA256 = {
+    'nova/bin/loader': '792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7',
+    'nova/bin/keyman': 'ace0e5fa8de1fdd4098540102b59ae0ab734f2c8bc9bf13a0c86103c2b419ac0',
+    'nova/bin/mode': 'f55ae4709fcdf62227fba0985aee8429058d1543d048751cedd86485cd67102a',
+}
+
+
+def _npk_source_sha256(package):
+    """Fingerprint canonical package state, NOT original-wire provenance."""
+    import hashlib
+    body = bytearray()
+    for part in package:
+        data = part.data if isinstance(part.data, bytes) else part.data.serialize()
+        body += struct.pack('<HI', part.id.value, len(data)) + data
+    return hashlib.sha256(struct.pack('<II', NovaPackage.NPK_MAGIC, len(body)) + body).hexdigest()
 
 
 def _part(package, part_id, required=True):
@@ -523,11 +560,13 @@ def _part(package, part_id, required=True):
     return parts[0] if parts else None
 
 
-def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key):
-    if runtime_policy != _CHR_RUNTIME_POLICY:
+def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key,
+                             *, source_npk=None):
+    if runtime_policy not in (_CHR_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY):
         raise ValueError('unsupported runtime policy')
     if getattr(package, '_packages', []):
-        raise ValueError('runtime policy only supports single-package CHR system NPK')
+        product = 'CHR ' if runtime_policy == _CHR_RUNTIME_POLICY else ''
+        raise ValueError('runtime policy only supports single-package ' + product + 'system NPK')
     info = _part(package, NpkPartID.NAME_INFO).data
     if info.name != 'system' or info.version != '7.24.4.final':
         raise ValueError('runtime policy requires system 7.24.4.final')
@@ -550,6 +589,28 @@ def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_k
     _validate_key_dict(key_dict)
     _part(package, NpkPartID.FILE_CONTAINER)
     _part(package, NpkPartID.SQUASHFS)
+    if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+        import hashlib
+        # Parsed state loses declared part lengths and cannot prove provenance.
+        # Direct callers must supply the original full wire bytes, not a digest
+        # or a reserialization of an untrusted parsed package.
+        if not isinstance(source_npk, bytes):
+            raise ValueError('x86-installer runtime policy requires original source_npk wire bytes')
+        if hashlib.sha256(source_npk).hexdigest() != _X86_INSTALLER_SOURCE_SHA256:
+            raise ValueError('x86-installer runtime policy requires exact qualified pristine source NPK')
+        if (len(source_npk) < 8
+                or struct.unpack_from('<II', source_npk) != (NovaPackage.NPK_MAGIC, len(source_npk) - 8)):
+            raise ValueError('invalid original source NPK envelope')
+        offset = 8
+        while offset < len(source_npk):
+            if len(source_npk) - offset < 6:
+                raise ValueError('truncated original source NPK part header')
+            size = struct.unpack_from('<I', source_npk, offset + 2)[0]
+            offset += 6 + size
+            if offset > len(source_npk):
+                raise ValueError('truncated original source NPK part payload')
+        if _npk_source_sha256(package) != hashlib.sha256(source_npk).hexdigest():
+            raise ValueError('x86-installer runtime policy requires exact qualified pristine source NPK')
 
 
 def _squashfs_time(data):
@@ -619,11 +680,12 @@ def _validate_terminal_banner_package(package, policy):
 
 
 def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key=None,
-                      *, terminal_banner=None):
+                      *, terminal_banner=None, source_npk=None):
     if terminal_banner is not None:
         _validate_terminal_banner_package(package, terminal_banner)
     if runtime_policy is not None:
-        _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key)
+        _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key,
+                                 source_npk=source_npk)
     name = package[NpkPartID.NAME_INFO].data.name
     report = {'package': name, 'status': 'not-system', 'replacements': [],
               'scope': 'literal replacement coverage only; boot and activation untested'}
@@ -702,6 +764,12 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                 raise ValueError('repacked SquashFS inode/link metadata mismatch; signing blocked')
         if runtime_policy:
             report['runtime_policy'] = runtime_policy
+            if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+                report['source_qualification'] = {
+                    'npk_sha256': _X86_INSTALLER_SOURCE_SHA256,
+                    'context': 'caller-declared x86 installer; not product autodetection',
+                    'basis': '582-file and metadata equality to investigated old ISO',
+                }
             report['preserved_anchors'] = [{'path': 'nova/bin/loader', 'role': 'LICENSE',
                                             'count': 1, 'counted_as_coverage': False}]
         new_container = file_container.serialize()
@@ -713,19 +781,30 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
                    runtime_policy=None, license_public_key=None, *, terminal_banner=None):
-    npk = NovaPackage.load(input_file)
+    provenance = {}
+    if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+        import hashlib
+        # Parse the same immutable bytes we pin; never reopen the input between
+        # qualification and parsing, or normalize unknown input into a pin.
+        source_npk = Path(input_file).read_bytes()
+        if hashlib.sha256(source_npk).hexdigest() != _X86_INSTALLER_SOURCE_SHA256:
+            raise ValueError('x86-installer runtime policy requires exact qualified pristine source NPK')
+        npk = NovaPackage(source_npk[8:])
+        provenance['source_npk'] = source_npk
+    else:
+        npk = NovaPackage.load(input_file)
     if terminal_banner is not None:
         _validate_terminal_banner_package(npk, terminal_banner)
     if runtime_policy is not None:
-        _validate_runtime_policy(npk, key_dict, runtime_policy, license_public_key)
+        _validate_runtime_policy(npk, key_dict, runtime_policy, license_public_key, **provenance)
     reports = []
     if len(npk._packages) > 0:
         for package in npk._packages:
             reports.append(patch_npk_package(package, key_dict, runtime_policy, license_public_key,
-                                            terminal_banner=terminal_banner))
+                                            terminal_banner=terminal_banner, **provenance))
     else:
         reports.append(patch_npk_package(npk, key_dict, runtime_policy, license_public_key,
-                                         terminal_banner=terminal_banner))
+                                         terminal_banner=terminal_banner, **provenance))
     for report in reports:
         print(f"package {report['package']}: {report['status']}")
     npk.sign(kcdsa_private_key, eddsa_private_key)
@@ -741,8 +820,11 @@ if __name__ == '__main__':
     npk_parser = subparsers.add_parser('npk', help='patch and sign npk file')
     npk_parser.add_argument('input', type=str, help='Input file')
     npk_parser.add_argument('-O', '--output', type=str, help='Output file')
-    npk_parser.add_argument('--runtime-policy', choices=[_CHR_RUNTIME_POLICY],
-                            help='Explicit version-scoped CHR runtime policy')
+    npk_parser.add_argument('--runtime-policy',
+                            choices=[_CHR_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY],
+                            help='Explicit caller-declared CHR or x86 installer path policy; '
+                                 'x86 installer requires pinned pristine single system source, '
+                                 'not product autodetection or physical readiness')
     npk_parser.add_argument('--terminal-banner', choices=[TERMINAL_BANNER_POLICY],
                             help='Opt-in actual terminal logo resource patch (not system note)')
     banner_parser = subparsers.add_parser('terminal-banner',

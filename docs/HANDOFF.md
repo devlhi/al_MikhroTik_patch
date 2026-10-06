@@ -1,6 +1,29 @@
 # HANDOFF — Ali Patch Code
 
-**Tambahan terbaru 2026-10-05 (§21): enam format CHR x86 caption tersedia lokal,
+**PRECOMMIT publikasi NEW v2, 2026-10-06 (§28): pemilik menyetujui cabang
+sementara LOKAL saja, fast-forward main, hapus cabang lokal yang sudah merged,
+lalu push hanya main. Scope x86-all 18 produk, prerelease lab bukan Latest;
+bukan rilis non-x86/universal. HEAD/live awal `60ed61c`. Source 76/76 cocok
+raw hash regresi §26; belum ada build CI NEW v2 atau publikasi pada checkpoint ini.**
+
+**Status terbaru 2026-10-06 (§26): HEAD/live main `60ed61c`; perubahan lokal,
+belum commit/push/rilis NEW v1. Defect katalog EFI ISO diperbaiki dengan xorriso.
+ISO v2 berhasil install, boot disk-only dan login pada QEMU BIOS serta UEFI;
+IMG v1 lewat USB BIOS juga berhasil. USB UEFI belum berhasil ke target yang
+dimaksud. Aktivasi belum diulang pada ISO v2; Level 6 persisten hanya dibuktikan
+pada media v1 BIOS/IDE (§25). Full WSL frozen awal: 540 tes, 530 lulus, 9 skip,
+1 failure cooldown; repeat source sama: 531 lulus, 9 skip, nol failure/error.
+Penyebab failure awal belum teridentifikasi, tidak dianggap diperbaiki.
+ARM/MIPS hanya prototipe offline terbatas; guard produksi tetap aktif.
+ISO baru tersedia di `dist/x86-installer-lab-v2-uefi`; bukan CI/rilis publik.
+Bare-metal, non-x86 runtime, jaringan dan SFP native belum terbukti.**
+
+**Publikasi 2026-10-05 (§22) selesai: source `60ed61c` dipush ke main.
+CI37291910153 profil chr-x86 sukses; NEW prerelease CHR x86 enam format terbit,
+9aset diverifikasi unduh ulang. Bukan Latest; rilis lama tidak diganti.
+Tidak ada boot/aktivasi ulang image CI baru saat publikasi.**
+
+**Hasil lokal 2026-10-05 (§21): enam format CHR x86 caption tersedia lokal,
 integritas ZIP dan kesetaraan sektor guest terverifikasi. Celah QCOW2 external-data
 pada validator awal sudah diperbaiki dan lolos review ulang. Full WSL final368tes:
 361pass7skip0failure/error; semua6arsip lulus validasi ulang pasca-fix.
@@ -1825,4 +1848,546 @@ credential Git hanya dalam memori proses, tanpa config/token disimpan ke disk.
 Staged diff--check menemukan trailing spaces pada enam baris evidence ASCII
 banner historis §19; byte dipertahankan karena bukti exact output, bukan source
 formatting. Check selain file tersebut lulus; file caption baru tidak bermasalah.
-Status publikasi belum selesai.
+Source sudah commit dan push sebagai `60ed61cd0673a126cdf0bb8846c24a940518bd8e`;
+main/local/cached/live remote cocok0/0 sesudah push. Workflow Patch v7 profil
+chr-x86/create_draft_release=true didispatch dan run37291910153 sukses: patch x86
+1m45s, validasi all6 sukses, draft release dibuat. Produk di luar CHR x86 di-skip
+sesuai profil. Tag baru `ali-patch-code-7.24.4-run37291910153-attempt1`, target source
+60ed61c; draft/prerelease, belum dipublikasikan saat catatan ini. Unduh ulang aset
+CI untuk verifikasi independen sedang berjalan; tidak menyamakan hash CI baru
+dengan artefak konversi lokal §21. Tidak ada boot/aktivasi image CI baru.
+
+Runner mengeluarkan warning Node20 action dipaksa Node24 serta rencana migrasi
+ubuntu-latest ke Ubuntu26; build tetap sukses. Tidak mengubah workflow sekadar
+untuk menyembunyikan warning. Rilis akan tetap prerelease lab dengan judul NEW,
+bukan klaim dukungan hardware/aktivasi universal. Status saat itu masih menunggu
+verifikasi publikasi; hasil final dicatat berikut ini.
+
+Publikasi selesai dan diverifikasi read-only: release403566620 berjudul
+**NEW — Ali Media Patch 7.24.4 — CHR x86 (6 formats, lab)**, draft=false,
+prerelease=true, bukan latest. Tag baru resolve tepat ke source60ed61c.
+URL: https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run37291910153-attempt1
+Sembilan aset (enam ZIP CHR, manifest, SHA256SUMS, RELEASE_NOTES) tidak berubah
+antara snapshot sebelum/sesudah publikasi. Metadata80aset rilis historis7.24.4
+serta7.23.3 juga tidak berubah; bukan unduh ulang/hash lokal aset historis.
+
+Unduh ulang seluruh9aset CI cocok ukuran/digest GitHub serta manifest/checksum.
+Validasi WSL QEMU8.2.2 selesai exit0: semua6container standalone, lima hasil
+konversi ekuivalen sektor dengan raw (VHD hanya padding nol). Structural check
+qcow2/vmdk/vhdx/vdi lulus; raw/vhd unsupported-by-format, bukan structural pass.
+Bukti: [validasi aset CI](evidence/chr-ci-release-validation-2026-10-05.json)
+dan [verifikasi publikasi](evidence/chr-new-release-publication-2026-10-05.json).
+Tidak ada boot/aktivasi ulang image CI baru, tidak ada patch SFP, dan non-x86
+belum dinyatakan selesai. Suite penuh tidak diulang pada penutupan publikasi.
+Pemeriksaan akhir main/HEAD/live remote tetap60ed61c, cached divergence0/0.
+Catatan penutupan HANDOFF dan dua evidence publikasi berada lokal, belum di-commit;
+source firmware60ed61c sudah di-push. Folder.zcode lokal tidak disertakan rilis.
+
+### 23. Laporan boot IMG pada SSD Mini PC x86 (2026-10-06)
+
+Pemilik melaporkan memasang IMG ke SSD Mini PC x86 dan mengirim dua foto.
+Nama/hash file, alat flash, mode boot, dan controller SSD belum diketahui.
+Pembacaan visual langsung tidak tersedia pada model; OCR Windows lokal berhasil
+setelah percobaan pertama gagal pada binding WinRT. OCR foto pertama menangkap
+fragmen `bogus number of reserved sec`, `internal error`, dan `reinstall ... router`;
+foto kedua menangkap fragmen loader6.04-EDD, warning Spectre/retpoline dan
+`kvm: already loaded the other module`. Ini transkripsi OCR parsial, bukan log
+serial persis. Foto berada pada cache sesi, belum menjadi evidence durabel repo.
+
+Rilis NEW yang ditautkan sebelumnya hanya profil CHR x86 enam format, bukan
+installer RouterOS x86 bare-metal. Ekstensi IMG tidak membuktikan jenis produk.
+Bila file yang dipakai adalah aset CHR tersebut, pemakaian langsung pada SSD
+fisik berada di luar pengujian yang dilakukan. Penyebab fatal belum terbukti:
+OCR saja tidak membuktikan geometri, tabel partisi, filesystem, driver storage,
+atau warning Spectre/KVM sebagai penyebab. Jangan menyatakan SSD rusak atau
+menyarankan wipe/perubahan BIOS tanpa bukti tambahan.
+
+Arahan sebelumnya terlalu umum: CHR vs RouterOS ditentukan produk/ID lisensi,
+bukan hanya VM vs hardware atau ekstensi disk. RouterOS x86 juga bisa di VM.
+Untuk bare-metal gunakan installer RouterOS x86 yang sesuai; rilis custom NEW
+belum menyediakan installer tersebut. Pengguna perlu menyampaikan nama file,
+alat flash, serta model Mini PC dan jenis SSD untuk diagnosis lanjutan.
+Tidak ada reproduksi boot, tes suite, flash, perubahan source/kunci, commit,
+atau push pada sesi penilaian ini. HEAD/live main60ed61c, cached divergence0/0.
+
+### 24. Perluasan lokal x86, pengaman build, dan laporan SFP (2026-10-06)
+
+Acuan source `60ed61cd0673a126cdf0bb8846c24a940518bd8e`, branch main. Pemeriksaan
+ulang HEAD/live origin main sama, cached divergence0/0. Seluruh perubahan di
+bawah masih lokal; tidak ada commit/push/dispatch/publikasi baru. Perubahan dan
+bukti publikasi §22 yang belum commit dipertahankan. Folder `.zcode` tetap lokal;
+rencana di dalamnya dikoreksi agar tidak lagi mengklaim penyebab geometri pasti
+atau hypervisor 100% stabil. Tanggal judul laporan mengikuti checkpoint sesi;
+evidence menyimpan timestamp UTC eksekusi yang sebenarnya.
+
+**Laporan pemilik:** CHR VMDK kini berhasil. OCR screenshot menangkap p-unlimited
+serta Ali Media Patch, tetapi nama/hash image dan restart persistence belum
+diuji ulang oleh agent pada VM pemilik. Bukti ini tidak digeneralisasi ke ISO,
+Mini PC, non-x86 atau SFP.
+
+**Source lokal:**
+
+- `.github/workflows/patch7.yml`, `scripts/release_assets.py` dan regresinya
+  menambahkan profil x86-all dengan tepat18aset: NPK, all-packages, ISO,
+  enam install-image, enam CHR, tiga NetInstall. Profil all tetap37aset/tujuh
+  arsitektur, chr-x86 tetap6. Inventory/coverage guard tidak dilemahkan.
+- `ppc_license.py` hanya matcher offline untuk dua ELF PPC pinned keyman/mode.
+  Review independen menemukan bahwa integrasi awal dapat memberi coverage
+  minimal dari satu target walau mode/loader tidak didukung. Integrasi produksi
+  dihapus sepenuhnya; regresi memastikan tidak signing/save pada paket parsial.
+  Loader PPC, ARM literal-use/alias, dan MIPS live-in setelah delay slot belum
+  terbukti aman. Non-x86 tetap diblokir; bukan fitur firmware siap rilis.
+- `patch.py` NetInstall PE/ELF sekarang menghentikan patch pada exception embedded
+  bootloader, payload terlalu besar, serta format luar tak dikenal. Tidak ada
+  fallback diam-diam ke blob asli. Regresi menguji existing/new/in-place output
+  tetap utuh pada kegagalan pra-write. Ini bukan transactional filesystem write,
+  guard cakupan NetInstall penuh, atau bukti deploy berhasil.
+- `scripts/sfp_link_report.py`, regresi36kasus, dan `docs/sfp-link-report.md`:
+  laporan offline dua endpoint, timestamp berzona, batas skew, explicit pairing,
+  identitas NIC manual belum diverifikasi, guard missing/stale/checksum/DOM dan
+  negative-loss warning. Rumus TX_A−RX_B serta TX_B−RX_A dalam dB. Parser lama
+  tidak diubah; bukan native SFP reader/driver/NPK atau fiber-only attenuation.
+- [Laporan lengkap](full-platform-sfp-report-2026-10-06.md) menyatukan matriks
+  produk, temuan298modul driver, keterbatasan VM/PF/VF, DOM, redaman dan bukti
+  hardware yang belum ada. `docs/release-validation.md` diperbarui ke tiga
+  profil dan validasi enam format (bukan VMDK saja).
+
+**Installer benar-benar diuji, hasil gagal tetap dicatat:**
+
+ISO build all run37277711016/source140b94a/artifact11330614951 berhasil diambil
+melalui HTTP206 selective ZIP ranges. ISO71.161.856byte dengan SHA256
+`4e4a5577f1701189dbae31ebad9cbc52bc16ffd04943dee21d277719395faa5b`
+cocok CRC, manifest dan SHA256SUMS. Digest arsip penuh1GB tidak diverifikasi.
+Pada QEMU8.2.2/TCG/SeaBIOS/IDE/512MiB/1CPU/0NIC/diskfresh1GiB, menu serta
+instalasi selesai, namun disk-only cold start tidak mencapai login pada45/90s.
+OCR menangkap loading/starting services/reboot dan timeout90s; QEMU-no-reboot
+keluar0 sebelum observasi180s. Bukan bukti reboot berulang atau log kontinu.
+ISO rilis lama790a792... mencapai login45/90/180s dalam konfigurasi pembanding.
+Keduanya menampilkan open/dev/panicsfailed saat install; pesan itu saja bukan
+penyebab. Hash loader terpasang cocok varian CHR yang historis gagal, tetapi
+kausalitas loader khusus ISO belum dibuktikan; policy CHR tidak disalin.
+
+Bukti durabel: [build all ISO](evidence/all-profile-run37277711016-iso-boot-20261005T173229Z-0decf647.json)
+dan [pembanding ISO lama](evidence/x86-iso-bios-install-probe-20261005T170357Z-81a08fcf.json).
+Tidak login/aktivasi, uji SSD fisik atau VM pemilik. UEFI tidak diuji karena OVMF
+absen; xorriso/isoinfo juga tidak ditemukan. Klaim layout FAT32 menjelaskan error
+pemilik dicabut di evidence; nama IMG/flash/controller/mode boot tetap unknown.
+
+**Review dan verifikasi:** review independen delta akhir tidak menemukan defect
+baru yang actionable. Env workflow dibandingkan tanpa mencetak nilai dan tetap
+sama. Review statis bukan persetujuan runtime; dokumen berubah saat review.
+Implementer menjalankan Windows venv: PPC23pass1skip, NetInstall10pass, gabungan
+PPC/patch/runtime/banner136pass23skip, normal serta -O. Percobaan awal system
+Python PPC masing-masing6failure2error1skip karena Capstone absen; venv rerun
+lulus. SFP36baru+41parser lama=77pass0skip. Full Windows historis396tes dengan
+15failure13error28skip tidak dianggap hijau atau dihapus oleh hasil focused.
+
+**Suite akhir pada snapshot source tetap:** WSL venv Python3.12.3, SquashFS4.6.1,
+Node18.19.1; full `python -B -m unittest discover -s tests -v`:443total,
+433pass10skip0failure/error, exit0 (145.437s unittest). Ke-71hash file non-doc
+identik sebelum/sesudah setiap run. Sepuluh skip:4WindowsCMD,1Windowsrename,
+2Caddy(binary tidak tersedia),2QEMU opt-in(tidak dikonfigurasi),1vendor PPC
+fixture(env unset). Tidak ada skip SquashFS/Node. Uji boot ISO di atas terpisah
+dari dua tes QEMU opt-in yang tidak dijalankan oleh suite.
+
+Focused normal dan -O masing-masing: release_assets62pass1skip,
+patch7_branding28pass, patch_netinstall10pass, ppc_license23pass1skip,
+sfp_diagnostics41pass, sfp_link_report36pass; nol failure/error. Full suite -O
+tidak dijalankan. [Evidence final tes](evidence/local-expanded-scope-tests-2026-10-06.json)
+menyimpan perintah tepat, skip IDs, timestamp, error setup awal dan hashes tanpa
+log mentah/kunci. Tidak ada instalasi prasyarat atau firmware generation.
+Pemeriksaan penyerahan: seluruh link lokal pada empat dokumen yang diperbarui
+ada; lima evidence JSON baru valid; nilai env workflow identik dengan HEAD;
+scan nilai konfigurasi sensitif pada penambahan deliverable nol hit.
+`git diff --check` lulus (warning Git LF→CRLF saja).
+
+**Blocker tetap:** installer gagal gate boot, matcher/runtime non-x86 belum
+lengkap, tidak ada akses/bukti NIC+modul fisik atau alur native RouterOS monitor.
+Target universal belum selesai. Tidak ada flash disk/NIC/EEPROM, perubahan key,
+atau publish aset baru untuk menyembunyikan kegagalan. Titik lanjut teknis adalah
+isolasi sebab boot pada source ISO pristine yang teridentifikasi dan pengujian
+hardware spesifik; seluruh klaim tetap dibatasi kombinasi yang benar diuji.
+
+### 25. Isolasi regresi boot installer x86, lisensi Level 6, dan evaluasi arsitektur (2026-10-06; lokal)
+
+Acuan source `60ed61cd0673a126cdf0bb8846c24a940518bd8e`, branch `main`. Seluruh
+perubahan di bawah masih berada di working tree lokal; tidak ada commit, push,
+dispatch build, atau publikasi rilis baru tanpa persetujuan dan bukti uji lengkap.
+
+#### A. Isolasi kausal regresi boot installer x86 dan aktivasi Level 6 lab
+
+Uji A/B terkontrol dilakukan pada dua disk virtual terpasang di QEMU
+8.2.2/TCG/SeaBIOS/IDE, 512 MiB RAM, 1 CPU, tanpa NIC. Di antara 582 file reguler,
+hanya byte loader berbeda; serialization SquashFS/signature juga berbeda.
+
+1. **Kandidat A (modifikasi loader generik)**: gagal mencapai prompt login;
+   observasi memuat `Starting services...` / `Loading system...`. Keluar dengan
+   `-no-reboot` tidak membuktikan sebab reset atau reboot loop kontinu.
+2. **Kandidat B (preservasi anchor loader)**: mempertahankan 8 immediate dwords
+   (32 byte) pada `nova/bin/loader` sambil tetap mereplace pola lisensi pada
+   `keyman` dan `mode`. Hasil: sistem mencapai login prompt pada 30 detik.
+3. **Aktivasi Lisensi Level 6**:
+   - RouterOS x86 menyajikan Software ID 8 karakter (format `XXXX-XXXX`), berbeda
+     dari System ID 11 karakter milik CHR.
+   - Blok lisensi Level 6 lab dibuat dan dipaste ke konsol; nilai tidak diekspor.
+   - Perintah `/system license print` mengonfirmasi Level 6 (`nlevel: 6`).
+   - Status Level 6 **tetap bertahan** setelah reboot 1, reboot 2, dan cold
+     restart (proses QEMU baru).
+   - Bukti tersanitasi: `docs/evidence/x86-installer-runtime-investigation-20261005T181703Z-9c41b8a2.json`.
+
+#### B. Kualifikasi NPK sumber pristine dan kebijakan `x86-installer-7.24.4`
+
+Pemeriksaan wire hash membuktikan empat sumber NPK RouterOS 7.24.4 x86 berbagi
+SHA-256 identik:
+- ISO resmi `/ROUTEROS.NPK`, install-image `/1.npk`, standalone RouterOS NPK, dan
+  NPK paket retained semuanya memiliki wire SHA-256:
+  `46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94`.
+- Kernel eksternal ketiga media juga identik; digest lengkap, 582 file dan
+  metadata parity dicatat di
+  [kualifikasi sumber](evidence/x86-installer-runtime-investigation-source-qualification-20261005T184216Z.json).
+  Signature vendor dengan verifier/kunci repo menghasilkan false; HTTPS dan
+  hash lokal bukan bukti keaslian kriptografis independen.
+- Inventori aktual: ISO 12 paket, install-image 11 paket. `user-manager` hanya
+  terdapat pada ISO. Semua NAME_INFO versi `7.24.4.final`, arch `i386`/`I`.
+  Daftar nama awal parent sempat disampaikan sebagai qualified padahal berasal
+  dari nama file; klaim itu ditarik segera. Integrator dan builder kemudian
+  membaca metadata aktual secara independen; hasil aktual menjadi acuan.
+- Kebijakan runtime `x86-installer-7.24.4` ditambahkan ke `patch.py` dengan
+  pin wire hash dan component SHA-256 (`loader`, `keyman`, `mode`),
+  menegakkan paket tunggal `system`, versi `7.24.4.final`, arsitektur `i386`,
+  preservasi loader tanpa menghitungnya sebagai coverage, dan penolakan input
+  yang telah dimodifikasi atau tidak dikenal.
+- 29 unit test di `tests/test_x86_installer_runtime_policy.py` lulus normal dan `-O`.
+
+#### C. Evaluasi arsitektur non-x86 (ARM, ARM64, MIPS, PPC, TILE)
+
+Permintaan pengguna untuk mendukung seluruh tipe arsitektur (ARM64, ARM, MIPSBE,
+MMIPS, SMIPS, TILE, x86) dianalisis secara objektif:
+- **ARM64**: Dalam paket RouterOS 7.24.4 `arm64`, biner lisensi (`keyman`,
+  `mode`, `loader`) sebenarnya adalah **ELF32 EM_ARM (32-bit ARMv7-A)**, bukan
+  AArch64 native. Konstruksi kunci dilakukan via PC-relative literal pool dan
+  operasi aritmatika `add`, bukan literal contiguous 32 byte.
+- **ARM**: Loader menggunakan representasi 10-limb alternating 26/25-bit.
+- **MIPS (mipsbe, mmips, smips)**: Menggunakan pola `LUI` + `ADDIU`/`ORI` dengan
+  penanganan carry dan delay slot pada instruksi branch/jump.
+- **PPC**: Menggunakan `LIS`/`ORI`. Matcher offline ada di `ppc_license.py`,
+  tetapi sengaja tidak diintegrasikan ke alur produksi karena risiko coverage palsu.
+- **TILE**: Tilera TILE-Gx (CCR1000 series) diverifikasi memiliki NPK vendor
+  resmi 7.24.4 (`system-7.24.4.npk`, arch `tile`). TILE ditambahkan ke profil
+  `all` di workflow dan `scripts/release_assets.py` (total 39 aset untuk 8
+  arsitektur). Statusnya tetap unverified karena belum ada matcher biner dan
+  belum ada hardware lab.
+- **Kesimpulan Non-x86**: Seluruh non-x86 saat ini **belum dapat dibangun
+  menjadi rilis yang berfungsi** karena matcher instruksi biner belum diimplementasikan.
+  Guard cakupan di `patch.py` sengaja fail-closed untuk mencegah rilis palsu.
+
+#### D. Analisis SFP dan redaman optik
+
+- Dukungan SFP terbagi menjadi 4 lapisan terpisah: (1) Kartu jaringan PCI & driver
+  kernel, (2) Transceiver module EEPROM, (3) DOM/DDM telemetry, (4) Link loss
+  dua arah ($TX_A - RX_B$ dan $TX_B - RX_A$).
+- 298 modul kernel x86 RouterOS memuat driver seperti `ixgbe`, `i40e`, `ice`,
+  `bnx2x`, dan `mlx4/5`. Namun modifikasi NPK tidak dapat memunculkan data optik
+  jika kartu jaringan atau modul transceiver fisik tidak mengeksposnya.
+- Tool offline `scripts/sfp_link_report.py` (dengan 36 test) disediakan untuk
+  menghitung redaman dua arah dari output monitor yang valid, bukan membaca port langsung.
+
+#### E. Status rilis dan batasan publikasi
+
+- Rilis baru berlabel "NEW v1" **belum dipublikasikan**. Sesuai aturan repo dan
+  keselamatan lab, publikasi baru memerlukan build ISO/install-image yang selesai
+  seutuhnya dan lolos pengujian boot disk hasil instalasi.
+- Remote `main` tetap pada commit `60ed61cd0673a126cdf0bb8846c24a940518bd8e`.
+  Tidak ada force-push atau pengubahan tag rilis yang telah terbit.
+
+#### F. Review dan pengujian checkpoint
+
+- Reviewer independen menemukan P2 pada API `patch_npk_package`: fingerprint
+  canonical serialization dapat menormalisasi wire malformed (panjang part akhir
+  `I` dinyatakan 2 tetapi payload 1). CLI/file raw pin menolak, tetapi API paket
+  langsung sebelumnya lolos. Approval parent ditahan meski reviewer menyebut
+  scope fixture lulus. Fix sedang dikerjakan; rebuild menunggu source stabil.
+- Sebelum fix tersebut, implementer melaporkan full WSL 478 tes: 468 lulus,
+  10 skip, nol failure/error. Full Windows tetap gagal: 15 failure, 13 error,
+  47 skip terkait deployment/POSIX; bukan hasil hijau dan bukan fix platform.
+  Reviewer mengulang installer 29/29 normal/-O dan regresi 162 lulus/1 skip
+  normal/-O. Angka ini bukan hasil final pasca-fix.
+- Integrasi workflow selesai: metadata preflight lengkap ISO12/FAT11 sebelum
+  subprocess, policy hanya system, add-on generik, standalone source tersendiri,
+  ZIP ISO dari paket yang sudah dipatch tanpa repatch. Integrator melaporkan
+  workflow 36/36 normal/-O pada Windows dan WSL, release-assets 65 lulus/1 skip
+  normal/-O WSL, YAML dan 17 blok bash lulus; 7 env identik dengan HEAD.
+- Parent mengulang Windows venv: SFP 77/77, workflow 36/36, gabungan release-assets/
+  NetInstall/PPC 100 total dengan 2 skip, nol failure/error. Link lokal 73/73,
+  JSON evidence dan `git diff --check` lulus. Full suite final belum diulang.
+- Satu tes interim builder membaca source saat fix berlangsung: 29 tes dengan
+  1 failure/1 error akibat API source_npk belum tersinkron dengan fixture.
+  Ini snapshot campuran, bukan verdict akhir; tidak dihapus dari riwayat.
+
+**Checkpoint sesudah perbaikan review:** API sekarang mewajibkan bytes wire
+asli `source_npk` untuk installer direct API, memeriksa raw hash, outer envelope,
+batas part dan canonical parsed state. File/CLI mem-parsing bytes immutable yang
+sama dengan yang dipin, tanpa read kedua. Reviewer mengulang kasus malformed,
+missing provenance, envelope/header dan positive source ke sentinel tanpa
+mutasi: 4 probe normal/-O lulus; installer 31/31 normal/-O WSL dan regresi
+162 lulus/1 skip normal/-O. P2 API ditutup dalam batas tersebut.
+
+P2 workflow terpisah ditemukan: FAT EFI/kernel ditulis sebelum selector; kini
+selector lengkap dan package dispatch mendahului kedua boot write. Regresi
+shell dengan sudo inert menguji metadata, versi, wire, inventory invalid tanpa
+write attempt dan valid ordering; integrator 37/37 normal/-O Windows+WSL.
+Review delta ordering independen masih berlangsung saat checkpoint ini.
+
+Parent full WSL terbaru: **485 tes, 475 lulus, 10 skip, nol failure/error**,
+162.142 detik, exit0. Run beririsan perubahan workflow/test oleh integrator;
+tidak diklaim sebagai snapshot frozen sebelum/sesudah. Final focused dan
+fingerprint diperlukan setelah freeze. Parent installer WSL 31/31; Windows
+11 lulus/20 skip karena prasyarat POSIX/fixture. Hash source stabil saat diperiksa:
+`patch.py` `13db59e246d61811bbbb3efcf29a7425f162ac3a019161a637568bd182ef3f88`;
+workflow `55d93fc1b503430e51f40bdf5561bef9253d77d6facbddf9e6dcc2a5778ea039`.
+Builder telah membekukan patch.py tersebut untuk media lokal; hasil boot kedua
+media masih terpisah dan belum selesai pada checkpoint.
+
+#### G. Hasil akhir frozen, review ulang dan kedua media nyata
+
+- **Review delta FAT ordering independen lulus:** 16 pemeriksaan (8 kasus normal
+  dan `-O`) memastikan inventory/metadata/architecture/wire/version invalid tidak
+  mencoba dispatch NPK atau write EFI/kernel. Set valid FAT11 menerima satu
+  policy system dan urutan NPK → EFI → kernel; patch pertama gagal menghentikan
+  boot writes tanpa fallback. Kedua P2 kini ditutup dalam cakupan API/order,
+  bukan jaminan rollback, mount, CI atau hardware.
+- **Full WSL frozen:** 486 tes, 476 lulus, 10 skip, nol failure/error,
+  exit 0, 157.985 detik. Installer 31/31 dan workflow 37/37, masing-masing normal
+  dan `-O`; full suite `-O` tidak dijalankan. Python 3.12.3, SquashFS 4.6.1,
+  Node 18.19.1. Seluruh 72 file source/config/test non-doc memiliki raw SHA-256
+  stabil sebelum/sesudah. Skip: fixture vendor PPC opsional (1), rename Windows
+  (1), QEMU opt-in (2), Caddy (2), BAT native (4). Tes QEMU media di bawah adalah
+  eksekusi terpisah, bukan hasil dua tes suite yang di-skip.
+  [Bukti frozen](evidence/x86-installer-final-regression-2026-10-06.json), SHA-256
+  `f7b74b1f16e1d4d5cd20151bbfc4ae3331918dddfd6d85163be891683bdd61a4`.
+  Timestamp UTC aktual 2026-10-05; label file mengikuti checkpoint 2026-10-06.
+- **Build lokal produksi:** patcher frozen `13db59e2…`, system output
+  `9bd28330aed4544a0f5bea9df2f3815841a811ecd06c3e52bbb2f0439556a4a8`.
+  Seluruh 12 NPK ISO/11 NPK image lolos signature custom dan readback. Audit
+  expected-transform atas 582 file dan metadata lulus; coverage nyata 2 LICENSE
+  dan 5 signing, loader pristine dan tidak dihitung. Input unduhan tidak diubah.
+  Permission owner-write `isolinux.bin` pada scratch dibutuhkan packer untuk
+  boot-info-table; bukan klaim outer ISO tree seluruhnya identik.
+- **ISO baru:** 71.161.856 byte, SHA-256
+  `9aafa225ddf31f7ee795039ae9cb4b0b2a2a6bb0742d605079a9b0c581556820`.
+  Install 12 paket ke disk virtual kosong 1 GiB selesai. Media dilepas, boot
+  disk hasil instalasi dan login autentikasi mengonfirmasi 7.24.4, board x86,
+  Software ID (bukan CHR). Level 6 lab teramati sesudah dua reboot serta clean
+  shutdown/cold start proses baru, identifier sama dan tidak diekspor.
+- **Install-image baru:** raw 201.326.592 byte, SHA-256
+  `3bae5653d12ae8b98e72d8491f65b6d3438f78280e6e8dad9ee1cc98c0a32613`;
+  ZIP 35.032.805 byte, SHA-256
+  `3876a41ab116dc1c59ad4d1c8a15e6e005bd3d099e8cdc40a78240b72f4c439a`.
+  Installer secondary IDE (overlay disposable 192 MiB) dipakai untuk install
+  ke disk primary IDE kosong 1 GiB. `software installed.` benar-benar teramati;
+  disk-only login, identitas produk, Level 6 dua reboot dan cold start semuanya
+  lulus. Ini bukan boot USB atau flashing IMG langsung sebagai disk sistem.
+  Pesan `open /dev/panics failed` tidak mencegah hasil ini dan bukan akar sebab.
+- **Batas evidence:** QEMU 8.2.2 TCG/SeaBIOS/IDE, RAM 512 MiB, 1 CPU, nol NIC.
+  Tidak mengakses VM pemilik/disk fisik. Tidak ada acceptance string eksplisit;
+  persistence adalah bukti. Baseline level numerik tidak teramati. Predicate
+  menu/reboot OCR awal menghasilkan false positive dan dibuang; polling 20 detik
+  sempat melewatkan completion image, lalu sampling 1 detik membuktikannya.
+  Kegagalan harness/permission lama tetap dicatat di
+  [bukti build dan install](evidence/x86-installer-runtime-investigation-build-and-install-20261006.json).
+  Workflow saat build `33ee8b2d…` berbeda dari final `55d93fc1…`; builder lokal
+  memakai mtools dan shared patched bytes, bukan eksekusi seluruh YAML final/CI.
+- **Delivery lokal baru:** `dist/x86-installer-lab-v1` berisi ISO, ZIP IMG,
+  manifest, SHA256SUMS dan salinan evidence; dist lama dipertahankan. Tidak memuat
+  disk target teraktivasi, identifier, private key atau file lisensi.
+- **Status publikasi:** belum commit/push/dispatch/rilis NEW v1. Instruksi pemilik
+  meminta semua arsitektur/bare-metal berfungsi sebelum publikasi; hasil lab x86
+  tidak memenuhi gate universal tersebut. Jangan menandai all/ARM/native SFP
+  siap atau mengganti tag/aset lama untuk menyamarkan scope yang belum diuji.
+  Source masih main pada `60ed61c`, live remote cocok (0 ahead/0 behind).
+- **Kendala tersisa:** physical Mini PC, UEFI, USB, NVMe/storage lain, VMware,
+  upgrades, deployment NetInstall, format disk selain media yang diuji, jaringan,
+  native SFP dan seluruh non-x86 belum diverifikasi. Penyebab kegagalan Mini PC
+  pemilik tetap belum diketahui. Laporan lengkap diperbarui dengan hasil ini.
+
+**Titik lanjut:** gunakan bukti lokal sebagai checkpoint x86 BIOS/IDE, bukan
+jaminan produksi. Gate all memerlukan matcher/policy non-x86 yang aman dan
+pengujian board; gate hardware/SFP memerlukan NIC, modul, DOM dan link aktual.
+Publikasi universal tetap tertahan oleh bukti yang belum tersedia. Pemeriksaan
+akhir dokumen/hash/secret dicatat terpisah dari suite source frozen di atas.
+
+**Verifikasi penyerahan parent:** 41 JSON evidence dapat diparse; 91 link relatif
+dalam docs valid; `git diff --check` lulus (peringatan LF→CRLF pada workflow dan
+release-validation saja). Raw hash 72/72 source masih cocok dengan snapshot final.
+ISO/ZIP size dan SHA-256 cocok dengan evidence; ZIP CRC, sole member dan SHA-256
+raw IMG lulus; salinan evidence dist identik dengan bukti durable. Environment
+workflow sama dengan HEAD. Scan pola secret/material private-key serta nilai
+konfigurasi aktual pada 23 input teks (diff tambahan, untracked source/docs/evidence,
+dan metadata dist) tidak menemukan nilai yang harus diredaksi; bukan klaim seluruh
+repo bebas secret. Perubahan sesudah frozen hanya dokumentasi/evidence/delivery,
+sehingga suite source tidak diulang pada penyerahan ini. Tidak ada operasi remote
+write; publikasi universal tetap blocked oleh gate non-x86/hardware/SFP.
+
+### 26. Perbaikan katalog UEFI, probe USB, dan prototipe offline (2026-10-06)
+
+Acuan `60ed61cd0673a126cdf0bb8846c24a940518bd8e`, main/local/live remote sama,
+cached divergence 0/0 saat penutupan. Tidak ada commit/push/dispatch/rilis baru.
+Perubahan lama dipertahankan; media v1 tidak ditimpa. Tanggal judul mengikuti
+checkpoint; timestamp aktual eksekusi ada dalam evidence.
+
+**ISO:** EFI FAT berukuran 34 MiB (69.632 sektor) terpotong pada katalog El Torito
+menjadi 4.096 karena overflow field 16-bit pada genisoimage/mkisofs. Ini menyebabkan
+rEFInd gagal memuat linux.x86_64. Eksperimen dua byte count 4096 menjadi 0 mencapai
+installer dan disk-only login. Menambah flag nol pada genisoimage saja tidak cukup.
+Workflow kini memakai `xorriso -as mkisofs`, BIOS load-size 4 dan EFI load-size 0
+pada entry masing-masing. Untuk payload kecil xorriso menulis count sebenarnya;
+untuk 32/34 MiB count nol. Dua regresi baru memeriksa scope flag dan ISO nyata
+1/32/34 MiB. Review independen packer/readback lulus dalam batas ini.
+
+- [Investigasi UEFI/USB](evidence/x86-uefi-usb-followup-20261006.json).
+- [Build/readback final](evidence/x86-iso-xorriso-build-readback-20261006.json):
+  seluruh 12 NPK/kernel/EFI tetap identik; perubahan hanya katalog dan boot-info-table
+  isolinux bytes 8–63. Metadata sama kecuali mtime katalog yang dihasilkan packer.
+  Ini repack pohon patched yang sudah dikualifikasi, bukan signing ulang atau CI.
+- [Runtime exact ISO final](evidence/x86-uefi-usb-followup-production-runtime-20261006.json):
+  instalasi ke target virtual kosong 1 GiB, boot dengan installer dilepas, login
+  autentikasi dan resource 7.24.4/board x86 lulus pada SeaBIOS dan OVMF UEFI.
+  `boot_tested: false` di provenance build adalah snapshot sebelum runtime,
+  bukan hasil runtime berikutnya. Marker OCR completion UEFI tidak tertangkap;
+  bukti suksesnya disk terisi dan login disk-only, bukan marker yang diasumsikan.
+- Warning rEFInd `textmode 0` juga muncul pada ISO vendor pristine. Probe OVMF
+  mengakui warning dan memilih entry default; warning itu belum diperbaiki.
+- IMG v1 melalui USB BIOS berhasil install ke target, lalu disk-only login/resource.
+  Trial awal salah memilih USB overlay; retry memperbaiki pemilihan target lab.
+  USB UEFI mencapai menu, tetapi hanya overlay USB yang terisi dan target tetap
+  kosong. Penyebab selection/harness/produk belum dipastikan; bukan hasil sukses.
+- Semua probe tanpa NIC, tanpa disk fisik/VM pemilik. Aktivasi exact ISO v2,
+  Secure Boot, Mini PC, NVMe, jaringan dan native SFP tidak diuji.
+
+**Delivery lokal v2:** `dist/x86-installer-lab-v2-uefi` berisi ISO, manifest,
+SHA256SUMS, build-evidence dan runtime-evidence. ISO 71.157.760 byte, SHA-256
+`87ef83ad64fbc5da71283c4176543cf248f7b8ce81b6936ae18c87d41c5f4281`.
+Status `LOCAL_LAB_BIOS_UEFI_BOOT_VALIDATED_NOT_PUBLISHED`. Jangan membawa hasil
+Level 6 v1 BIOS/IDE sebagai bukti aktivasi v2 atau hardware. Installer bukan disk
+sistem hasil instalasi; operasi install memformat target.
+
+**Non-x86 offline, tanpa integrasi produksi:**
+
+- `arm_license.py`: hanya ARM mode pinned, word keempat; tujuh word lain tetap.
+  Tiga immediate ADD non-flag dapat berubah, literal pool tidak ditulis. Batas
+  ELF/relocation/branch/overlap dan anggaran immediate ditolak bila tak terbukti.
+  ARM keyman, ARM64, loader dan replacement full-key tetap unsupported. Review
+  independen mencakup 4096 immediate, 48 chain simulasi, 5000 mutasi ELF dengan -O;
+  tidak ada temuan blocker dalam scope sempit ini. [Bukti ARM](evidence/arm-offline-matcher-followup-2026-10-06.json).
+- `mips_license.py`: positif hanya fixture sintetis. Enam keyman/mode nyata
+  tetap menghasilkan nol match/plan karena jalur GOT/PLT/lazy resolver masih
+  membawa v0 yang belum terbukti aman; tiga loader ditolak. Reviewer menemukan
+  P2: 12 byte callee pembukti kill-v0 belum dilindungi dari mapping lain. Fix
+  memesan range callee dan construction pada occupied/planner untuk kedua urutan
+  mapping. Re-review: 20 overlap ditolak dan 4 adjacent controls lulus per mode;
+  33/33 tes normal/-O. [Bukti MIPS](evidence/mips-offline-matcher-followup-2026-10-06.json).
+- ARM/MIPS/PPC detached dari `patch.py`; guard paket tidak dilemahkan. TILE tetap
+  inventory saja. Tidak ada boot/aktivasi non-x86.
+- **Insiden batas output:** implementer MIPS melaporkan dua output eksplorasi
+  sempat menampilkan nilai immediate anchor dan digest anchor. Nilai tidak diulang
+  di dokumen ini; tidak ada laporan private-key exposure. Deliverable durable
+  dilaporkan tidak memuat anchor lengkap/digest tersebut. Ini pelanggaran aturan
+  output yang dicatat, bukan klaim bahwa output terdahulu dapat dihapus.
+
+**Regresi frozen dan batas diagnosis:**
+[Bukti final](evidence/followup-final-regression-20261006.json), SHA-256
+`58856f06f343eddb033cb34fa8917b0d90c9be044249a11276d8c3a55aa8d408`.
+Full normal awal 540: 530 lulus, 9 skip, 1 failure, 0 error (178.647 detik).
+Failure `test_cooldown_cannot_be_bypassed_by_new_session` tetap dipertahankan.
+Isolated retry 1/1, modul server 25/25, full repeat source sama 540: 531 lulus,
+9 skip, 0 failure/error (184.564 detik). Tidak menganggap repeat sebagai fix.
+Workflow 39/39, ARM 19/19, MIPS 33/33, masing-masing normal/-O dan nol skip.
+76/76 raw source hashes dan fixture stabil; xorriso serta fixture ARM/MIPS/PPC
+aktif. Sembilan skip: rename Windows 1, QEMU opt-in 2, Caddy 2, native BAT 4.
+Full -O dan full Windows tidak diulang. Dua diagnostic import/loader errors dan
+satu path-conversion WSL failure tetap tercatat sebagai masalah harness.
+
+Diagnosis read-only menemukan tes memakai cooldown 60 detik. Server mencatat
+`time.monotonic()` per IP sebelum signing/verifikasi; session baru tidak mereset
+last_generate. Expiry akibat durasi kerja/scheduling mungkin, tetapi tidak terbukti.
+Harness awal hanya menyimpan ID kegagalan, bukan assertion frame/status/durasi
+per tes: tidak dapat menyimpulkan expected 429 got 200 atau akar sebab tertentu.
+HTTP timeout 15 detik juga membatasi hipotesis stall signing panjang. Tidak ada
+perubahan spekulatif pada server/tes, dan kegagalan belum dinyatakan selesai.
+
+**Titik lanjut yang masih terbuka:** diagnosis cooldown dengan telemetry tersanitasi
+bila kambuh; target USB UEFI; aktivasi exact v2 bila ingin diklaim; policy/runtime
+non-x86; hardware Mini PC dan NIC/modul/DOM/link SFP nyata. Bukti virtual x86 ini
+belum memenuhi permintaan semua arsitektur/bare-metal sebelum publikasi NEW v1.
+
+**Validasi penyerahan §26:** pemeriksa read-only mengonfirmasi 47/47 JSON evidence
+serta 3/3 JSON metadata v2 dapat diparse; 92 link relatif enam dokumen tanpa target
+hilang; Windows working/staged diff--check exit0 (warning LF/CRLF saja). Raw hash
+76/76 source cocok semua lima snapshot regresi. ISO v2 size/hash cocok manifest,
+SHA256SUMS dan dua evidence; salinan build/runtime byte-identical dengan docs.
+Dua blok environment workflow (8 entry) identik dengan HEAD. Scan 42 input teks
+menemukan enam occurrence nilai key konfigurasi hanya pada workflow, semuanya
+sudah ada di HEAD; nol kecocokan konfigurasi di input lain dan nol marker secret
+jelas. Satu kandidat assignment pada kode harness evidence adalah false positive;
+helper triage pertama gagal regex, alternatif selesai. Tidak mengklaim repo bebas
+semua jenis secret. Suite/boot/aktivasi tidak diulang untuk penutupan dokumentasi;
+source dan artefak tidak diubah. Live main diperiksa parent tetap60ed61c, 0/0.
+
+### 27. Permintaan publikasi NEW v2 — terhenti sebelum commit
+
+Pemilik meminta push/build rilis NEW v1, kemudian mengubah label menjadi NEW v2.
+Scope yang disampaikan adalah x86-all prerelease lab, bukan dukungan universal.
+Pemilik secara eksplisit menolak cabang sementara. Aturan eksekusi agent
+mengharuskan branching sebelum commit pada default branch, sehingga commit/push,
+dispatch dan publikasi tidak dilakukan. Jangan menganggap izin rilis sebagai izin
+membuat cabang atau menjalankan build dari source remote lama tanpa perbaikan.
+
+Preflight read-only: main/HEAD/live remote tetap `60ed61c`, divergence 0/0;
+akses GitHub berhasil dan izin push tersedia. Workflow Patch v7 aktif. Tiga rilis
+existing tetap ada (CHR lab 9 aset, 7.24.4 40 aset, 7.23.3 40 aset), tanpa draft.
+Cache tercatat tetapi freshness belum dianalisis. Tidak ada tes/unduh aset/boot
+baru; tidak ada staging, commit, push, branch, perubahan auth/config atau operasi
+remote write. Semua perubahan source lokal dipertahankan. Hanya catatan HANDOFF
+penutupan ini ditambahkan sesudah preflight. NEW v2 belum dibangun/diterbitkan;
+publikasi menunggu penyelesaian konflik aturan cabang, bukan kendala akses GitHub.
+
+### 28. Publikasi NEW v2 x86-all — PRECOMMIT (2026-10-06)
+
+Kelanjutan §27: pemilik menjawab "oky" pada penjelasan cabang sementara
+**lokal saja**, fast-forward main, hapus cabang lokal merged, push **hanya main**.
+Izin ini scoped untuk publikasi NEW v2, bukan izin cabang permanen/remote branch.
+Acuan aktual local/cached/live main `60ed61cd0673a126cdf0bb8846c24a940518bd8e`,
+divergence 0/0. Tidak ada perubahan source perilaku dalam sesi publikasi ini.
+
+Audit baru: 76/76 raw hash source cocok `followup-final-regression-20261006.json`;
+47 JSON evidence parse, 12 dokumen docs diperiksa link relatif tanpa target hilang,
+working diff--check exit0. Dua environment block YAML identik terhadap HEAD;
+perbandingan teks awal false akibat format, resolved dengan parsed YAML. Scan
+38 input reviewed menemukan enam occurrence configured-key hanya pada workflow
+yang unchanged dari HEAD; nol marker private-key/token jelas. Nilai tidak dicetak.
+Probe schema awal memakai nama key snapshot keliru (KeyError), diperbaiki dengan
+`hashes_before`/`hashes_after`; tidak ada source berubah.
+
+Regresi §26 tetap bukti source: full awal 540 = 530pass/9skip/1failure cooldown,
+repeat identik 531pass/9skip/0failure; penyebab awal tetap unresolved. Workflow
+39, ARM19, MIPS33 normal/-O pass merupakan hasil sebelumnya, bukan run ulang.
+Full suite/boot/aktivasi tidak diulang pada checkpoint ini.
+
+Cache workflow berisi **input unduhan**, bukan output patched: ISO, install-image
+ZIP, CHR ZIP, rEFInd ZIP dan NetInstall archives. Patch step unconditional setelah
+restore; standalone x86 NPK diunduh fresh; output release dist tidak dicache.
+Tidak perlu menghapus cache pemilik; guard source pin/coverage tetap aktif.
+Snapshot tiga rilis existing/tag diambil sebelum operasi write: 9/40/40 aset.
+
+Rencana approved: commit file reviewed eksplisit (tanpa .zcode/dist/biner/rawlog),
+push main; dispatch pushed commit profil x86-all/draft true; unduh seluruh aset
+ke directory baru, inventory/checksum/ZIP/disk/signature readback; publish title
+NEW v2 prerelease/latest false, lalu evidence/closure commit. NEW CI assets
+berbeda dari media lokal v2: tidak mengatribusikan runtime lokal BIOS/UEFI atau
+Level6 v1 ke CI baru. Aktivasi exactv2, USB UEFI, baremetal/SecureBoot/NVMe,
+jaringan/native SFP dan runtime non-x86 tetap untested/unresolved. ARM/MIPS/PPC
+detached offline; TILE inventory saja. Tidak memindahkan tag/replace aset lama.
+
+Tambahan tes baru Windows sebelum commit: workflow39 = 38pass/1skip
+(xorriso unavailable), release-assets66 = 65pass/1skip (POSIX read permissions),
+0failure/error keduanya. Run penuh Windows maupun full WSL tidak diulang.

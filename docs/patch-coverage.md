@@ -148,6 +148,45 @@ tes sintetis tidak membuktikan firmware produksi boot atau menerima lisensi.
 Build final, verifikasi signature nyata, boot/login dan persistensi aktivasi
 harus diuji terpisah. Kebijakan tidak menyatakan dukungan versi/produk lain.
 
+## Addendum: kebijakan installer x86 7.24.4
+
+`patch.py npk --runtime-policy x86-installer-7.24.4` merupakan pilihan eksplisit
+untuk paket sistem installer x86 yang sudah dikualifikasi, bukan autodeteksi
+produk dan bukan dukungan semua versi. Kebijakan generik tanpa opsi serta
+kebijakan CHR tetap terpisah.
+
+- Wire NPK pristine harus tepat SHA-256
+  `46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94`.
+  Versi `7.24.4.final`, paket tunggal `system`, authoritative `i386`, dan aturan
+  marker `I` tetap wajib. Paket termodifikasi, repatched, multipackage, atau
+  hanya berlabel versi sama tidak diterima. API langsung `patch_npk_package`
+  wajib menerima `source_npk` berupa bytes wire asli lengkap, bukan hash atau
+  reserialization objek parsed. Raw digest, outer envelope, batas setiap part
+  dan fingerprint state parsed diperiksa bersama. API file/CLI membaca sekali
+  dan mem-parsing bytes immutable yang sama dengan yang dipin.
+- Fingerprint masing-masing `loader`, `keyman`, dan `mode` dipin sebelum
+  transformasi. Satu envelope instruksi LICENSE loader dipertahankan setelah
+  pemeriksaan decoder dan overlap; **tidak dihitung sebagai coverage**.
+  Penggantian LICENSE nyata pada `keyman` dan `mode` tetap wajib.
+- Pemeriksaan metadata, representasi sumber, seluruh mapping dan kegagalan
+  sebelum signing/output mengikuti kontrak runtime di atas. Tidak ada fallback
+  ke policy generik ketika kualifikasi installer gagal.
+- Caller workflow harus mengidentifikasi paket sistem melalui metadata, bukan
+  menebak nama file. Add-on tidak menerima runtime policy; operasi sign-only
+  generik add-on tidak membuktikan runtime installer.
+
+Dasarnya ialah uji A/B disk x86 terpasang yang terisolasi: varian loader generik
+mengalami kegagalan boot, sedangkan varian preservasi loader mencapai login dan
+mempertahankan Level 6 setelah dua reboot serta cold restart. Ini bukti satu
+konfigurasi QEMU BIOS/IDE tanpa NIC, bukan jaminan Mini PC, UEFI, VMware,
+non-x86, atau firmware hasil rebuild lain. Bukti terpisah disimpan dalam
+[investigasi runtime installer](evidence/x86-installer-runtime-investigation-20261005T181703Z-9c41b8a2.json).
+
+Tes `tests/test_x86_installer_runtime_policy.py` memeriksa pin, metadata,
+penolakan input tidak dikenal/repatched, preservasi anchor dan coverage wajib.
+Tes sintetis, verifikasi sumber dan boot/aktivasi firmware tetap merupakan
+bukti yang berbeda; hasil tes tidak boleh dipindahkan ke aset rilis baru.
+
 ## Opt-in caption di bawah logo ASCII terminal — CHR x86 7.24.4
 
 **Koreksi permintaan pemilik:** keenam baris ASCII MikroTik asli tetap utuh;

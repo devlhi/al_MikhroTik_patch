@@ -1,0 +1,109 @@
+{
+  "checkpoint_date": "2026-10-06",
+  "initial_prototype_verification_timestamp_utc": "2026-10-06T01:55:52.072174+00:00",
+  "reference_commit": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+  "git": {
+    "branch": "main",
+    "head_vs_cached_origin_main": "0 ahead, 0 behind",
+    "live_remote_checked": false,
+    "remote_operations": false,
+    "preexisting_edits_not_written_by_this_worker": true,
+    "owned_files": ["mips_license.py", "tests/test_mips_license.py", "docs/evidence/mips-offline-matcher-followup-2026-10-06.json"],
+    "handoff_not_edited": "Explicit user ownership restriction overrides workspace default; parent should integrate these findings into HANDOFF."
+  },
+  "scope": "Detached offline ELF32 MIPS candidate validation and fail-closed transform prototype. No firmware output, signing, runtime, remote operation, production integration, workflow edit or loader policy.",
+  "environment": {
+    "interpreter": "/home/djundev/.cache/mikpatch-audit/venv/bin/python",
+    "python": "3.12.3",
+    "capstone": "5.0.7",
+    "cwd": "/mnt/c/laragon/www/mikpatch",
+    "fixtures": "/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff"
+  },
+  "confidentiality": {
+    "deliverables": "No configured key values, candidate key bytes or anchor digests in source, tests or this evidence. Real-anchor assertions use booleans and no raw values. No configuration keys were read.",
+    "session_output_violation": "Two exploratory tool outputs incorrectly printed anchor instruction immediates and an anchor digest. The user was informed. These outputs are not reproduced in deliverables; the session transcript was not modified. Subsequent probes were sanitized. This session did not fully comply with the no-print requirement."
+  },
+  "result": {
+    "real_candidates_recognized": 6,
+    "real_replacements_permitted": 0,
+    "status": "BLOCKED at concrete unresolved GOT/PLT dispatch proof, not safe firmware support",
+    "synthetic_positive_scope": "Four endian/file layouts repinned only in tests, with a direct in-file MOVE v0,a0; JR ra; NOP leaf. No such accepting source pin is shipped.",
+    "no_dynamic_bypass": "The public API has no trust-resolver flag. Real PLT stubs fail the direct-leaf proof and return no replacement. Eight stores form ONE 32-byte buffer, never eight replacements."
+  },
+  "source_validation": {
+    "method": "Rehashed all nine cached MIPS keyman/mode/loader files against non-x86-key-inspection-2026-10-05.json; all match. Capstone MIPS32, raw fixed opcode/register checks, ELF section VA/file ownership. No network or vendor signature validation.",
+    "elf": "ELF32 EM_MIPS ET_EXEC; exact flags 0x70001005. mipsbe/smips big-endian; mmips little-endian MIPS32, not microMIPS.",
+    "distinct_sources": [
+      {"architectures": ["mipsbe", "smips"], "file": "keyman", "size": 55292, "sha256": "2878f385b84c8da36a8f98ab10cde6f2f77020704b722e56a24a43a6335c90f8", "construction_start": 25916, "construction_bytes_through_delay_store": 112, "reserved_envelope_bytes_through_caller_kill": 124, "stub_offset": 52832, "got_slot_va": 4313560, "initial_got_target_va": 4245312},
+      {"architectures": ["mipsbe", "smips"], "file": "mode", "size": 73048, "sha256": "e43f5642729892be7196128108a1646fcccb6c421f18273be3037bf0dbad92e1", "construction_start": 59528, "construction_bytes_through_delay_store": 112, "reserved_envelope_bytes_through_caller_kill": 120, "stub_offset": 70896, "got_slot_va": 4331428, "initial_got_target_va": 4263392},
+      {"architectures": ["mmips"], "file": "keyman", "size": 55292, "sha256": "6537534a1a4bde10dea0694e9f97d256e9f83df9cb35cdab0211f8210df3fe16", "construction_start": 28956, "construction_bytes_through_delay_store": 112, "reserved_envelope_bytes_through_caller_kill": 124, "stub_offset": 52992, "got_slot_va": 4313560, "initial_got_target_va": 4245472},
+      {"architectures": ["mmips"], "file": "mode", "size": 73336, "sha256": "48457c4a8fcc136a9407043514dc4e5e947ae80d9437421bd5ecee338ab09711", "construction_start": 59720, "construction_bytes_through_delay_store": 112, "reserved_envelope_bytes_through_caller_kill": 120, "stub_offset": 71184, "got_slot_va": 4331716, "initial_got_target_va": 4263680},
+      {"architectures": ["mipsbe", "smips"], "file": "loader", "size": 85340, "sha256": "65eefca80004bc1f48371944f8a7ad0bbb05957b42dcfc785912e09188904dd1", "status": "unsupported ten limbs"},
+      {"architectures": ["mmips"], "file": "loader", "size": 85468, "sha256": "267a2ab7646b87d188b048741b954a38020ba477a21230b7731b2e42562e5931", "status": "unsupported ten limbs"}
+    ],
+    "signed_word_indices": {"mipsbe_smips": [0, 6, 7], "mmips": [0, 1, 5, 7]},
+    "libc_read_only_hash_recheck": [
+      {"arch": "mipsbe", "size": 278792, "sha256": "b188156494e9c870c69d367e71eaf22f53ed7b81522cc878e9c8726b855f214b"},
+      {"arch": "mmips", "size": 278952, "sha256": "fe02b7107c9e18f52b2f53b887ebfc47628caf01335d55fb5beeea0e1a587179"}
+    ]
+  },
+  "dispatch_blocker": {
+    "fresh_observation": "Four distinct JAL stubs resolve via .rel.plt type 127 to memcpy. Stub LUI t7; LW t9; JR t9; ADDIU t8 in delay slot preserves live v0. Initial GOT slot points to PLT0. PLT0 sets gp/t8/t7 and performs JALR t9 without killing v0. Interpreter /lib/libc.so contains musl marker; inspected exported symbols did not identify a resolver entry to prove its live-in handling.",
+    "inherited_bounded_fact": "Prior readiness evidence established local memcpy starts MOVE v0,a0 and immediately kills incoming v0. This session rechecked libc hashes and memcpy symbol metadata, not a complete resolver implementation.",
+    "not_claimed": "The initial slot does not prove lazy binding occurs at runtime; eager binding may replace it. Nor does ABI caller-saved status alone prove no resolver observation. Interposition, alternate symbol resolution and indirect-entry safety remain unproved.",
+    "decision": "Reject all actual candidates rather than assume safe transformation. Preserve blocked envelope reports and fail overlap before returning zero coverage.",
+    "next_step": "Independent review of prototype and bounded static proof of actual loader binding/dispatch including incoming v0, or retain rejection. Loader ten-limb semantics and product-specific runtime policy remain separate blockers."
+  },
+  "implemented_checks": [
+    "Immutable bytes and <=4MiB input bound; four exact whole-file pins; unknown/repatched sources rejected.",
+    "Mandatory ELF section and RX PT_LOAD ownership, nonoverlapping file/VA regions, aligned fixed-width code, bounded metadata and relocation/symbol tables.",
+    "Capstone required; complete decode with exact instruction boundaries plus raw opcode/register/store checks; no assert-based safety gates.",
+    "Fixed argument setup, JAL and final SW delay slot preserved. Reserved envelope includes post-return v0 kill.",
+    "Signed ADDIU compensated high half, unsigned ORI separately encoded per pinned endian layout. Only sixteen immediate fields can change.",
+    "Direct branch/jump/likely/coprocessor interior-entry, delay-slot entry, defined-symbol and relocation exclusions. Generic indirect-control-flow proof is not claimed.",
+    "All-mapping planner reserves every pristine literal/envelope and full immutable 12-byte proved callee range, rejects overlap regardless of mapping order and blocked call status, rejects containment/cascade inputs, and returns instruction plans only. Occupied spans protect both construction and callee; inspection exposes callee_range separately.",
+    "Production _replace_keys remains unchanged and contributes no synthetic MIPS instruction coverage. No loader preservation or transform policy."
+  ],
+  "tests": [
+    {"mode": "initial normal, fixture env unset", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 30, "passed": 29, "skipped": 1, "failures": 0, "errors": 0, "skip_reason": "optional real fixture env unset"},
+    {"mode": "initial prototype final normal (before P2 fix)", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH MIKPATCH_MIPS_FIXTURES=/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 30, "passed": 30, "skipped": 0, "failures": 0, "errors": 0, "seconds": 0.546},
+    {"mode": "initial prototype final optimized (before P2 fix)", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH MIKPATCH_MIPS_FIXTURES=/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff /home/djundev/.cache/mikpatch-audit/venv/bin/python -O -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 30, "passed": 30, "skipped": 0, "failures": 0, "errors": 0, "seconds": 0.683},
+    {"mode": "PPC regression normal", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH MIKPATCH_PPC_FIXTURES=/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_ppc_license.py -v", "ran": 24, "passed": 24, "skipped": 0, "failures": 0, "errors": 0, "seconds": 0.087}
+  ],
+  "test_scope": "Synthetic positive transforms include signed 0x7fff/0x8000/0xffff and wrap in both source/replacement directions, both endian layouts, incomplete/opcode/register/delay/malformed/pin/relocation/entry/overlap negatives. Optional six real fixtures are inspection plus sentinel requests that MUST return empty; zero real MIPS transforms. Three loaders rejected. Full suite and PPC -O not rerun here. No firmware/runtime claim.",
+  "initial_prototype_source_sha256_before_P2": {
+    "mips_license.py": "374dca1f03a3c2deb51c631799dfc5a358c40aec986617373340bd4c4fd7a58d",
+    "tests/test_mips_license.py": "dcc3742c30eb2f6c359c184e422effc861584292dc41486c0d7b64a8071d40da"
+  },
+  "tested_source_sha256": {
+    "mips_license.py": "a2d4ac4b3f0c06723198f825e04d64a137180e1f8f1538fdbf196fe41446e8b3",
+    "tests/test_mips_license.py": "a9671f617a7ea0bc40a5f8a835769a890bfaf698e86a3d95582cf1fa08c31d4d"
+  },
+  "P2_followup": {
+    "reviewer": "agent_8e0b352d",
+    "prior_defect": "The boolean _call_proved result depended on an immutable 12-byte leaf callee, but occupied/planner preflight reserved only construction. A second literal mapping could replace the initial v0 kill with an instruction reading incoming v0. Reproduced with synthetic repinned fixtures in both mapping orders and all four layouts; real pins remained rejected.",
+    "fix": "_call_proved now returns the complete callee file range or None. Inspection exposes callee_range. Both occupied checking and all-mapping pristine preflight protect the full callee range alongside construction. Replacement tuple formats remain unchanged and callee bytes are never written.",
+    "regressions": "All four layouts: each of 12 callee bytes as occupied, full and edge-straddling occupied ranges, destructive first-instruction literal mappings in both orders, every byte-changing full-leaf mapping in both orders, reported callee_range, adjacent nonoverlapping spans accepted, and callee preservation after construction replacement.",
+    "red_results": [
+      {"mode": "initial full normal RED", "ran": 32, "failure_records": 21, "skipped": 1, "exit_code": 1, "note": "An edge assertion outside subTest stopped occupied coverage early; subsequently corrected before focused RED runs."},
+      {"mode": "focused normal RED", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -k callee_ -v", "ran": 3, "failure_records": 68, "seconds": 0.224, "exit_code": 1},
+      {"mode": "focused optimized RED", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH /home/djundev/.cache/mikpatch-audit/venv/bin/python -O -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -k callee_ -v", "ran": 3, "failure_records": 68, "seconds": 0.341, "exit_code": 1}
+    ],
+    "red_count_note": "68 is a subtest failure count, not 68 test methods: 60 occupied overlaps and eight mapping-order/layout combinations. These runs preceded the fix; no broken source was restored for final verification.",
+    "intermediate_green": {"mode": "normal with real fixtures", "ran": 32, "passed": 32, "skipped": 0, "seconds": 1.391, "note": "Predates final report-field cleanup and third regression; not final-revision verification."},
+    "final_green_results": [
+      {"mode": "normal with real fixtures", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH MIKPATCH_MIPS_FIXTURES=/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 33, "passed": 33, "skipped": 0, "failures": 0, "errors": 0, "seconds": 0.916},
+      {"mode": "optimized with real fixtures", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH MIKPATCH_MIPS_FIXTURES=/home/djundev/.cache/mikpatch-audit/non-x86-inspection-2fn92rff /home/djundev/.cache/mikpatch-audit/venv/bin/python -O -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 33, "passed": 33, "skipped": 0, "failures": 0, "errors": 0, "seconds": 0.890},
+      {"mode": "normal, fixture env absent", "command": "MSYS_NO_PATHCONV=1 wsl.exe -e env -u PYTHONPATH /home/djundev/.cache/mikpatch-audit/venv/bin/python -B -m unittest discover -s /mnt/c/laragon/www/mikpatch/tests -p test_mips_license.py -v", "ran": 33, "passed": 32, "skipped": 1, "failures": 0, "errors": 0, "seconds": 0.388, "skip_reason": "MIKPATCH_MIPS_FIXTURES unset"}
+    ],
+    "real_sources": "Fresh normal and optimized final runs recognize six blocked candidates, permit zero real replacements, and reject three loaders. No firmware output or runtime test.",
+    "review_status": "Fix implemented and regression-tested; independent reviewer recheck pending, not approved.",
+    "scope_limits": "Only owned MIPS source, tests and evidence edited. Full suite and PPC tests not rerun during P2 repair. No HANDOFF, production, workflow, firmware, signing, runtime, commit or remote operations. Prior confidentiality violation remains disclosed above; no new raw key or anchor outputs."
+  },
+  "validation_notes": [
+    "All three owned files passed explicit trailing-space/tab check. Evidence JSON valid; both tested source hashes match. Boolean in-memory scan of all three deliverables found no complete reconstructed real anchor, its hex encoding or anchor SHA-256 digest.",
+    "Global WSL git diff --check returned exit 2 with widespread whitespace diagnostics outside owned files (including .gitattributes and patch6.yml). Retrying with core.whitespace=cr-at-eol also returned 2, so CRLF alone is not established as the cause. Not a clean global check; no unrelated files normalized.",
+    "Initial Git Bash WSL invocation lacked MSYS_NO_PATHCONV and did not produce intended multi-command output; retried with explicit WSL interpreter and path conversion disabled.",
+    "Independent review agent_8e0b352d found the P2 immutable-callee overlap defect after initial delivery. The P2_followup records repair and RED/GREEN verification; independent recheck of the final hashes is pending."
+  ]
+}

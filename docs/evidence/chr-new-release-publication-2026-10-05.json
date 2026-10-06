@@ -1,0 +1,721 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-05T10:46:42.481823+00:00",
+  "started_at": "2026-10-05T10:45:31.766358+00:00",
+  "status": "passed",
+  "scope": "post-publication read-only verification of release 403566620, tag resolution, asset immutability, and historical releases stability",
+  "publication": {
+    "release_id": 403566620,
+    "name": "NEW \u2014 Ali Media Patch 7.24.4 \u2014 CHR x86 (6 formats, lab)",
+    "html_url": "https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run37291910153-attempt1",
+    "tag_name": "ali-patch-code-7.24.4-run37291910153-attempt1",
+    "target_commitish": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "draft": false,
+    "prerelease": true,
+    "is_latest": false,
+    "published_at": "2026-10-05T10:44:40Z",
+    "created_at": "2026-10-05T09:43:02Z",
+    "updated_at": "2026-10-05T10:44:40Z",
+    "public_anonymous_api_verified": true,
+    "expected_title_matches": true,
+    "latest_release_id": 401538288
+  },
+  "tag_resolution": {
+    "ref": "refs/tags/ali-patch-code-7.24.4-run37291910153-attempt1",
+    "target_type": "commit",
+    "target_sha": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "resolved_commit": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "matches_source_commit": true,
+    "expected_commit": "60ed61cd0673a126cdf0bb8846c24a940518bd8e"
+  },
+  "assets_verification": {
+    "count": 9,
+    "expected_count": 9,
+    "all_unchanged_vs_prepub_snapshot": true,
+    "assets": [
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+        "id": 612140424,
+        "size": 65563491,
+        "digest": "sha256:18f0d0a7e1d47936fb09ed1dca88dab2c9feb1631541611e98624f02979addaf",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+        "id": 612140422,
+        "size": 65485982,
+        "digest": "sha256:44c47ed5411ee7e0c36d3985766f1f2e65e3bb2575a4d2635a2dbf4c8f762850",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+        "id": 612140421,
+        "size": 65500759,
+        "digest": "sha256:25920148b873508abbe66eb6801e89830a0edbeb8b134fe69d79a2de17c014d3",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+        "id": 612140426,
+        "size": 65511859,
+        "digest": "sha256:f9b607de882214ade2abe137820d0966d8d0ac1fce46a858278bcf7acd87c2d6",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+        "id": 612140419,
+        "size": 65540588,
+        "digest": "sha256:278fd440600ee7a4a2864385c5aebb81af339ccbd2846d8763918c10929b6c61",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+        "id": 612140427,
+        "size": 65483671,
+        "digest": "sha256:1823c564d2f9be4ee789d65a77d4b3777a4e19318ef1558210bc62a2ca83fce2",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "manifest.json",
+        "id": 612140420,
+        "size": 1879,
+        "digest": "sha256:08b7d08484d1081ffc813e1339b6cd1063abd7fe3ba8570771799a24d1df2e9f",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "RELEASE_NOTES.md",
+        "id": 612140425,
+        "size": 933,
+        "digest": "sha256:a01183a3b173f5e295babae0b8c20935d837becac0e12ed7aacb37dd0119b0d7",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      },
+      {
+        "name": "SHA256SUMS",
+        "id": 612140423,
+        "size": 676,
+        "digest": "sha256:17c662e31221164a88695eb881f67bb38fc8b9218d79c6ac6765b4ef078657bc",
+        "state": "uploaded",
+        "unchanged_vs_prepub": true
+      }
+    ]
+  },
+  "sanitized_notes_body": {
+    "byte_length": 2842,
+    "line_count": 31,
+    "has_content": true,
+    "contains_lab_warning": true,
+    "raw_body_redacted": true,
+    "sha256_utf8": "f8b7217cd7d14040055a1680fbfe06340a2f28fdc35f579b7ebdc72c40418f76",
+    "sanitization": "Policy/count summary only; full published body intentionally excluded.",
+    "policy_keywords_observed": {
+      "lab": true,
+      "boot": true,
+      "aktivasi": true,
+      "SFP": true,
+      "non-x86": true,
+      "build": true,
+      "QEMU": true
+    },
+    "safe_summary": "Published lab prerelease for six CHR x86 formats. Integrity/container verification does not constitute boot or activation verification."
+  },
+  "historical_releases_verification": {
+    "checked_releases": [
+      401538288,
+      401130489
+    ],
+    "release_7_24_4": {
+      "tag_name": "7.24.4",
+      "asset_count": 40,
+      "all_40_assets_unchanged": true,
+      "asset_comparisons": [
+        {
+          "id": 604788936,
+          "name": "ali-patch-code-x86-netinstall64-7.24.4-patched.zip",
+          "size": 36220441,
+          "digest": "sha256:8c003e6ddda0155436da402c2c4daa0ebc5a59c662383448752127e16c0bd33a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788937,
+          "name": "manifest.json",
+          "size": 11281,
+          "digest": "sha256:8525a418afe1a658d2bae7e4aed6639a35a46abce06c460146423b7690fe6043",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788939,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.img.zip",
+          "size": 69182009,
+          "digest": "sha256:fea076d7ba5794e5047899a820afa8c3356b5f3744d847b5ec8d2f15a8d27438",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788940,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.vhdx.zip",
+          "size": 69068663,
+          "digest": "sha256:9923d09608060e012913919e699121cde47fa974eebb9821185e5cf1f4235ebf",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788941,
+          "name": "ali-patch-code-x86-mikrotik-7.24.4-patched.iso",
+          "size": 71161856,
+          "digest": "sha256:790a79251afc6cb8c0d66d024457e757950cdd93b51f43195472b271fb76a74b",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788942,
+          "name": "ali-patch-code-x86-routeros-7.24.4-patched.npk",
+          "size": 20524705,
+          "digest": "sha256:5747764aeaaae8111f329a88850d639fbc6ed2904d0c5b0634e12674cd66a967",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788943,
+          "name": "ali-patch-code-x86-netinstall-7.24.4-patched.zip",
+          "size": 36183206,
+          "digest": "sha256:4827085832f21e6d412ecc1a5f0fdebd170311d1e0666d16a45a67f4e1a3d48e",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788944,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.vmdk.zip",
+          "size": 69054876,
+          "digest": "sha256:7fb9f1e83e3e399b55b3892929eb7c3456abda3a9417a8df87349522ba38ccf8",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788945,
+          "name": "ali-patch-code-x86-netinstall-7.24.4-patched.tar.gz",
+          "size": 43593929,
+          "digest": "sha256:0644537eba7952379143efc1fcc54b8255aecd9c7c1831464d1df10eecfe384d",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788947,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.qcow2.zip",
+          "size": 69057472,
+          "digest": "sha256:9a2c4618284f94e305f8fec20ef965af802248c5a04406dc42e28a638a56d627",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788948,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.vdi.zip",
+          "size": 69054683,
+          "digest": "sha256:a8bb4ef5ffda45014d32e0483485a35b47101030843e686026ac9fd4057159e0",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788951,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.vhd.zip",
+          "size": 65509516,
+          "digest": "sha256:88b481fc46107a46c2c6390201d7f33f4b674bf6e386378132e3866692849a34",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788952,
+          "name": "ali-patch-code-x86-install-image-7.24.4-patched.vhd.zip",
+          "size": 69057086,
+          "digest": "sha256:7cad0825020024c09bbec86f821d2f9dec02568a1827d88b512eac9f150ece8e",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788954,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.vhdx.zip",
+          "size": 39048882,
+          "digest": "sha256:5f64c38216d03bfbc13778393352de8e6bca952dea2784489975aa3c73a6794c",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788955,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.vhdx.zip",
+          "size": 65536851,
+          "digest": "sha256:7e29a22d19f9e289e8f3335eeab76bec94ea4dce856f59c3fba1872d07993f63",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788956,
+          "name": "ali-patch-code-smips-routeros-7.24.4-smips-patched.npk",
+          "size": 7170576,
+          "digest": "sha256:24ab55585006d794df7f341b9567ad22c805dd230c33678831419f8ab3dffd8d",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788957,
+          "name": "ali-patch-code-mmips-all_packages-mmips-7.24.4-patched.zip",
+          "size": 4018767,
+          "digest": "sha256:54f2bfdfa318d8a5e5cd6e813ec0adfa13e3302659a21e50837d1131e1269d62",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788958,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.vdi.zip",
+          "size": 65498798,
+          "digest": "sha256:b8213bc89eb1f4649279644fd62a1dfd2d777030fc4748473eda8de197c46bf3",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788961,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.vmdk.zip",
+          "size": 65482116,
+          "digest": "sha256:b0635638f96ec073d75c9ef028812a64aaec11e27f079a2ad4b1dd9337d9bf7a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788962,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.vmdk.zip",
+          "size": 39001793,
+          "digest": "sha256:59913b765595d0bed94fc7cf23b8c1f1f42f0eab5a2f569fa947fe7a7a8c59b6",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788963,
+          "name": "ali-patch-code-mipsbe-routeros-7.24.4-mipsbe-patched.npk",
+          "size": 11443957,
+          "digest": "sha256:d6940fa0e1f9de673004c37c813de6fafb13e9d58ab07193c8efcd06b362fdf1",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788964,
+          "name": "RELEASE_NOTES.md",
+          "size": 1367,
+          "digest": "sha256:6d4a8935931d410d5829cc9d0f09cd4d07fd35461506da6b7e6d9a67888607ee",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788965,
+          "name": "ali-patch-code-ppc-all_packages-ppc-7.24.4-patched.zip",
+          "size": 4118571,
+          "digest": "sha256:233b9129da855e3dd219b02273cc1610f1734d31335bb92c361dc4a2572ed706",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788967,
+          "name": "ali-patch-code-smips-all_packages-smips-7.24.4-patched.zip",
+          "size": 915170,
+          "digest": "sha256:5c988591cbd5f0107aedc65f3dc57114b415f63e166c3b9eb4df127acb572204",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788968,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.img.zip",
+          "size": 65559685,
+          "digest": "sha256:318e52d152b8a5257c423b43f70750597118ec2d22ffb0f9118acb52f8cda6e7",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788969,
+          "name": "ali-patch-code-x86-chr-7.24.4-patched.qcow2.zip",
+          "size": 65483407,
+          "digest": "sha256:8876b78794d5a4498ffd400ffcfd85a45ac9a6411a3d7a4d332662e502ab123a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788970,
+          "name": "ali-patch-code-mmips-routeros-7.24.4-mmips-patched.npk",
+          "size": 10746275,
+          "digest": "sha256:dec7090a1e6990ebc4a520087f5a41e58fa6317d072cb4a30c5c55df3e6c2086",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788971,
+          "name": "ali-patch-code-arm64-mikrotik-7.24.4-arm64-patched.iso",
+          "size": 75536384,
+          "digest": "sha256:8ad216aed03649a1abe29f13feb8ab641e0583e33c0e977e2c319ab0ccefcbe6",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788972,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.qcow2.zip",
+          "size": 39004551,
+          "digest": "sha256:fab777e04891837ee40af8a4a2fcd7673eed26db142ad73419a4c7c9883efea7",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788973,
+          "name": "SHA256SUMS",
+          "size": 4414,
+          "digest": "sha256:c824e437608129546d00e22886fb152c152a51de902bd7c25bc5f5218d830f63",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788974,
+          "name": "ali-patch-code-arm-routeros-7.24.4-arm-patched.npk",
+          "size": 13029344,
+          "digest": "sha256:9fc4aadf71e75d373a7aa117f6b1b90b4dca0348759907af27417a3e51e1ee7f",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788975,
+          "name": "ali-patch-code-ppc-routeros-7.24.4-ppc-patched.npk",
+          "size": 21951614,
+          "digest": "sha256:c70e297aa870b4234a09a9c6d87281364c7c6dfd580785625384a04bb43ef815",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788976,
+          "name": "ali-patch-code-arm64-routeros-7.24.4-arm64-patched.npk",
+          "size": 14670666,
+          "digest": "sha256:e724ddd8a1821bf72d2b3ecd3b45bff85a4039b33d7d6c1ced635a1b35993d64",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788977,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.vdi.zip",
+          "size": 39016425,
+          "digest": "sha256:70920c738923754f4bbf9d1ab383493f18db54b792f9d23ed45d1a8609cd8665",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788978,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.img.zip",
+          "size": 39088788,
+          "digest": "sha256:9e1454af452d7ea100da6909593697329d446f09263af1cf6ebdd9c148eea3ca",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788979,
+          "name": "ali-patch-code-x86-all_packages-7.24.4-patched.zip",
+          "size": 30850593,
+          "digest": "sha256:3b48118e83c6e8ed5012a8b23e132a10689d239d98d387fdcbbf9302c192bbea",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788980,
+          "name": "ali-patch-code-mipsbe-all_packages-mipsbe-7.24.4-patched.zip",
+          "size": 2907369,
+          "digest": "sha256:d06d417e7bf4f1ac31b13fe2de4bcc17bac9f5c70727e45c856710f05b2c74ae",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788982,
+          "name": "ali-patch-code-arm64-all_packages-arm64-7.24.4-patched.zip",
+          "size": 65152776,
+          "digest": "sha256:b885d6af76cb469767c91d2dd198bf77cc48b5ab6ae00ccbc8a26d4c79dbc0d6",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788983,
+          "name": "ali-patch-code-arm-all_packages-arm-7.24.4-patched.zip",
+          "size": 29850808,
+          "digest": "sha256:1b6c96c8085059f897a5a6a4c4125b4f9f64c0876410522e09f41858dccdfa10",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 604788984,
+          "name": "ali-patch-code-arm64-chr-7.24.4-arm64-patched.vhd.zip",
+          "size": 39020835,
+          "digest": "sha256:7f0450104acceca8ed4e24c88a6a362185992d43db31b6f3cf33aecf673d23a2",
+          "unchanged_vs_prepub": true
+        }
+      ]
+    },
+    "release_7_23_3": {
+      "tag_name": "7.23.3",
+      "asset_count": 40,
+      "all_40_assets_unchanged": true,
+      "asset_comparisons": [
+        {
+          "id": 603608545,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.vhdx.zip",
+          "size": 68723534,
+          "digest": "sha256:bff7fbd00daf7fe8476f9e5a313ad5da4e465f7530264ba30db77cd1edea8e91",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608546,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.vhdx.zip",
+          "size": 65171441,
+          "digest": "sha256:f0ff5fbfb5fb2b64baa4509620f005a5cb2cb7eea5e914a577a53674467ba5ea",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608547,
+          "name": "ali-patch-code-x86-routeros-7.23.3-patched.npk",
+          "size": 20441537,
+          "digest": "sha256:72e06d1570cfab4bb189413f583029861f84891d8aae47bd6a97573fe36973bf",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608548,
+          "name": "ali-patch-code-x86-netinstall-7.23.3-patched.tar.gz",
+          "size": 43489953,
+          "digest": "sha256:6f1be3f4007dc89f8a2469d992cdfdd87ca8a2c0b1884f9496b8d4401c6f8837",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608549,
+          "name": "manifest.json",
+          "size": 11281,
+          "digest": "sha256:c10883cda2b1ffa84c8a940c009a49fd082606ad744dfe2e6a14f18181e8a0f7",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608550,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.vhd.zip",
+          "size": 68711493,
+          "digest": "sha256:cbe6e3ee5d8449b104c7354b70c2eb4acd96f258591206060b763855563413bd",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608551,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.qcow2.zip",
+          "size": 68709713,
+          "digest": "sha256:7a4508a81839de6fd2a8bd985d700b0a798761c937628ace22cbcc0d49a296f9",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608552,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.vmdk.zip",
+          "size": 68707871,
+          "digest": "sha256:576936b4ffb9c9097034d5b76c7c951e02e78bf125610b7ebcb5768255080f11",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608553,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.vmdk.zip",
+          "size": 65121094,
+          "digest": "sha256:6905195587245be5d6ac350427eec79f02e83e2d442c510f822a74c552010d64",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608554,
+          "name": "ali-patch-code-x86-netinstall64-7.23.3-patched.zip",
+          "size": 36161751,
+          "digest": "sha256:403c7184001b1220aaddb16c02caa327382c305eb34bafde0105d3d1978dc78f",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608556,
+          "name": "ali-patch-code-x86-mikrotik-7.23.3-patched.iso",
+          "size": 70983680,
+          "digest": "sha256:bcbd9c8ee213d339d54ddd5851dfda65d0f10954b13c93ab59dbb439e060f372",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608558,
+          "name": "ali-patch-code-x86-netinstall-7.23.3-patched.zip",
+          "size": 36124859,
+          "digest": "sha256:d645e3a59d20d8c6cf83e511a4b635d93eb6aa20c9d09d41eac7114cb0783666",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608559,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.img.zip",
+          "size": 68836564,
+          "digest": "sha256:6f940fcc71ebeab2f36d791adefe5572f137fab37633c8c818982aa3859108bb",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608560,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.qcow2.zip",
+          "size": 65122981,
+          "digest": "sha256:3757c702bdb6cad98b0276d6e9986eead14edca469197823e1f9e285ecfaf9d8",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608561,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.img.zip",
+          "size": 65199728,
+          "digest": "sha256:fb5191786d85d687e92c3d17460d1d3583cb3f65967e351ec744927bdd3e19a6",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608562,
+          "name": "ali-patch-code-x86-install-image-7.23.3-patched.vdi.zip",
+          "size": 68710059,
+          "digest": "sha256:67d67f7fbb2588eabcccbf4a5a6ffc27483b2df55579efc81710b26439edd7e7",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608564,
+          "name": "ali-patch-code-mipsbe-routeros-7.23.3-mipsbe-patched.npk",
+          "size": 11427023,
+          "digest": "sha256:a859613a0650d1167066f73a81e814841bb24d61bff26e5ce580fd044adfd94d",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608565,
+          "name": "ali-patch-code-ppc-all_packages-ppc-7.23.3-patched.zip",
+          "size": 4061671,
+          "digest": "sha256:4d2891678e6ccc2b7dc9b15a71c9b35d40247dd69fad5955c98406fe8e597114",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608566,
+          "name": "ali-patch-code-smips-routeros-7.23.3-smips-patched.npk",
+          "size": 7165990,
+          "digest": "sha256:0d43e70fce18a04a42763c851167d19f68738922bf360a8a49cf785f7eaaea5a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608567,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.img.zip",
+          "size": 38977264,
+          "digest": "sha256:656ffd9d59936e6f5459f13fb361cbdfe59fc538cc4cc6fcbdbdf8e2fc4b7fdb",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608568,
+          "name": "ali-patch-code-smips-all_packages-smips-7.23.3-patched.zip",
+          "size": 924847,
+          "digest": "sha256:2e90eb94d3952f8a27c65bb9a76241343e6988fa805602eb2749ad3c38f73b4c",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608569,
+          "name": "ali-patch-code-arm-all_packages-arm-7.23.3-patched.zip",
+          "size": 28774267,
+          "digest": "sha256:36cf418b29b7b44a357749ff27520973c89cc9bb7975125d9766e87c2d38c8c8",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608570,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.vdi.zip",
+          "size": 38901373,
+          "digest": "sha256:bac09b6f77618d2e1a76d95b61ffbed40adb85b405c318de448e4a310851b32b",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608571,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.vmdk.zip",
+          "size": 38891479,
+          "digest": "sha256:7cbb27768496609651e082bc6fa0353fce04aec30da5714f03fc3a58b31e8160",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608572,
+          "name": "ali-patch-code-x86-all_packages-7.23.3-patched.zip",
+          "size": 30689945,
+          "digest": "sha256:3478fd22abe97ee7c2918b33dc12f183ce4999da0cd6a17c3b4832d3c56e2de6",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608573,
+          "name": "ali-patch-code-mipsbe-all_packages-mipsbe-7.23.3-patched.zip",
+          "size": 2853928,
+          "digest": "sha256:6ef1d8b6db545ea4c33580c00d14a228a231cfde0ed357e1f0779830e3f7097f",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608574,
+          "name": "RELEASE_NOTES.md",
+          "size": 2318,
+          "digest": "sha256:2aa9bae59cbd7b08d6d7ff91e73cc173d040e2537a216a29d31b36aa0f58e217",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608575,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.vdi.zip",
+          "size": 65137369,
+          "digest": "sha256:9202085293191d887f3820bb9f6db01054394fd3bced5f30a1731799d5031b5a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608576,
+          "name": "ali-patch-code-x86-chr-7.23.3-patched.vhd.zip",
+          "size": 65146333,
+          "digest": "sha256:4b464ce9b9695b743352eb3587fe6fa80c411a383f8c8520c574692b483bd7d3",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608577,
+          "name": "ali-patch-code-arm64-mikrotik-7.23.3-arm64-patched.iso",
+          "size": 76619776,
+          "digest": "sha256:22e0e16280439a67b65c566ee3893641f250ce3ab4397723c0b59013c4bfa7d1",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608578,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.qcow2.zip",
+          "size": 38894628,
+          "digest": "sha256:779972dbfd2735fb05b862840c45a0c3e4b3f547ab7108c2b3c6ae9a93eefaa1",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608580,
+          "name": "ali-patch-code-mmips-routeros-7.23.3-mmips-patched.npk",
+          "size": 10741282,
+          "digest": "sha256:4ded7aaeefaca478c09e79cf5fe7051c3c5a66481e62fce1f459731dd728d250",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608581,
+          "name": "SHA256SUMS",
+          "size": 4414,
+          "digest": "sha256:1aee2858ea21752205fffa746b85080c21b0c877d8d6ba8c8904fbe77a01254a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608582,
+          "name": "ali-patch-code-mmips-all_packages-mmips-7.23.3-patched.zip",
+          "size": 3966855,
+          "digest": "sha256:7b32e25ab9cdb32c023b60878de10548ea055aae50e0466ecaad08d34dbc894f",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608583,
+          "name": "ali-patch-code-ppc-routeros-7.23.3-ppc-patched.npk",
+          "size": 21916785,
+          "digest": "sha256:2e34c2d038e5860ca2a75e6b8ea3fa47ec2f7792c45640b4376d9d33de44ba8c",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608584,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.vhdx.zip",
+          "size": 38938072,
+          "digest": "sha256:d316dcb6dedcfce5bd39383e673236e781b2bc9c484664bbbb2ca1457f8fc534",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608585,
+          "name": "ali-patch-code-arm64-all_packages-arm64-7.23.3-patched.zip",
+          "size": 66164073,
+          "digest": "sha256:466b093b1ddb66fb97e81c98c80b4ba5ad88f4c946ddbb65726bfb353770e64a",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608586,
+          "name": "ali-patch-code-arm64-chr-7.23.3-arm64-patched.vhd.zip",
+          "size": 38910215,
+          "digest": "sha256:b9fdc5782ef94bad9bee4538648e2813d24503bd4a8767f4e57f1d15ada8cf76",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608587,
+          "name": "ali-patch-code-arm64-routeros-7.23.3-arm64-patched.npk",
+          "size": 14617094,
+          "digest": "sha256:552dd704deb662f006e4ebe856e4b5c9efac2b5f982604d5a52ce7aed7e794f2",
+          "unchanged_vs_prepub": true
+        },
+        {
+          "id": 603608589,
+          "name": "ali-patch-code-arm-routeros-7.23.3-arm-patched.npk",
+          "size": 12999242,
+          "digest": "sha256:450a3f8ba8a0726a9341fb91736691c4f0a9ba2b87e3d6fe4c34e491741e2550",
+          "unchanged_vs_prepub": true
+        }
+      ]
+    },
+    "status": "all_80_asset_ids_names_sizes_digests_unchanged; release_tags_and_target_commitish_unchanged"
+  },
+  "prepub_evidence_reference": {
+    "path": "C:\\laragon\\www\\mikpatch\\docs\\evidence\\chr-ci-release-validation-2026-10-05.json",
+    "sha256": "9ce30ea2eb567f8b4a64dea470ab88d9d615ba4789126f43645c4715a62042a4"
+  },
+  "limits": [
+    "Read-only authenticated and anonymous GitHub GETs; no publication or release edits performed.",
+    "No source files or docs/HANDOFF.md were modified in this check.",
+    "No files were re-downloaded; verification relied on immutable asset IDs, sizes, and GitHub sha256 digests matching the prepub snapshot.",
+    "No boot, login, or license activation testing was performed on published assets.",
+    "Secrets and credential material are strictly excluded from evidence."
+  ]
+}

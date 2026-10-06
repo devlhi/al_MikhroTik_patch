@@ -16,7 +16,7 @@ from pathlib import Path
 
 BRAND = "Ali Patch Code"
 BRAND_SLUG = "ali-patch-code"
-ARCHITECTURES = ("x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc")
+ARCHITECTURES = ("x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc", "tile")
 VALID_VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 IMAGE_FORMATS = ("img", "qcow2", "vmdk", "vhd", "vhdx", "vdi")
 HISTORICAL_STATUS = {
@@ -27,16 +27,21 @@ HISTORICAL_STATUS = {
     "mmips": "README lama melaporkan bootloop. Eksperimental, bukan untuk produksi.",
     "smips": "README lama melaporkan bootloop. Eksperimental, bukan untuk produksi.",
     "ppc": "README lama menyatakan belum diuji.",
+    "tile": "Pilihan pipeline saja; matcher, build, boot dan aktivasi belum terverifikasi. Bukan dukungan siap pakai.",
 }
 
 
-PROFILES = ("all", "chr-x86")
+PROFILES = ("all", "chr-x86", "x86-all")
+SCOPED_LABELS = {
+    "chr-x86": "CHR x86 experimental",
+    "x86-all": "x86 only, full product set (18 artifacts), experimental",
+}
 
 
 def profile_architectures(profile: str) -> tuple[str, ...]:
     if profile not in PROFILES:
         raise ValueError(f"unsupported profile: {profile}")
-    return ("x86",) if profile == "chr-x86" else ARCHITECTURES
+    return ARCHITECTURES if profile == "all" else ("x86",)
 
 
 def expected_sources(version: str, arch: str, profile: str = "all") -> list[str]:
@@ -123,9 +128,9 @@ def stage_assets(args: argparse.Namespace, profile: str = "all") -> int:
         manifest = {"brand": BRAND, "routeros_version": args.version,
                     "architecture": args.arch, "boot_tested": False, "assets": staged}
         scope = args.arch
-        if profile == "chr-x86":
+        if profile != "all":
             manifest["profile"] = profile
-            scope = "CHR x86 experimental"
+            scope = SCOPED_LABELS[profile]
         notes = "\n".join([
             f"# {BRAND} — RouterOS {args.version} — {scope}", "",
             "Hasil patch BELUM diuji boot pada perangkat atau VM.",
@@ -192,7 +197,7 @@ def _validated_manifest(path: Path, arch: str, version: str,
     if not isinstance(data, dict):
         raise CombineError(f"{where}: top level is not a JSON object")
     keys = {"brand", "routeros_version", "architecture", "boot_tested", "assets"}
-    if profile == "chr-x86":
+    if profile != "all":
         keys.add("profile")
         if data.get("profile") != profile:
             raise CombineError(f"{where}: profile must be {profile!r}")
@@ -247,7 +252,7 @@ def _validated_manifest(path: Path, arch: str, version: str,
                  "boot_tested": False,
                  "assets": [{key: entry[key] for key in ("source", "filename", "size", "sha256")}
                             for entry in sorted(assets, key=lambda item: item["filename"])]}
-    if profile == "chr-x86":
+    if profile != "all":
         validated["profile"] = profile
     return validated
 
@@ -369,9 +374,9 @@ def _preflight_combine(args: argparse.Namespace, profile: str = "all") -> dict:
     manifest = {"brand": BRAND, "routeros_version": args.version,
                 "architectures": manifests, "boot_tested": False}
     scope = "semua arsitektur"
-    if profile == "chr-x86":
+    if profile != "all":
         manifest["profile"] = profile
-        scope = "CHR x86 experimental"
+        scope = SCOPED_LABELS[profile]
     notes = ["# " + BRAND + " — RouterOS " + args.version + " — " + scope, "",
              "Hasil patch BELUM diuji boot pada perangkat atau VM.",
              "Gunakan hanya di lab dengan rencana pemulihan; "

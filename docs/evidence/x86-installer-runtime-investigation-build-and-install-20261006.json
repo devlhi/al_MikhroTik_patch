@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-05T19:19:08.800616+00:00",
+  "scope": "Fresh real ISO and install-image production-policy build plus separate fresh disk BIOS installation and activation persistence",
+  "source_qualification_evidence": "/mnt/c/laragon/www/mikpatch/docs/evidence/x86-installer-runtime-investigation-source-qualification-20261005T184216Z.json",
+  "build": {
+    "scope": "Local production CLI policy build, not GitHub CI",
+    "timestamp_utc": "2026-10-05T18:50:45.898366+00:00",
+    "git_head": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "code_sha256": {
+      "patch.py": "13db59e246d61811bbbb3efcf29a7425f162ac3a019161a637568bd182ef3f88",
+      "npk.py": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274",
+      "terminal_banner.py": "ebaafd1d42a9e1f3e0cda3325ef57db1ac0451833db9752f5529098bcd3e4e83",
+      "mikro.py": "07c6ec0fc3d0b52794b177aa8c1f7b7fa88dcc86043320a115a10a4fadd4a817",
+      "sha256.py": "3dda603db9fb65d63eb26d6a9edad6587df324bb6869ac22c95ccdee55c292df"
+    },
+    "worktree_modified": true,
+    "workflow_sha256": "33ee8b2d0e80f3ebe6dbf699c5c9b53e2d0ec69ef2bebdd4a7eae2df32b57045",
+    "build_dir": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh",
+    "packages": [
+      {
+        "filename": "calea-7.24.4.npk",
+        "name": "calea",
+        "source_sha256": "d87baef2cc5d5a4d7e476f7cf60b760ed8b8b4f27fe39d320854644745e034d5",
+        "output_sha256": "22b3ae1cd295b4a4912798d181988f3bb2123013ceb6bd328a45e584adf98ab1",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "container-7.24.4.npk",
+        "name": "container",
+        "source_sha256": "362e94f85bada3d23d5693a55c9e325cb4b9fb49c719808aa8e013b91315d3e6",
+        "output_sha256": "005746f8508f898e9c12b0e0208ae0c68bffae8fef182c35f4766448fdfcee6c",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "dude-7.24.4.npk",
+        "name": "dude",
+        "source_sha256": "950e57e6b976cbda385524f10cf10717ae91506e58c11d9952321d1183bf11b5",
+        "output_sha256": "f8752810545369c2a3878310084f2579b15a46bc9efdf719efe119539012995d",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "gps-7.24.4.npk",
+        "name": "gps",
+        "source_sha256": "6694f4632972a2cf8c135b3c00371260119d0f2f89f62e05fbff98a8a4716f03",
+        "output_sha256": "93e39ff16230db50835afe3456f5b7bd4f198f2cd5f9c94df5bc91d6fe370788",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "iot-7.24.4.npk",
+        "name": "iot",
+        "source_sha256": "0520e5fd558c3ff10582692446f1a855ce55a0ab98846d2fc9b62f551685a3b3",
+        "output_sha256": "f16c5f7bbf649cc25d4c734e9b4268ba9fbf35a5852ee72d66887d88f796c767",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "openflow-7.24.4.npk",
+        "name": "openflow",
+        "source_sha256": "8da8d6a3828072623d22ccc7d751313b1b2197456495af683b6d00be07844ae2",
+        "output_sha256": "efb4e24f609aa25e1f91a7f81fac711851d3f48bc7eb1fd74cf77cce2b29a6a3",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "rose-storage-7.24.4.npk",
+        "name": "rose-storage",
+        "source_sha256": "ebb643e6ce9a88050f060032ece1b6202570f61c6a39e5f1b39e214e8d21efcc",
+        "output_sha256": "58d053050eaa1ad5be6467896590648a65d6d3ca160892090c93dbbbe92d54ca",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "routeros-7.24.4.npk",
+        "name": "system",
+        "source_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+        "output_sha256": "9bd28330aed4544a0f5bea9df2f3815841a811ecd06c3e52bbb2f0439556a4a8",
+        "custom_signature_verified": true,
+        "runtime_policy": "x86-installer-7.24.4"
+      },
+      {
+        "filename": "tr069-client-7.24.4.npk",
+        "name": "tr069-client",
+        "source_sha256": "3fb19294dab81458342fe6f9f3ed7172b0b9e8c521d86b8faca819c22ebe71fd",
+        "output_sha256": "61ead907f1d66660cd9029d2960fc902dd01a094bdf9c799fff32854de100e88",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "ups-7.24.4.npk",
+        "name": "ups",
+        "source_sha256": "e74874160d3dbc782b11c877033b8366f20feb28df8b19a2087abc7abafd6ec1",
+        "output_sha256": "e57883618de88becc0256e6ff893952bfecddf016734feb0dcc28abf3f0b8a48",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "user-manager-7.24.4.npk",
+        "name": "user-manager",
+        "source_sha256": "b7dbf9158e9f4679e19ac23b9d89790d056b5301205a4949e70eb06ba202009a",
+        "output_sha256": "e18083e8398aa665031f6b25618875f589f7aba63ddbcbc7ff84785d82cd9dfb",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      },
+      {
+        "filename": "wireless-7.24.4.npk",
+        "name": "wireless",
+        "source_sha256": "5423d8dcf5e17e2b1ad197253feda5ada479aa6b2e350b02b325927ac45190f3",
+        "output_sha256": "5d1364c6839bb9b8835248e30fd188ffed3b60261b16c5b494e3e7d932882fc1",
+        "custom_signature_verified": true,
+        "runtime_policy": null
+      }
+    ],
+    "phase": "build-passed-not-runtime-tested",
+    "iso_command": [
+      "/home/djundev/.cache/mikpatch-audit/x86-iso-tools-tajur975/root/usr/bin/mkisofs",
+      "-o",
+      "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/mikrotik-7.24.4-x86-installer-lab.iso",
+      "-V",
+      "MikroTik 7.24.4 ",
+      "-sysid",
+      "",
+      "-preparer",
+      "MiKroTiK",
+      "-publisher",
+      "",
+      "-A",
+      "MiKroTiK RouterOS",
+      "-input-charset",
+      "utf-8",
+      "-b",
+      "isolinux/isolinux.bin",
+      "-c",
+      "isolinux/boot.cat",
+      "-no-emul-boot",
+      "-boot-load-size",
+      "4",
+      "-boot-info-table",
+      "-eltorito-alt-boot",
+      "-e",
+      "efiboot.img",
+      "-no-emul-boot",
+      "-R",
+      "-J",
+      "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/iso-root"
+    ],
+    "iso_sha256": "9aafa225ddf31f7ee795039ae9cb4b0b2a2a6bb0742d605079a9b0c581556820",
+    "iso_bytes": 71161856,
+    "iso_readback_package_and_kernel_parity": true,
+    "image_sha256": "3bae5653d12ae8b98e72d8491f65b6d3438f78280e6e8dad9ee1cc98c0a32613",
+    "image_bytes": 201326592,
+    "image_readback_package_kernel_refind_parity": true,
+    "kernel_sha256": "a88d9a8c16f9bbf7d4fd5c328000415e312cc6331afba00545a142c8c33c1988",
+    "refind_sha256": "eac079520d3d263b652dcc5330182ccaf42a1d47b5540dbfc545f3eb145a7e74",
+    "scope_limits": [
+      "x86 BIOS runtime tests pending",
+      "UEFI and physical hardware untested",
+      "No published release; no old dist changes",
+      "Image copies shared patched addon/system outputs exactly rather than recompressing a second time; workflow semantics equivalent"
+    ],
+    "source_inputs_unchanged": true,
+    "iso_outer_mode_exception": "isolinux/isolinux.bin owner-write added in scratch for genisoimage boot-info-table update; package/SFS metadata unchanged",
+    "iso_tree_modes_mtimes_restored": "All original outer modes/mtimes except isolinux.bin owner-write needed by boot-info-table packer; boot-info-table bytes/mtime necessarily updated by packer",
+    "system_independent_audit": {
+      "regular_files_verified": 582,
+      "metadata_equal_pristine": true,
+      "container_payloads_equal_expected": true,
+      "real_replacements": [
+        {
+          "mapping_index": 1,
+          "kernel": 0,
+          "squashfs": 2,
+          "total": 2
+        },
+        {
+          "mapping_index": 2,
+          "kernel": 2,
+          "squashfs": 3,
+          "total": 5
+        }
+      ],
+      "license_per_target": {
+        "nova/bin/loader": 0,
+        "nova/bin/keyman": 1,
+        "nova/bin/mode": 1
+      },
+      "loader_pristine_bytes_preserved": true,
+      "custom_signature_verified": true
+    },
+    "refind_provenance": {
+      "requested_url": "https://downloads.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip",
+      "final_url": "https://onboardcloud.dl.sourceforge.net/project/refind/0.14.2/refind-bin-0.14.2.zip",
+      "status": 200,
+      "sha256": "410c7828c4fec2f2179bd956073522415831d27c00416381b8f71153c190a311",
+      "bytes": 4510998,
+      "efi_sha256": "eac079520d3d263b652dcc5330182ccaf42a1d47b5540dbfc545f3eb145a7e74",
+      "efi_bytes": 278328,
+      "success": true
+    },
+    "prior_failed_attempts": [
+      "First build and diagnostic repeated PermissionError on read-only scratch ISO files before save; no input mutation. Fixed owner-write only then restored exact original ISO-tree modes/mtimes.",
+      "Initial post-build verifier repack blocked read-only isolinux.bin (no sudo); resolved only that scratch outer permission. Second verification stopped missing routeros.npk name; corrected to actual RockRidge routeros-7.24.4.npk, subsequent full verification passed."
+    ],
+    "final_iso_readback_verified": true,
+    "source_rehashes": {
+      "mikrotik-7.24.4.iso": "135046e5f8813a567f334b7417da857cc5ec1c3dc29115b6db4100acf2b33ddd",
+      "install-image-7.24.4.zip": "acc2b7b3dccb325d8efe204ce0f44e9bcafec6211d6b0a225b44a18f3ed230da",
+      "routeros-7.24.4.npk": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+      "install-image-7.24.4.img": "1844b2b801f040e74b5b7e79b3335571c885c2cc4740916e05c87ab82ae7d05b"
+    }
+  },
+  "installation": {
+    "scope": "Actual local built media BIOS installers onto NEW empty disposable disks; no physical hardware or UEFI proof",
+    "network_interfaces": 0,
+    "tests": {
+      "iso": {
+        "work": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-iso-vuvqg7mz",
+        "empty_target_created": true,
+        "target": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-iso-vuvqg7mz/target.qcow2",
+        "firmware": "SeaBIOS",
+        "storage": "IDE",
+        "samples": [
+          {
+            "stage": "45sec",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": true,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "94b4ac8230fca11100bde333b6736cabcbd957d76a4dcc66febff63d6800356e"
+          },
+          {
+            "stage": "selected-all-install",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": true,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": true,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "6c96ddd616461558b6684806b318373aeeb68e29b33154b9c6dd2580e75ff927"
+          },
+          {
+            "stage": "install-wait-1",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": true,
+              "keep_configuration": false,
+              "software_installed": true,
+              "reboot_prompt": true,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "b9f7528e43259baaf3129b1554c763e6d461fae9acfc2ee7323a9c1895023d4e"
+          }
+        ],
+        "install_completed": true,
+        "media_sha256_before": "9aafa225ddf31f7ee795039ae9cb4b0b2a2a6bb0742d605079a9b0c581556820",
+        "boot_to_installer": true,
+        "media_sha256_after": "9aafa225ddf31f7ee795039ae9cb4b0b2a2a6bb0742d605079a9b0c581556820",
+        "guest_stopped": true
+      },
+      "image": {
+        "work": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-image-bey9fl5p",
+        "empty_target_created": true,
+        "target": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-image-bey9fl5p/target.qcow2",
+        "firmware": "SeaBIOS",
+        "storage": "IDE",
+        "samples": [
+          {
+            "stage": "45sec",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": false,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "c1604178c771448d806d780c837d49439f55d65c7bd2442bada1f5f8a3d4af46"
+          },
+          {
+            "stage": "confirmed-1024MiB-target-selection",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": true,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "5a432bebd07c5ce712301b844cfd5b127baeeb6058b7a4177c7b94b07495b793"
+          },
+          {
+            "stage": "selected-all-install",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": false,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "0695f2e14859b9e89afe09f1712b5fb9b1a9e75ca7c73eb83ac55a0af1bb0fe1"
+          },
+          {
+            "stage": "install-wait-1",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": false,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "71ca22ad4c502a640045c208e23382c434ab7a09595bcf45faa32f1fb2b2d46f"
+          },
+          {
+            "stage": "install-wait-2",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": false,
+              "reboot_prompt": false,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "93fe69ab72b3552efec90506f361d861f63dc8c06dcad5fbc35209bbe4a8cf99"
+          },
+          {
+            "stage": "install-wait-3",
+            "ocr_flags": {
+              "installer_menu": true,
+              "continue_confirmation": false,
+              "keep_configuration": false,
+              "software_installed": true,
+              "reboot_prompt": false,
+              "no_bootable_disk": false,
+              "kernel_panic": false,
+              "failed_to_find_disk": false
+            },
+            "screenshot_sha256": "c6bba0ecb140bfe55e9b8f32513e8ca3378021b6e8c100652f7748b0ebd92075"
+          }
+        ],
+        "install_completed": true,
+        "media_sha256_before": "3bae5653d12ae8b98e72d8491f65b6d3438f78280e6e8dad9ee1cc98c0a32613",
+        "image_disposable_overlay": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-image-bey9fl5p/installer-overlay.qcow2",
+        "bootindex_installer": 1,
+        "boot_to_installer": true,
+        "media_sha256_after": "3bae5653d12ae8b98e72d8491f65b6d3438f78280e6e8dad9ee1cc98c0a32613",
+        "guest_stopped": true
+      }
+    }
+  },
+  "activation": {
+    "iso": {
+      "network_devices": 0,
+      "physical_disk_access": false,
+      "owner_vm_contacted": false,
+      "raw_console_persisted": false,
+      "identifiers_exported": false,
+      "activation_attempted": true,
+      "overlay": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-iso-vuvqg7mz/activation-disposable-2.qcow2",
+      "states": [
+        {
+          "stage": "reboot_1",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        },
+        {
+          "stage": "reboot_2",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        },
+        {
+          "stage": "cold_start",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        }
+      ],
+      "boot_login": true,
+      "license_field_names": [
+        "software-id",
+        "nlevel",
+        "features",
+        "expires-in"
+      ],
+      "identified_product": "ros",
+      "product": "ros",
+      "identifier_kind": "Software ID",
+      "level_before": "not-present",
+      "resource_confirmation": {
+        "version_7_24_4": true,
+        "board_x86": true,
+        "board_chr": false
+      },
+      "local_signature_and_id_valid": true,
+      "explicit_acceptance_prompt": false,
+      "rejection_indicator": false,
+      "clean_shutdown": true,
+      "activation_persistent": true,
+      "final_close_was_already_stopped": true
+    },
+    "image": {
+      "network_devices": 0,
+      "physical_disk_access": false,
+      "owner_vm_contacted": false,
+      "raw_console_persisted": false,
+      "identifiers_exported": false,
+      "activation_attempted": true,
+      "overlay": "/home/djundev/.cache/mikpatch-audit/x86-real-build-8ilp8ybh/bios-image-bey9fl5p/activation-disposable-2.qcow2",
+      "states": [
+        {
+          "stage": "reboot_1",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        },
+        {
+          "stage": "reboot_2",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        },
+        {
+          "stage": "cold_start",
+          "product": "ros",
+          "level": "6",
+          "identifier_equal": true
+        }
+      ],
+      "boot_login": true,
+      "license_field_names": [
+        "software-id",
+        "nlevel",
+        "features",
+        "expires-in"
+      ],
+      "identified_product": "ros",
+      "product": "ros",
+      "identifier_kind": "Software ID",
+      "level_before": "not-present",
+      "resource_confirmation": {
+        "version_7_24_4": true,
+        "board_x86": true,
+        "board_chr": false
+      },
+      "local_signature_and_id_valid": true,
+      "explicit_acceptance_prompt": false,
+      "rejection_indicator": false,
+      "clean_shutdown": true,
+      "activation_persistent": true,
+      "final_close_was_already_stopped": true
+    }
+  },
+  "delivery": {
+    "schema_version": 1,
+    "generated_at_utc": "2026-10-05T19:19:08.800616+00:00",
+    "status": "LOCAL_LAB_VALIDATED_NOT_PUBLISHED",
+    "git_head_reference": "60ed61cd0673a126cdf0bb8846c24a940518bd8e",
+    "working_tree_modified": true,
+    "runtime_policy": "x86-installer-7.24.4",
+    "source_code_sha256": {
+      "patch.py": "13db59e246d61811bbbb3efcf29a7425f162ac3a019161a637568bd182ef3f88",
+      "npk.py": "117a77c269d8e9a3295de924aefcf7656360d970775b5862febd006228509274",
+      "terminal_banner.py": "ebaafd1d42a9e1f3e0cda3325ef57db1ac0451833db9752f5529098bcd3e4e83",
+      "mikro.py": "07c6ec0fc3d0b52794b177aa8c1f7b7fa88dcc86043320a115a10a4fadd4a817",
+      "sha256.py": "3dda603db9fb65d63eb26d6a9edad6587df324bb6869ac22c95ccdee55c292df"
+    },
+    "workflow_sha256_at_build": "33ee8b2d0e80f3ebe6dbf699c5c9b53e2d0ec69ef2bebdd4a7eae2df32b57045",
+    "workflow_sha256_at_delivery": "55d93fc1b503430e51f40bdf5561bef9253d77d6facbddf9e6dcc2a5778ea039",
+    "review": {
+      "source": "Coordinator report",
+      "result": "Independent API provenance and FAT ordering re-reviews PASS at patch13db59... and workflow55d93...; bounded code approval, not remote CI or hardware qualification"
+    },
+    "regression_evidence": {
+      "path": "/mnt/c/laragon/www/mikpatch/docs/evidence/x86-installer-final-regression-2026-10-06.json",
+      "sha256": "f7b74b1f16e1d4d5cd20151bbfc4ae3331918dddfd6d85163be891683bdd61a4",
+      "tests": 486,
+      "passed": 476,
+      "skipped": 10
+    },
+    "artifacts": [
+      {
+        "filename": "mikrotik-7.24.4-x86-installer-lab-v1.iso",
+        "sha256": "9aafa225ddf31f7ee795039ae9cb4b0b2a2a6bb0742d605079a9b0c581556820",
+        "bytes": 71161856
+      },
+      {
+        "filename": "install-image-7.24.4-x86-installer-lab-v1.img.zip",
+        "sha256": "3876a41ab116dc1c59ad4d1c8a15e6e005bd3d099e8cdc40a78240b72f4c439a",
+        "bytes": 35032805
+      }
+    ],
+    "raw_image_member": {
+      "filename": "install-image-7.24.4-x86-installer-lab-v1.img",
+      "bytes": 201326592,
+      "sha256": "3bae5653d12ae8b98e72d8491f65b6d3438f78280e6e8dad9ee1cc98c0a32613"
+    },
+    "boot_context": {
+      "virtualizer": "QEMU 8.2.2 TCG",
+      "machine": "pc",
+      "firmware": "SeaBIOS bios-256k",
+      "memory_mib": 512,
+      "vcpus": 1,
+      "nic_count": 0,
+      "installer_iso": "read-only IDE CDROM index2, boot d",
+      "installer_image": "immutable raw base with disposable qcow2 overlay attached IDE bus ide.0 unit1 (secondary IDE harddisk), bootindex1; not emulated USB",
+      "install_target": "fresh empty qcow2 virtual1GiB primary IDE index0; image disk-menu selected1024MiB target",
+      "post_install": "installer detached; boot only separate activation qcow2 overlay backed by installed target; IDE controller unchanged",
+      "activation": "ROS Software ID, x86 board, version7.24.4, custom labLevel6 after2reboots and clean shutdown/cold process start"
+    },
+    "gates": {
+      "source_qualification": true,
+      "custom_npk_signatures": true,
+      "coverage_and_metadata": true,
+      "iso_install_to_empty_disk": true,
+      "image_install_to_empty_disk": true,
+      "both_disk_only_boot_login": true,
+      "both_level6_two_reboots_and_cold": true,
+      "zip_crc_and_payload_hash": true,
+      "independent_code_review_reported_pass": true
+    },
+    "limitations": [
+      "Local WSL production-CLI rebuild, NOT a GitHub Actions/CI artifact or published release.",
+      "BIOS SeaBIOS/QEMU TCG pc/IDE only; no UEFI boot, USB-controller boot, physical disks, bare metal, VMware, Hyper-V, upgrades, throughput, SFP or network functionality tested.",
+      "Zero guest NICs; authorized custom lab keys only. This is not an official MikroTik licensing service.",
+      "Raw image is INSTALLATION MEDIA (FAT16 superfloppy), NOT an already installed RouterOS disk. It was booted as secondary IDE media and installed onto a separate fresh primary IDE 1GiB disk.",
+      "Runtime activation used disposable overlays of installed target disks. Delivery contains no activated target disks, license files, guest identifiers or private keys.",
+      "Before-paste license field value was not parsed by this probe (level_before=not-present); no numeric baseline is inferred. Level6 after both reboots and cold start is explicitly observed.",
+      "Build-time workflow bytes differ from final reviewed workflow: build hash is retained; no claim of identical complete YAML execution. Local builder uses mtools instead of host loop/NBD mounts and reuses identical patched package bytes across both media."
+    ]
+  },
+  "observed_nonfatal_message": "Image installer emitted open /dev/panics failed immediately before software installed; subsequent separate disk boot/login/activation passed. Not classified as kernel panic.",
+  "failed_attempts_and_probe_corrections": [
+    "Earlier ISO installer-menu OCR required packages plural and missed menu; corrected predicate then real completion observed.",
+    "Initial image navigation remained at output disk selection; later select target plus delay reached package menu.",
+    "An intermediate broad reboot-prompt completion predicate incorrectly matched cancel and reboot menu; discarded, final success requires software installed plus independent disk-only runtime.",
+    "Image auto-reboot with -no-reboot caused BrokenPipeError at20second polling; final1second polling captured software installed before exit. Earlier attempts not counted as passes."
+  ],
+  "failed_or_skipped_final_gates": {
+    "failed": [],
+    "not_run": [
+      "UEFI",
+      "USB-controller boot",
+      "physical hardware",
+      "owner VM",
+      "network",
+      "remote CI rebuild",
+      "remote publication"
+    ],
+    "regression_skips": 10
+  },
+  "credential_handling": {
+    "keys_exported": false,
+    "raw_guest_console_persisted": false,
+    "guest_identifiers_exported": false,
+    "activation_keys_only_in_memory": true
+  },
+  "notes": [
+    "build.phase and build.scope_limits reflect the earlier pre-runtime checkpoint; final installation/activation/delivery objects supersede pending status, not provenance.",
+    "Shell date is2026-10-05UTC whereas task/coordinator evidence date is2026-10-06; actual timestamps retained."
+  ]
+}

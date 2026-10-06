@@ -1,4 +1,27 @@
-# Non-x86 7.24.4 — representasi anchor ditemukan, matcher belum dibuat
+# Non-x86 7.24.4 — temuan statis dan prototipe offline terbatas
+
+## Status lanjutan 2026-10-06
+
+Acuan HEAD `60ed61c`, perubahan masih lokal. `arm_license.py` hanya mendukung
+perubahan word keempat pada satu ARM mode pinned melalui tiga immediate ADD;
+tujuh word lain dan literal pool tidak boleh berubah. Bukan arbitrary full-key,
+ARM keyman, ARM64 atau loader. 19/19 tes normal dan -O dengan fixture nyata lulus.
+Review independen terbatas mencakup decoder/immediate, simulasi dan mutasi ELF.
+[Bukti ARM](evidence/arm-offline-matcher-followup-2026-10-06.json).
+
+`mips_license.py` menangani konstruksi sintetis LUI+ADDIU/ORI, endian, signed carry
+dan delay slot, tetapi enam keyman/mode nyata tetap nol match/plan: v0 masih live
+melalui GOT/PLT dan lazy resolver belum terbukti aman. Tiga loader ditolak.
+Review menemukan overlap terhadap callee pembukti register-kill; 12 byte callee
+kini dilindungi bersama construction untuk semua urutan mapping. Re-review lulus;
+33/33 tes normal/-O dengan fixture nyata. Positif tetap sintetis saja.
+[Bukti MIPS](evidence/mips-offline-matcher-followup-2026-10-06.json).
+
+ARM/MIPS/PPC **tidak diintegrasikan ke patch.py**. Guard produksi tetap menolak
+cakupan tidak lengkap. TILE hanya inventory; boot/aktivasi non-x86 belum diuji.
+Insiden output eksplorasi MIPS dicatat tanpa nilai sensitif di HANDOFF §26.
+
+## Investigasi historis sebelum prototipe
 
 Acuan source: `bb010811bd1443334ed32b0d3168ef09b77bc111`. Investigasi statis
 read-only pada enam NPK yang diunduh dari HTTPS vendor menemukan konstruksi

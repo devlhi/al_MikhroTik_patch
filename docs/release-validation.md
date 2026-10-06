@@ -10,8 +10,9 @@ The manual `patch7.yml` workflow pins RouterOS `7.24.4`. Its required
 `build_profile` choice defaults to `all`; the first build step rejects unknown
 or empty values. API callers should explicitly send a supported profile.
 
-- `all`: all seven architectures (`x86`, `arm`, `arm64`, `mipsbe`, `mmips`,
-  `smips`, `ppc`) and their existing package/image sets. This is not an alias for
+- `all`: all eight architectures (`x86`, `arm`, `arm64`, `mipsbe`, `mmips`,
+  `smips`, `ppc`, `tile`) and their package/image sets. TILE adds a guarded NPK
+  and all-packages ZIP; vendor availability is verified, runtime is not. This is not an alias for
   whichever architectures happen to pass. Any architecture failure blocks the
   combined release; do not bypass coverage to obtain a green run.
 - `chr-x86`: only `x86`, and only CHR images in six ZIP containers: `img`,
@@ -20,25 +21,60 @@ or empty values. API callers should explicitly send a supported profile.
   Version selection and CHANGELOG retrieval still run. This narrower scope is
   explicit, not evidence that the omitted architectures or installers work.
 
+- `x86-all`: only `x86`, with exactly 18 product artifacts: RouterOS NPK,
+  all-packages ZIP, ISO, six install-image ZIPs, six CHR ZIPs, and three
+  NetInstall archives. This local profile separates x86 packaging from blocked
+  non-x86 jobs; it does not establish bare-metal compatibility.
+
 Both staging and combining receive `--profile`. Their inventories must match
 that profile, with no missing required files or extra architecture directories.
-`chr-x86` requires the six CHR ZIPs and an x86-only combined input. Manifests,
-checksums, and release notes are metadata, not additional firmware formats.
+`all` requires 39 product artifacts across eight architectures; `chr-x86`
+requires six CHR ZIPs; `x86-all` requires 18 x86 artifacts. Manifests, checksums,
+and release notes are metadata, not additional firmware formats.
 
-After staging and before uploading, both profiles validate the x86 CHR VMDK
-candidate with `scripts/validate_chr_image.py`, using the ZIP, `manifest.json`
-and `SHA256SUMS` under `dist/x86`. This is an archive-integrity gate (hash, size,
-expected nonempty ZIP member, CRC and image magic), not runtime, package coverage,
-signature, boot or activation evidence.
+After staging and before uploading, all profiles validate all six x86 CHR ZIPs
+with `scripts/validate_chr_image.py`, using `manifest.json` and `SHA256SUMS`
+under `dist/x86` and QEMU image tools. The gate verifies member integrity,
+container metadata and guest-sector equivalence. QEMU structural checks are
+supported for QCOW2/VMDK/VHDX/VDI; raw/VHD checks are recorded as unsupported,
+not passes. External backing/data/extents are rejected, but the validator is
+not a sandbox: image-info tools can inspect references before rejection.
+This does not prove runtime, NPK coverage, signature, boot or activation.
 
 The CHR internal system image and every NPK in downloaded all-packages archives
 use `patch.py npk`. This preserves the [coverage contract](patch-coverage.md),
 including failure before signing when a required system mapping has no match.
 The standalone `npk.py sign` command is not a substitute for this validation.
 Kernel/block/NetInstall operations do not independently provide the NPK-level
-guarantee. Only x86 exports the ISO package collection; ARM64's all-packages ZIP
+guarantee. NetInstall now rejects embedded patch exceptions, oversized blobs and
+unknown outer formats before output; this is error handling, not a new coverage
+or runtime guarantee. Only x86 exports the ISO package collection; ARM64's all-packages ZIP
 has one authoritative source, the separately downloaded and guarded package set,
 so ZIP update semantics cannot retain old ISO-only members.
+
+## x86 installer source selection
+
+The x86 ISO and install-image paths use explicit
+`--runtime-policy x86-installer-7.24.4` only for the qualified single system NPK.
+The selector reads NAME_INFO and ordered architecture metadata, rejects unknown,
+duplicate, missing or multipackage inputs, and preflights the complete directory
+before invoking patch commands. ISO requires 12 package names; install-image
+requires 11 (without `user-manager`). NPK discovery is case-insensitive.
+The system wire must match the pinned pristine SHA-256 in the
+[coverage contract](patch-coverage.md#addendum-kebijakan-installer-x86-7244).
+No generic fallback is permitted if system qualification fails.
+
+Add-ons retain generic `patch.py npk` sign-only handling. The ISO all-packages ZIP
+copies already-patched packages, without a second patch pass. The standalone x86
+NPK is downloaded separately and qualified through the installer policy; source
+byte equality does not establish installation or upgrade compatibility.
+CHR keeps its separate runtime/banner policy; non-x86 keeps its guarded generic
+path. Installer policy integration does not make non-x86 or native SFP work.
+
+Disk-only boot/login and activation trials of the rebuilt ISO and install-image
+must be recorded separately from the earlier A/B component investigation.
+Physical Mini PC, UEFI, NVMe, VMware, networking and SFP need their own evidence.
+Neither an earlier CHR trial nor identical component hashes is a substitute.
 
 ## Evidence must stay separate
 
@@ -67,12 +103,12 @@ must not be attributed to a new source revision without matching provenance.
    legacy keys are not production keys.
 2. In an authenticated GitHub session, dispatch the approved revision with
    `build_profile=chr-x86` and `create_draft_release=false` for the scoped build,
-   or explicitly choose `all` for full coverage. Do not treat a CHR-only run as a
-   full build. Capture run URL, commit, profile and attempt.
+   `x86-all` for the 18 x86 products, or `all` for eight-architecture coverage.
+   Do not treat a CHR-only or x86-only run as a full build. Capture run URL, commit, profile and attempt.
 3. Require all selected jobs and strict inventory checks to succeed. Download
    artifacts from that run, verify checksums and expected names/ZIP members,
    retain sanitized coverage/signature results, and investigate failures rather
-   than bypassing guards. An `all` run must include all seven architectures.
+   than bypassing guards. An `all` run must include all eight architectures.
 4. Use isolated disposable VMs with snapshots and non-production data. Record
    image hashes, hypervisor/version, BIOS/UEFI, controller/NIC and boot source.
    Test boot, login and any authorized activation separately. Test install/upgrade

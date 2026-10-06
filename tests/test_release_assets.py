@@ -16,9 +16,9 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/release_assets.py"
 VERSION = "7.24.4"
-ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc"]
+ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc", "tile"]
 METADATA_FILES = ("SHA256SUMS", "manifest.json", "RELEASE_NOTES.md")
-TOTAL_ASSETS = 37
+TOTAL_ASSETS = 39
 PYTHON = [sys.executable, *(["-O"] if sys.flags.optimize else []), "-B"]
 
 
@@ -184,6 +184,29 @@ class StageTests(Base):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unsupported architecture", result.stderr)
 
+    def test_tile_has_only_two_package_assets_and_explicit_unverified_status(self):
+        self.make_sources("tile")
+        result, output = self.stage("tile")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads((output / "manifest.json").read_text())
+        self.assertEqual({asset["filename"] for asset in manifest["assets"]}, {
+            branded_name("tile", f"routeros-{VERSION}-tile-patched.npk"),
+            branded_name("tile", f"all_packages-tile-{VERSION}-patched.zip"),
+        })
+        self.assertIs(manifest["boot_tested"], False)
+        notes = (output / "RELEASE_NOTES.md").read_text()
+        self.assertIn("matcher, build, boot dan aktivasi belum terverifikasi", notes)
+        self.assertIn("Bukan dukungan siap pakai", notes)
+
+    def test_tile_is_rejected_from_both_x86_scoped_profiles(self):
+        self.make_sources("tile")
+        for profile in ("chr-x86", "x86-all"):
+            with self.subTest(profile=profile):
+                result, output = self.stage("tile", profile=profile)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("unsupported architecture", result.stderr)
+                self.assertFalse(output.exists())
+
     def test_status_table_distinguishes_architectures(self):
         self.make_sources("x86")
         self.make_sources("mmips")
@@ -345,6 +368,16 @@ class CombineTests(Base):
         self.assert_rejected_without_side_effects(dist, out, result,
                                                   "missing architecture")
         self.assertEqual(sorted(p.name for p in dist.iterdir()), sorted(ALL_ARCHS[:-1]))
+
+    def test_combine_rejects_either_missing_tile_asset_without_partial_output(self):
+        self.stage_all()
+        for index, source in enumerate(expected_sources("tile")):
+            with self.subTest(source=source):
+                dist = self.case_input(f"tile-missing-{index}")
+                (dist / "tile" / branded_name("tile", source)).unlink()
+                result, output = self.combine(dist)
+                self.assert_rejected_without_side_effects(dist, output, result, "missing")
+                self.assertIn("tile", result.stderr)
 
     def test_combine_rejects_late_ppc_missing_metadata_before_any_change(self):
         self.stage_all()
@@ -950,6 +983,110 @@ def load_release_module():
 
 
 class ProfileTests(Base):
+    def stage_x86_all(self):
+        payloads = self.make_sources("x86")
+        result, output = self.stage("x86", profile="x86-all")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return output.parent, payloads
+
+    def test_x86_all_exact_legacy_inventory_bytes_and_scoped_metadata(self):
+        module = load_release_module()
+        self.assertEqual(module.profile_architectures("x86-all"), ("x86",))
+        self.assertEqual(module.expected_sources(VERSION, "x86", "x86-all"),
+                         module.expected_sources(VERSION, "x86", "all"))
+        self.assertCountEqual(module.expected_sources(VERSION, "x86", "x86-all"),
+                              expected_sources("x86"))
+        dist, payloads = self.stage_x86_all()
+        self.assertEqual(len(payloads), 18)
+        # Unrelated source products must not leak into this staged release.
+        self.make_sources("arm64")
+        result, output = self.combine(dist, profile="x86-all")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        expected = {branded_name("x86", name) for name in payloads}
+        for directory in (dist / "x86", output):
+            self.assertEqual({p.name for p in directory.iterdir()}, expected | set(METADATA_FILES))
+            manifest = json.loads((directory / "manifest.json").read_text())
+            self.assertEqual(manifest["profile"], "x86-all")
+            self.assertIs(manifest["boot_tested"], False)
+            architectures = manifest.get("architectures", [manifest])
+            self.assertEqual([m["architecture"] for m in architectures], ["x86"])
+            self.assertEqual(architectures[0]["profile"], "x86-all")
+            self.assertIs(architectures[0]["boot_tested"], False)
+            self.assertEqual(len(architectures[0]["assets"]), 18)
+            notes = (directory / "RELEASE_NOTES.md").read_text(encoding="utf-8")
+            self.assertIn("x86 only, full product set (18 artifacts)", notes)
+            self.assertNotIn("semua arsitektur", notes)
+            self.assertNotIn("CHR x86 experimental", notes)
+            for name, data in payloads.items():
+                self.assertEqual((directory / branded_name("x86", name)).read_bytes(), data)
+            checksums = (directory / "SHA256SUMS").read_text().splitlines()
+            self.assertEqual(len(checksums), 18)
+            for line in checksums:
+                digest, name = line.split("  ")
+                self.assertEqual(hashlib.sha256((directory / name).read_bytes()).hexdigest(), digest)
+
+    def test_x86_all_rejects_every_incompatible_architecture(self):
+        module = load_release_module()
+        self.make_sources("x86")
+        for arch in [*ALL_ARCHS[1:], "unknown"]:
+            with self.subTest(arch=arch):
+                with self.assertRaises(ValueError):
+                    module.expected_sources(VERSION, arch, "x86-all")
+                result, output = self.stage(arch, profile="x86-all")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("unsupported architecture", result.stderr)
+                self.assertFalse(output.exists())
+                self.assertFalse(list(self.root.rglob(".ali-combine-*")))
+
+    def test_x86_all_combine_rejects_scope_inventory_and_manifest_mismatches(self):
+        dist, _ = self.stage_x86_all()
+        asset = branded_name("x86", expected_sources("x86")[0])
+        for label in ("wrong-arch", "extra-arch", "extra-asset", "missing-asset",
+                      *METADATA_FILES, "profile-missing", "profile-all", "profile-chr",
+                      "manifest-arch", "zero-size", "boot-tested"):
+            with self.subTest(case=label):
+                case = self.root / ("case-" + label)
+                shutil.copytree(dist, case)
+                if label == "wrong-arch":
+                    (case / "x86").rename(case / "arm64")
+                elif label == "extra-arch":
+                    (case / "arm64").mkdir()
+                elif label == "extra-asset":
+                    (case / "x86" / "unexpected.npk").write_bytes(b"NOT FIRMWARE")
+                elif label in ("missing-asset", *METADATA_FILES):
+                    (case / "x86" / (asset if label == "missing-asset" else label)).unlink()
+                else:
+                    path = case / "x86" / "manifest.json"
+                    manifest = json.loads(path.read_text())
+                    if label == "profile-missing":
+                        del manifest["profile"]
+                    elif label.startswith("profile-"):
+                        manifest["profile"] = "all" if label == "profile-all" else "chr-x86"
+                    elif label == "manifest-arch":
+                        manifest["architecture"] = "arm64"
+                    elif label == "zero-size":
+                        manifest["assets"][0]["size"] = 0
+                    else:
+                        manifest["boot_tested"] = True
+                    path.write_text(json.dumps(manifest))
+                result, output = self.combine(case, profile="x86-all")
+                self.assertNotEqual(result.returncode, 0, result.stderr)
+                self.assertFalse(output.exists())
+
+    def test_x86_all_and_legacy_all_manifests_are_not_interchangeable(self):
+        module = load_release_module()
+        dist, _ = self.stage_x86_all()
+        path = dist / "x86" / "manifest.json"
+        for profile in ("all", "chr-x86"):
+            with self.subTest(profile=profile), self.assertRaises(module.CombineError):
+                module._validated_manifest(path, "x86", VERSION, profile)
+        result, output = self.stage("x86", output=self.root / "legacy" / "x86")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result, merged = self.combine(output.parent, profile="x86-all")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("profile must be", result.stderr)
+        self.assertFalse(merged.exists())
+
     def stage_chr(self):
         self.make_sources("x86", "chr-x86")
         result, output = self.stage("x86", profile="chr-x86")
@@ -1027,8 +1164,8 @@ class ProfileTests(Base):
         with self.assertRaises(ValueError):
             module.expected_sources(VERSION, "x86", "unknown")
 
-    def test_stage_rejects_missing_and_empty_assets_for_both_profiles(self):
-        for profile in ("all", "chr-x86"):
+    def test_stage_rejects_missing_and_empty_assets_for_all_profiles(self):
+        for profile in ("all", "chr-x86", "x86-all"):
             for kind in ("missing", "empty"):
                 with self.subTest(profile=profile, kind=kind):
                     self.make_sources("x86", profile)
