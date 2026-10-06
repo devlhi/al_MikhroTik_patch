@@ -1,9 +1,18 @@
 # HANDOFF — Ali Patch Code
 
-**Laporan pemilik terbaru (§29): setelah memilih ROS untuk lisensi x86, pemilik
-menyatakan berhasil dan mengirim screenshot. Ini laporan pemilik, bukan verifikasi
-agent atas screenshot atau boot/aktivasi aset CI tertentu. Nama/hash media,
-level lisensi dan persistence sesudah reboot belum dikonfirmasi.**
+**Riset BCM57800/SFP terbaru (§31): referensi upstream bnx2x dan temuan biner
+vendor menunjukkan jalur EEPROM layak diteliti; belum ada patch NPK/native DOM
+atau tes perangkat. Prioritas adalah pemetaan NIC/port/modul dan jalur query–decoder–
+property RouterOS. Pembacaan EEPROM tertentu dapat power-cycle modul pada retry;
+jangan menganggap ethtool -m tanpa risiko gangguan. Laporan ada di
+[sfp-bcm57800-npk-feasibility.md](sfp-bcm57800-npk-feasibility.md).**
+
+**Laporan pemilik terbaru (§30): lisensi ROS x86 dilaporkan berhasil (§29).
+Output CLI yang dikirim pemilik menunjukkan ether3 link-ok, 1Gbps full-duplex;
+pemilik menyebutnya port SFP. Identitas modul dan DOM tidak tampil pada output.
+OCR screenshot sebelumnya menyebut Broadcom BCM57800; pemetaan ether3 ke fungsi
+PCI/model modul belum dikonfirmasi. Fokus kini identifikasi/telemetri, bukan
+menganggap port tidak berjalan.**
 
 **Publikasi NEW v2 selesai 2026-10-06 (§28): source/build `369f5b9` dipush
 hanya main melalui cabang sementara lokal yang sudah dihapus. CI37407917092
@@ -2486,3 +2495,133 @@ Push hanya mencakup HANDOFF melalui cabang sementara lokal lalu fast-forward
 main; .zcode dikecualikan. Sebanyak 66 link lokal valid, diff diperiksa untuk
 informasi sensitif dan whitespace. Suite tidak diulang karena dokumentasi saja.
 Tidak ada build baru, perubahan tag/aset NEW v2 atau akses perangkat.
+
+### 30. Laporan pemilik: kartu/port SFP belum terbaca
+
+Setelah melaporkan keberhasilan lisensi ROS x86, pemilik menyatakan kartu SFP
+belum terbaca dan mengirim screenshot. Gambar hanya ada di cache sesi dan belum
+bisa diperiksa secara visual oleh model; tidak mengarang isi/diagnosis gambar.
+Belum diketahui apakah PCI NIC tidak terdeteksi, driver tidak menghasilkan port,
+modul transceiver tidak teridentifikasi, link down, atau hanya DOM yang kosong.
+Model kartu/PCI IDs, modul SFP dan bare-metal vs VM/passthrough belum diketahui.
+
+Acuan main/local/live `4d9ae590b43fc93c1a6407b7a9fdc4a6b7eeaf8f`, divergence0/0;
+working tree awal hanya .zcode untracked. Penilaian mengacu pada temuan statis
+SFP sebelumnya: driver tersedia tidak membuktikan dukungan NIC/modul tertentu.
+NEW v2 tidak menambahkan patch driver/native SFP. Lisensi sukses bukan bukti
+akses EEPROM/DOM. Jangan menyisipkan parameter ixgbe atau mengganti driver
+sebelum model/perangkat dan jalur kegagalan diketahui.
+
+Bukti read-only yang dibutuhkan: `/system resource print`,
+`/system resource pci print detail`, `/interface ethernet print detail`, serta
+monitor once pada port aktual bila ada. Redaksi Software ID/serial/MAC/IP dan
+kredensial; tidak meminta dump konfigurasi atau blok lisensi. Pada x86 nama ether
+sendiri bukan bukti bahwa port bukan SFP. Jika VM, bedakan NIC virtual/VF/full PF.
+
+Hanya HANDOFF lokal diperbarui untuk mencatat blocker; tidak commit/push, patch,
+build, tes suite, reboot, instal ulang atau akses hardware. Penyebab tetap terbuka
+sampai output perangkat tersedia. Diff/link diperiksa untuk perubahan dokumen.
+
+Pemilik kemudian mengirim gambar perangkat yang dipakai. OCR Windows lokal pada
+gambar kedua membaca `Broadcom NetXtreme II BCM57800`, berulang bersama label PCI,
+Broadcom Inc. dan Intel Cannon Lake PCH SATA AHCI (sebagian kata Intel kurang jelas).
+Hasil menunjukkan daftar perangkat PCI, tetapi label RouterOS/Winbox tidak tertangkap;
+tidak mengklaim OS mana yang mengenali kartu atau driver sudah terikat. Angka speed
+parsial tidak dipakai sebagai spesifikasi terkonfirmasi. Model OEM/subsystem dan
+modul transceiver belum teridentifikasi.
+
+Pemeriksaan read-only baru pada extracted vendor-root yang sudah ada menemukan
+`bnx2x.ko` dan firmware bnx2x-e1/e1h/e2-7.13.15.0.fw. Ini keberadaan file dalam
+pohon vendor cache sebelumnya, bukan verifikasi pemuatan driver/firmware pada mesin
+pemilik atau dukungan penuh tiap board BCM57800. Temuan statis sebelumnya mencatat
+jalur EEPROM di bnx2x; parameter ixgbe tidak relevan untuk keluarga Broadcom ini.
+Tetap perlu daftar interface dan PCI RouterOS, lalu monitor port bila muncul.
+Tidak ada patch, instal ulang, reboot, tes runtime, commit/push atau output sensitif
+baru; OCR tidak diunggah ke layanan luar dan gambar tidak disalin ke repo.
+
+Output teks berikutnya dari pemilik untuk monitor ether3 once menunjukkan
+status link-ok, rate 1Gbps, full-duplex yes, tx/rx-flow-control no, supported
+1G-baseT-full dan default-cable-setting standard. Pemilik menegaskan ini port
+SFP yang sudah berjalan. Ini bukti yang dikirim pemilik tentang link interface,
+bukan hasil remote tool agent; tidak mengukur throughput/traffic atau persistence.
+Tidak ada sfp-vendor-name/part-number/rx-power/tx-power pada output tersebut.
+Label 1G-baseT-full tidak membuktikan jenis konektor/modul fisik: dapat berupa
+pelaporan kemampuan oleh driver; modul RJ45 vs optik atau mapping ke port lain
+belum dapat ditentukan. Jangan menyebut kartu tak terdeteksi atau optical sensor
+pasti didukung hanya dari link-ok.
+
+Koreksi penjelasan sebelumnya: adanya bnx2x.ko dan firmware di paket bukan bukti
+bahwa seluruh chipset/board BCM57800 pasti didukung pada perangkat pemilik.
+Untuk telemetry perlu model/OEM NIC dan part-number/tipe modul/dukungan DOM,
+serta interface detail tersanitasi untuk menghubungkan ether3 dengan kartu.
+Tanpa TX/RX kedua ujung, tidak bisa menghitung loss link/redaman kabel.
+Tidak ada perubahan driver/firmware atau tes baru; hanya catatan penilaian
+lokal. Main/live tetap4d9ae59, divergence0/0; perubahan HANDOFF sebelumnya dijaga.
+
+### 31. Riset referensi BCM57800 dan kelayakan native SFP melalui NPK
+
+Tanggal eksekusi lingkungan: 2026-10-06 UTC; tanggal konteks percakapan 2026-10-04.
+Permintaan pemilik adalah mencari referensi cara memodifikasi NPK agar x86 membaca
+SFP. Hasil sesi berupa penilaian, bukan permintaan/implementasi patch spekulatif.
+Acuan source `4d9ae590b43fc93c1a6407b7a9fdc4a6b7eeaf8f`; preflight dan pemeriksaan
+ulang menunjukkan main/local/live sama, cached divergence0/0. Perubahan HANDOFF
+§30 dipertahankan; .zcode untracked tidak disentuh atau dimasukkan commit.
+
+**Perubahan:** tambah [laporan kelayakan dan referensi primer](sfp-bcm57800-npk-feasibility.md).
+Koreksi petunjuk tes pada [temuan driver sebelumnya](sfp-driver-findings.md):
+pembacaan EEPROM bukan jaminan tanpa gangguan. Tidak ada perubahan source,
+workflow, driver, NPK, keypair, guard cakupan, media atau rilis.
+
+**Bukti referensi publik:** Linux v5.6 bnx2x menyediakan get_module_info dan
+get_module_eeprom pada PF, tidak pada VF. Pembaca memisahkan A0/A2 serta memeriksa
+SFF-8472/diagnostic flags; jenis PHY, power state, module capability dan ownership
+menentukan akses. Power gate upstream bukan syarat carrier-up umum. Warpcore
+retry dapat power-cycle modul setelah kegagalan baca; identitas perilaku pada
+biner vendor belum dibuktikan. Jangan menjalankan/polling ethtool -m di produksi;
+uji hanya pada lab dengan izin gangguan link. Source ethtool memisahkan query
+dari decoding/kalibrasi. Dokumentasi kernel menegaskan ABI internal tidak stabil;
+vermagic cocok saja tidak membenarkan menyalin .ko distro ke RouterOS. GPL archive
+listing bukan bukti exact build inputs, dan tidak menyediakan source userland
+proprietary. Referensi dan batasnya dicantumkan pada laporan.
+
+**Pemeriksaan lokal baru:** pencarian literal di extracted vendor-root cache
+menemukan nama property identitas/power/suhu SFP pada schema console dan string
+penamaan SFP/QSFP di net. Ini bukan bukti dataflow atau patch offset. Pencarian
+byte 0x8946 luas menemukan file data juga, bukan pembuktian callsite. Temuan
+callback bnx2x vendor sebelumnya tetap bukti statis historis, bukan tes baru pada
+hardware pemilik. Tidak ada akses perangkat, ioctl runtime atau dump EEPROM.
+
+**Keputusan/batas:** belum ada alasan mengganti bnx2x terlebih dahulu. Perlu
+pemetaan ether3 ke PCI/PF-VF/port/OEM dan part-number/DOM modul, lalu pembandingan
+terkontrol pada hardware sama dan penelusuran query–decoder–property RouterOS.
+Jika Linux memberi DOM tetapi RouterOS tidak, backend userland menjadi jalur
+investigasi; belum terbukti bug/patch spesifik. Link-ok dari pemilik tetap bukti
+laporan link, bukan identifikasi/DOM/akurasi sensor atau redaman kedua arah.
+Repack/signature dan rename port tidak menambahkan akses EEPROM. Tidak ada klaim
+semua NIC/modul/arsitektur atau kesetaraan CCR selesai.
+
+**Validasi:** perubahan dokumentasi saja; diff/whitespace, link relatif dan
+pemeriksaan pola informasi sensitif dijalankan sebelum penyerahan. Referensi
+publik diperiksa saat riset; bukan uji perangkat. Suite unit, build, boot/login,
+aktivasi, SFP runtime/traffic/hotplug tidak dijalankan. Tidak commit/push/publikasi.
+Langkah lanjut engineering tetap memerlukan bukti hardware tersanitasi dan
+penelusuran dataflow; jangan mengubah perangkat produksi berdasarkan hipotesis.
+
+### 32. Penyerahan dokumentasi riset SFP ke main
+
+Tanggal eksekusi lingkungan: 2026-10-06 UTC. Pemilik meminta push hasil riset
+sebelum melanjutkan perjalanan. Cakupan: HANDOFF (§30–32), laporan kelayakan
+BCM57800 dan koreksi keselamatan di sfp-driver-findings; bukan patch firmware
+atau rilis baru. Preflight git fetch origin main sukses; main/HEAD/upstream
+`4d9ae590b43fc93c1a6407b7a9fdc4a6b7eeaf8f`, divergence0/0. Hanya tiga dokumen
+tersebut akan di-stage; .zcode untracked tetap dikecualikan. Prosedur sama dengan
+publikasi sebelumnya: commit pada cabang sementara lokal, fast-forward main,
+hapus cabang lokal, lalu push hanya main; tidak ada cabang remote baru.
+
+Validasi dokumen: git diff --check lulus; pemeriksaan sebelumnya atas72 link
+relatif lulus dan pola sensitif pada konten tambahan tidak ditemukan. Pemeriksaan
+ulang sebelum commit mencakup semua tiga dokumen. Suite unit, build, tes hardware,
+boot dan aktivasi tidak diulang karena dokumentasi saja. Kesiapan native SFP
+belum berubah; titik lanjut dan batas bukti ada pada §31/laporan kelayakan.
+Hash commit penyerahan dan hasil push dicatat oleh Git serta respons penyerahan,
+bukan hash yang diperkirakan sebelum commit dibuat.
