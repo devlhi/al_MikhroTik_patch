@@ -47,13 +47,16 @@ def lic_parse_chr(lic: str, public_key: bytes):
     print(f'License valid: {mikro_kcdsa_verify(licVal, nonce_hash+signature, public_key)}')
 
 
-def lic_gen_ros(software_id, private_key: bytes):
+def lic_gen_ros(software_id, private_key: bytes, feature_bits: int = 1):
     assert (isinstance(private_key, bytes))
     if isinstance(software_id, str):
         software_id = mikro_softwareid_decode(software_id)
     lic = software_id.to_bytes(6, 'little')
     varb7 = 7  # RouterOS Version
-    varb8 = 22  # Features
+    # Byte 7 packs feature bits (high nibble) and the license level (low
+    # nibble). The community-project legacy value 22 = 0x16 means level 6
+    # plus feature bit 1, which RouterOS renders as "extra-channels".
+    varb8 = ((feature_bits & 0xF) << 4) | 6  # Features + License Level
     lic += varb7.to_bytes(1, 'little')
     lic += varb8.to_bytes(1, 'little')
     lic += b'\0'*8

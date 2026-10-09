@@ -65,15 +65,24 @@ def _decode_private_key(private_key):
     return key
 
 
-def generate_ros(software_id, private_key):
-    """Return a custom lab license for a RouterOS Software ID."""
+def generate_ros(software_id, private_key, feature_bits=1):
+    """Return a custom lab license for a RouterOS Software ID.
+
+    feature_bits (0-15) selects the license feature nibble. The legacy
+    default 1 keeps the payload byte-identical to older generator output
+    (byte 0x16: level 6 + feature rendered as "extra-channels"); 0 issues a
+    key whose RouterOS Features field is expected to stay empty.
+    """
     software_id = _clean(software_id)
     if not ROS_SOFTWARE_ID_RE.fullmatch(software_id):
         raise ValueError(
             'Software ID RouterOS harus berformat XXXX-XXXX (huruf besar/'
             'angka dari tabel resmi), contoh 4JZ2-H049')
+    if (isinstance(feature_bits, bool) or not isinstance(feature_bits, int)
+            or not 0 <= feature_bits <= 15):
+        raise ValueError('feature_bits harus bilangan bulat 0-15')
     return repo_license.lic_gen_ros(
-        software_id, _decode_private_key(private_key))
+        software_id, _decode_private_key(private_key), feature_bits=feature_bits)
 
 
 def generate_chr(system_id, private_key):
@@ -133,13 +142,17 @@ def parse(license_text, public_key):
         raise ValueError('signature lisensi tidak cocok dengan public key')
 
     fields = {'License valid': 'True'}
-    if payload[6:8] == bytes((7, 22)) and payload[8:] == b'\0' * 8:
+    if payload[6] == 7 and payload[8:] == b'\0' * 8:
         number = int.from_bytes(payload[:6], 'little')
         if number >= len(mikro.SOFTWARE_ID_CHARACTER_TABLE) ** 8:
             raise ValueError('Software ID dalam lisensi tidak valid')
+        # Byte 7 packs feature bits (high nibble) + license level (low
+        # nibble); nibble meaning verified statically, display pending lab A3.
         fields.update(kind='ros', **{
             'Software ID': mikro.mikro_softwareid_encode(number),
-            'RouterOS Version': '7', 'License Level': '22',
+            'RouterOS Version': '7',
+            'License Level': str(payload[7] & 0x0F),
+            'Feature Bits': str(payload[7] >> 4),
         })
     elif payload[8:13] == bytes((0, 87, 134, 244, 3)) and payload[13:] == b'\0' * 3:
         fields.update(kind='chr', **{

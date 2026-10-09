@@ -1,5 +1,186 @@
 # HANDOFF — Ali Patch Code
 
+**PUSH & RILIS 2026-10-09 (sesi keempatbelas): izin pemilik diberikan
+("kalau udah anda jalankan push dan releases tag").** Pre-flight lulus:
+diff-check bersih, test_license_util 18 OK + test_chr_runtime_policy 27 OK
+(run aktual sesi ini), scan rahasia file baru nihil. Commit mencakup:
+generator lisensi `feature_bits` (default mengawetkan byte lama), kebijakan
+runtime `x86-installer-7.24.5` + pin source, normalisasi mode symlink di
+parser metadata (+regresi), dokumentasi rencana/evidence/HANDOFF lengkap.
+Firmware rilis menyusul via dispatch CI `patch7.yml` profil x86-all +
+draft (tag BARU per run, prerelease, bukan Latest; tag/aset lama tak
+disentuh). Patch SFP-DOM net (B5) adalah PROTOTIPE LAB — TIDAK ikut
+commit/rilis ini (belum terintegrasi pipeline + belum terbukti hardware;
+artefak di scratch /tmp). Hasil dispatch/verifikasi dicatat menyusul di
+bawah.
+
+**B5 SELESAI 2026-10-09 (sesi ketigabelas): patch SFP-DOM `net`
+DIIMPLEMENTASIKAN + regresi QEMU HIJAU.** Agent implementasi menulis cave
+356-byte/92-instruksi (terverifikasi Capstone dua kali; parent verifikasi
+byte-level: 0xEB@0x2c4ba, redirect call→0x8184d18, phdr text 0x131d15→
+0x132000, prolog cave ada) dengan penyempurnaan desain: memakai thunk
+**0x817b40b** — helper SIOCETHTOOL yang juga dipakai fetcher RPC asli
+(marshalling struct besar terbukti: aslinya mengirim struct 0x110-byte lewat
+thunk yang sama, risiko kapasitas teratasi). Alur cave: GMODULEINFO → baca
+A0 → A2 (modul 512B saja) → validasi checksum SFF-8472 → jiffies → al=1;
+gagal = al=0 tanpa crash. Artefak scratch `agent-b5/`: `net-patched`
+(1530168 B, sha 1688dd64…), `system-netdom.npk` (20.524.705 B, re-sign
+in-process), transkrip. **Regresi QEMU lulus**: install 7.24.4 segar →
+swap NPK → boot + NIC e1000 → `monitor ether1 once` kembalikan field
+standar, DOM dilewati anggun, nol crash. Sisa risiko: halaman A0-atas QSFP
+belum (SFP-only v1); jalur positif DOM hanya terbukti di hardware nyata;
+build masih prototipe lab (belum masuk pipeline terkualifikasi + guard).
+**Berikutnya B6: pasang di mesin pemilik (BCM57800 + modul optik DOM)** —
+target: vendor/serial/tx-rx power tampil di CLI seperti punya teman. Lalu
+B7: port cave ke net 7.24.5. Rincian di JSON bukti §33 addendum B5.
+
+**B4 SELESAI 2026-10-09 (sesi keduabelas): desain patch net byte-level
+lengkap dan DIVERIFIKASI parent.** Laporan agent B4
+(`/tmp/ali-sfp-research/agent-b4/`): peta property DOM lengkap (field id,
+offset halaman A0/A2, decode kalibrasi SFF-8472 termasuk polynomial RX);
+gerbang SFP = caps bit0 yang hanya menyala bila GDRVINFO-extended membawa
+magic MikroTik 0xafaf4554. **Desain patch dua bagian, keduanya terverifikasi
+byte-level parent:** (A) satu byte `74→EB` @file 0x2c4ba memaksa pembuatan
+buffer halaman SFP; (B) alihkan `call` @0x80768a1 ke cave 0x8184d18 (perlu
+perluas phdr text 0x131d15→0x132000) yang membaca EEPROM via ioctl
+ethtool standar 0x42/0x43 lewat helper yang ada, menyalin A0/A2 ke buffer,
+return 1 → decode/serialize bawaan net jalan tanpa diubah. Jangkar 7.24.5
+juga sudah dipetakan (A @0x8074390, call @0x807677f, cave 0x8184be0).
+Risiko tercatat: kapasitas marshalling helper utk struct 0x90-byte
+(fallback: pecah bacaan), pemetaan nama field power (verifikasi runtime),
+dan batas QEMU (tak bisa emulasi EEPROM — nilai DOM final hanya terbukti
+di NIC fisik). **Berikutnya (B5): tulis byte cave + script patcher, patch
+net 7.24.4, rebuild NPK pipeline terkualifikasi, regresi QEMU, lalu uji
+mesin pemilik.** Rincian di JSON bukti §33 addendum B4.
+
+**B3 VERDICT + KEPUTUSAN RUTE 2026-10-08 (sesi kesebelas): responder RPC
+bukan packet_hook; rute utama CLI-DOM = patch `nova/bin/net` per-build.**
+Agent B3 (laporan `/tmp/ali-sfp-research/agent-b3/`): callback input netlink-27
+packet_hook hanyalah **injektor frame mentah** ({ifindex,meta,frame}→
+dev_queue_xmit), tanpa parsing pesan/magic, tanpa jalur reply — jadi BUKAN
+responder 0xA0B1. Sensus magic di 78 biner nova: hanya `net` sendiri.
+Disimpulkan: di x86 tidak ada mekanisme responder kernel; driver vendor
+bnx2x/ixgbe SUDAH punya pembaca EEPROM ethtool standar; dan build teman
+version-locked (indikasi kuat patch biner per-build). **Keputusan: rute
+utama untuk paritas CLI = patch `nova/bin/net`** (7.24.4 & 7.24.5 tersedia
+lokal) supaya cluster property sfp-* diisi dari ioctl
+ETHTOOL_GMODULEINFO/GMODULEEEPROM yang sudah dikuasai net — tanpa build
+modul kernel. Rute responder-kernel dideprioritasi. VM Lima sedang dipasang
+(persiapan bila nanti perlu build kernel). Rincian + langkah di JSON bukti
+§33 addendum B3.
+
+**B2 maju signifikan 2026-10-08 (sesi kesepuluh): protokol 27 =
+NETLINK_PACKET_HOOK, terkonfirmasi dari patch GPL.** Patch MikroTik menambah
+registry netlink di `include/uapi/linux/netlink.h` (WIRELESS 17, STP 23,
+UNICL 24, MESH 25, LOG 26, **PACKET_HOOK 27**, LTE_GCT 28, ADDRLIST 29,
+PTP_HOOK 30). Source `packet_hook.c` TIDAK ada di dump (modul biner), tetapi
+`.ko`-nya tidak di-strip: `proto_handlers` = array 263 head-list di .text
+0x1300; `register_proto` = insert list; sensus impor seluruh 298 .ko: tak
+ada pengimpor `register_proto`; `proto_handlers` dipakai keluarga
+fastpath-IP-proto → kemungkinan BUKAN dispatch RPC. Callback input netlink
++ rute pesan 0xA0B1 belum terlokasi (banyak fungsi statis tanpa st_size;
+butuh disassembly sadar-relokasi). Agent B3 ditugaskan menuntaskan itu
+(lokasi: `/tmp/ali-sfp-research/agent-b3/`). Rincian di JSON bukti §33
+addendum B2.
+
+**C1 SELESAI 2026-10-08 (sesi kesembilan): patch lisensi 7.24.5 TERBUKTI
+setara 7.24.4 secara end-to-end di lab.** Perubahan engine: `patch.py`
+menambah kebijakan `x86-installer-7.24.5` + pin source `d97831be…`
+(komponen pin tak berubah — loader/keyman/mode byte-identik, diverifikasi);
+CLI menerima kedua kebijakan. Normalisasi mode symlink di parser metadata
+(semantik Linux; drift APFS 0777→0755 yang membuat 6 tes RealPolicy gagal
+di macOS — bukan regresi kode, terbukti via stash baseline) + tes regresi
+baru. Suite hijau: x86-installer 31 OK, chr 27 OK, coverage 23+7 OK,
+branding OK, banner 23 OK. Build produksi NPK 7.24.5 ter-patch:
+coverage 2/5 `coverage-passed`, SHA-256 `6d6421e4…`. Bukti runtime: disk
+QEMU 7.24.4+fb0 di-upgrade (swap `/var/pdb/system/image` via debugfs +
+boot kernel 7.24.5) → resource: **7.24.5 stable**; license: **software-id
+sama, nlevel 6, features kosong** — lisensi carry-over tanpa regenerasi.
+Transkrip scratch `/tmp/ali-sfp-research/{license,resource}-7245.txt`.
+Belum ada commit/push.
+
+**C0 7.24.5 SELESAI 2026-10-08: triase sangat menguntungkan.** NPK system
+7.24.5 vendor diunduh (SHA-256 `d97831be…`). `keyman`/`loader`/`mode`/
+`login`/console .mem/`logo.txt` byte-identik dengan 7.24.4; `net`/`sys2`
+berubah byte (ukuran sama); kernel tetap 5.6.3-64; packet_hook/bnx2x/ixgbe
+ada; protokol SFP identik (12 SIOCETHTOOL, 4×0xA0B1, magic, netlink 27).
+Kualifikasi C1 diprediksi murah (ganti pin source + verifikasi ulang);
+Workstream B kemungkinan cukup satu build modul untuk 7.24.4+7.24.5.
+
+**TRANSPORT & RESPONDER RPC SFP KETEMU 2026-10-08 (sesi kedelapan; agent B2
+kehabisan kuota, parent menuntaskan sendiri).** Bus RPC internal RouterOS =
+**netlink protokol custom 27** (`socket(AF_NETLINK, SOCK_RAW, 0x1B)` di net
+@0x806fb32, kirim via `send()` ber-header magic 0x52B0, rantai
+0x806df7c→0x806dd04→0x806db22 terverifikasi). **Responder =
+`packet_hook.ko`**: satu-satunya modul vendor dengan
+`__netlink_kernel_create`/`netlink_kernel_release`/`netlink_broadcast` +
+`util_init` (`/dev/util`) — dan mengekspor **API registrasi driver**
+(`register_proto`/`proto_handlers`/`register_*_handler`; 54 ekspor) yang
+menjadi pintu implementasi Workstream B di ixgbe/bnx2x. Langkah berikut
+(B2): bedah dispatch packet_hook.ko (semantik register_proto, layout tabel,
+rute pesan netlink 27 ke driver). Rincian di JSON bukti §33 addendum
+B1-transport. Tidak ada perubahan kode produksi.
+
+**B1-lanjut berjalan 2026-10-08 (sesi ketujuh): penelusuran responder RPC
+0xA0B1 didelegasikan ke agent analisa.** Hasil awal sesi ini: scan seluruh
+298 .ko vendor + biner nova untuk magic request (0xB000A0B0/0x52/0x11223344)
+hanya menemukan trio lengkap di `net` (pengirim) — responder tidak match
+magic, dispatch-nya by message-id. Situs kirim 0xA0B1 (#1 @0x806dfc3) sudah
+dibedah: request 29-byte dibangun di stack (magic 0xB000A0B0, 0x52,
+0x12000001, len 0x578, window offset), dikirim via helper 0x806dd04 yang
+menyimpan callback `onReadModule` (@0x806dffe; string "onReadModule timeout"
+@0x818e2fb) dalam registry pending berbasis std::sectree — helper ini belum
+sampai lapisan transport. Agent B2 ditugaskan melacak transport penuh
+(AF_UNIX/netlink/ioctl) + identitas responder + format reply dari parser
+onReadModule, pada net 7.24.4 dan 7.23.1. Laporan akan masuk scratch
+`/tmp/ali-sfp-research/agent-b2/`.
+
+**A3 SELESAI 2026-10-08 (sesi keenam): lisensi feature_bits=0 TERBUKTI
+menampilkan Level 6 + Features KOSONG di firmware patched 7.24.4.** Harness
+lab macOS penuh dibangun dari nol: install-image vendor di-patch dengan
+pipeline produksi (policy x86-installer, coverage 2/5, coverage-passed;
+volume case-sensitive mengatasi tabrakan APFS), di-install via QEMU TCG ke
+disk virtual, sistem terpasang di-boot dengan kernel langsung + serial
+console (melewati milo), lisensi fb0 ditempel lewat console dan
+diverifikasi pasca-reboot: `nlevel: 6`, `features:` kosong. Hipotesis nibble
+(byte7 = fitur<<4 | level) kini berdasar empiris. Transkrip + batas di JSON
+bukti §33 addendum A3; scratch driver QEMU di /tmp dapat hilang. Tersisa A4
+(opsi feature_bits di CLI/panel + regenerasi lisensi pemilik) dan kontrol
+opsional fb1. Belum ada commit/push.
+
+**Eksekusi rencana dimulai 2026-10-08 (sesi kelima): A2 selesai hijau; B1
+berjalan.** Sesuai [rencana terpadu](plan-native-sfp-license-features.md):
+A1 menemukan kata `extra-channels` di kamus console dan menghasilkan hipotesis
+byte payload index 7 = `(bit fitur << 4) | level` (lama 0x16 = level 6 +
+"extra-channels"; tampilan kosong teman konsisten 0x06); satu-satunya pasangan
+nibble keyman (0x8050ee5) ternyata loop hex-dump sehingga konfirmasi final
+menunggu A3 lab. **A2 terimplementasi:** `lic_gen_ros(…, feature_bits=1)`
+(byte lama terawetkan), `license_util.generate_ros` + `parse` menerjemahkan
+nibble level/fitur; regresi hijau: license_util 18/18, CLI 28/28, server
+25/25, frontend 12/12 (0 skip). Ini divergence pertama `license.py` dari
+baseline komunitas. A3 (lab QEMU; qemu-system tersedia, perlu harness debugfs)
+dan B1 (agent katalog 0x89Fx di net 7.24.4+7.23.1 sedang berjalan) menyusul.
+Belum ada commit/push.
+
+**B1 selesai 2026-10-08 (agent + verifikasi parent): arsitektur SFP DOM
+terkoreksi.** Katalog 33 situs 0x89F0–0x89FE (identik 7.24.4/7.23.1) via
+`nv::ifreqDataIoctl`; klaster SFP = 0x89F0 get module type (mask 0x25F0) +
+0x89F1 atribut. **Data EEPROM/DOM sebenarnya lewat RPC nv-bus pesan 0xA0B1**
+(magic 0xA0B000/0x52B0/0x11223344, halaman 1400 B, header reply 0x21-B) —
+konstanta diverifikasi parent. Region 0x8093xxx ternyata switch-chip, bukan
+SFP (koreksi hipotesis sesi sebelumnya). Responder kernel belum ketemu: scan
+298 .ko vendor = false positive; GPL dump tidak memuat bridging nv-bus.
+Langkah berikut: telusuri tujuan kanal pesan 0xA0B1 dari net. Laporan agent
+dan skrip ada di scratch `/tmp/ali-sfp-research/agent-b1/` (ringkasan
+dimuat di [rencana terpadu](plan-native-sfp-license-features.md)).
+
+**Trace userland SFP terbaru (§33): userland RouterOS 7.24.4 x86 (`nova/bin/net`)
+tidak pernah memanggil ioctl EEPROM modul (GMODULEINFO/GMODULEEEPROM) — field
+merek/redaman SFP tidak dapat muncul di x86 untuk NIC driver standar apa pun,
+termasuk BCM57800. Modifikasi/rebuild driver NPK tidak dapat memperbaikinya;
+permintaan "samakan dengan CCR" menuntut injeksi fitur ke biner tertutup dan
+tidak diimplementasikan sesi ini. Opsi lanjut ada di §33.**
+
 **Riset BCM57800/SFP terbaru (§31): referensi upstream bnx2x dan temuan biner
 vendor menunjukkan jalur EEPROM layak diteliti; belum ada patch NPK/native DOM
 atau tes perangkat. Prioritas adalah pemetaan NIC/port/modul dan jalur query–decoder–
@@ -2625,3 +2806,127 @@ boot dan aktivasi tidak diulang karena dokumentasi saja. Kesiapan native SFP
 belum berubah; titik lanjut dan batas bukti ada pada §31/laporan kelayakan.
 Hash commit penyerahan dan hasil push dicatat oleh Git serta respons penyerahan,
 bukan hash yang diperkirakan sebelum commit dibuat.
+
+### 33. Trace userland x86: jalur EEPROM modul SFP tidak pernah dipanggil (2026-10-07)
+
+Permintaan pemilik: supaya x86 menampilkan redaman/DOM dan merek modul SFP
+seperti CCR — cari referensi dan modifikasi NPK, berbekal catatan §30–31.
+Hasil sesi ini mengubah kesimpulan kelayakan: **modifikasi NPK jenis apapun
+di sisi driver tidak dapat memunculkan field itu di RouterOS 7.24.4 x86**,
+karena userland-nya tidak pernah memquery EEPROM modul. Bukti tahan lama:
+[JSON trace userland](evidence/sfp-x86-userland-ethtool-trace-2026-10-07.json).
+
+- Referensi publik: thread
+  [SFP info don't appear in ROS v7 x86](https://forum.mikrotik.com/t/sfp-info-dont-appear-in-ros-v7-x86/143644)
+  — bare-metal v7 (82599ES + X710) tanpa info SFP, dilaporkan bekerja di v6,
+  tanpa jawaban resmi. Ini korelasi; bukan bukti penyebab sampai trace di bawah.
+- Sumber biner: ISO vendor `mikrotik-7.24.4.iso` diunduh (SHA-256
+  `135046e5…f33ddd`, unduhan dua tahap karena putus); `routeros-7.24.4.npk`
+  di dalamnya byte-identik dengan pin `46de2e3d…` (sumber terkualifikasi
+  x86-installer di `patch.py` dan `vendor.npk` pada temuan driver). Ekstraksi
+  per file via `unsquashfs -cat` (tabrakan nama APFS seperti §7).
+- Trace statis Capstone atas `nova/bin/net` (ELF32) + pemindaian 78 biner
+  `nova/bin/*`: hanya `net` memuat dword SIOCETHTOOL (12 situs) dan satu
+  string `ethtool`. Katalog perintah yang dikonstruksi: `0x4c` GLINKSETTINGS,
+  `0x12/0x13` G/SCOALESCE, `0x1a` GPRIVFLAGS, `0x03` GDRVINFO, satu `0x50`.
+  **Tidak ada konstruksi `0x42` GMODULEINFO / `0x43` GMODULEEEPROM** sebagai
+  immediate, push, tabel .rodata yang kredibel, maupun netlink genl "ethtool".
+- Sisi driver tetap ada: `bnx2x.ko` vendor (kernel 5.6.3-64) masih mengekspor
+  `bnx2x_read_sfp_module_eeprom`. Karena pemanggilnya tidak ada di userland,
+  mengganti/membangun ulang `bnx2x.ko` tidak akan menampilkan DOM; hal yang
+  sama berlaku untuk NIC standar lain (ixgbe/i40e/ice), konsisten dengan
+  laporan regresi v6→v7 di forum.
+- Mekanisme CCR (board MikroTik sendiri) tidak diverifikasi sesi ini —
+  diduga kanal privat driver↔userland (string debug `umsg/netlink.h` ada di
+  `net`); butuh biner system NPK non-x86 atau sumber GPL untuk menutupnya.
+  Fakta pengambil keputusan untuk permintaan ini adalah negatif sisi x86.
+- **Tidak ada patch NPK yang dibuat.** Alasan: fitur yang diminta bukan
+  perubahan kontainer/repack melainkan injeksi fitur baru (query ioctl +
+  dekode SFF-8072/8472 + kalibrasi + publikasi property + schema console)
+  ke biner tertutup `net` 32-bit stripped, harus diulang tiap rilis, dan
+  tak terverifikasi tanpa perangkat pemilik. Aturan repo melarang patch
+  spekulatif tanpa bukti.
+- Batas: statis satu build x86 7.24.4 (bukan runtime di mesin pemilik);
+  pencarian negatif terbatas pada permukaan kode/data yang dipindai; tidak
+  ada `ethtool -m`/pembacaan EEPROM dijalankan (peringatan power-cycle
+  Warpcore tetap berlaku); artefak scratch di `/tmp/ali-sfp-research`
+  dapat hilang — hash sumber tercatat di JSON bukti. Suite tidak diulang
+  (tidak ada kode produksi yang berubah). ISO sudah di-detach.
+- Opsi lanjut untuk pemilik: (a) baca DOM eksternal (Linux `ethtool -m`
+  pada target yang boleh terganggu link-nya; analisa dua ujung pakai
+  `scripts/sfp_link_report.py`), (b) laporkan regresi v6→v7 ke MikroTik
+  dengan bukti trace ini, (c) bila native wajib: proyek injeksi fitur
+  userland + rig uji hardware — keputusan pemilik, bukan item kecil.
+- Status Git: sesi ini mengubah dokumentasi/evidence saja (file baru +
+  bagian ini); **belum commit/push** menunggu izin pemilik.
+
+**Tambahan 2026-10-08 — klaim WhatsApp "7.23.1 x86 punya SFP tx/rx" diuji
+dan TIDAK terkonfirmasi:** ISO vendor 7.23.1 diunduh (SHA-256 `aa80ce63…`),
+`routeros-7.23.1.npk` (SHA-256 `a45ab9a0…`, system 7.23.1.final) diekstrak,
+dan `nova/bin/net` (1.505.624 byte) ditelusuri dengan metode identik.
+Hasilnya **identik dengan 7.24.4**: 12 situs SIOCETHTOOL dengan set perintah
+yang sama, nol konstruksi GMODULEINFO/GMODULEEEPROM. Immediate 0x42/0x43 yang
+ada (36/18 di KEDUA versi, jumlah sama) terbukti dari konteks disassembly
+sebagai enum media/speed dan ID property serialisasi berurutan — bukan
+perintah ioctl. Jadi untuk x86 NIC driver standar, 7.23.1 tidak berbeda dari
+7.24.4. Tidak ada screenshot/output perangkat yang mendukung klaim; contoh
+nyata yang asli (`monitor` berisi `sfp-rx-power` + `/system resource print`
+ber-board x86) akan menjadi bukti lawan yang layak diteliti. Rincian di JSON
+bukti §33. 7.24.2 tidak diunduh terpisah: 7.24.4 sudah menetapkan perilaku
+7.24.x dan versi yang diklaim "bisa" (7.23.1) adalah uji yang menentukan.
+
+**Tambahan 2026-10-08 (lanjutan R&D, sesi kedua) — userland ARM juga tidak
+memanggil query EEPROM modul; arsitektur DOM MikroTik = didorong driver.**
+Pemilik menolak jalur option.npk dan meminta cara lain (NIC: Broadcom
+BCM57800 pemilik; Intel X520 menurut cerita teman). NPK system arm64 7.24.4
+resmi diunduh (13.934.949 byte; `nova/bin/net` ternyata ELF32-ARM, 1.706.692
+byte, stripped). Hasil identik dengan x86: string SIOCETHTOOL/SLINKSETTINGS
+ada, tepat **12 situs** konstruksi `MOVW r2,#0x8946` (decode per-jendela
+karena literal pool), katalog perintah GSET/GDRVINFO/G(S)COALESCE/
+GLINKSETTINGS/GPRIVFLAGS/0x50/0x51, dan **nol** situs 0x42/0x43. Kesimpulan
+arsitektur: karena board MikroTik (ARM/CCR dsb.) menampilkan DOM tanpa query
+ethtool userland, data SFP **disuplai driver kernel MikroTik lewat kanal
+privat** ke struktur internal `net` (klaster initQsfp §33) — mekanisme
+persisnya diidentifikasi pada sesi ketiga di bawah.
+
+**Tambahan 2026-10-08 (sesi keempat, ringkas) — rencana terpadu dibuat;
+"extra channel" di License Features berasal dari generator kita.** Screenshot
+pemilik: lisensi hasil generator repo menampilkan Level 6 + Features
+"extra channel"; build teman (AASHS, basis 7.24.2, changelog
+ditandatangani, container tanpa hard reset) menampilkan Features kosong
+dengan updater normal. Asal-usulnya byte index 7 payload lisensi yang
+`lic_gen_ros` set 22 (warisan komunitas); string "extra channel" dirakit
+dinamis (tidak literal di keyman/net/console .mem — pemetaan bit jadi tugas
+riset). Rencana eksekusi dua workstream (A: Features cleanup via generator +
+verifikasi lab; B: SFP DOM native via driver 0x89Fx, termasuk penambahan
+7.24.2 ke set pembanding karena build teman berbasis 7.24.2) ditulis di
+[docs/plan-native-sfp-license-features.md](plan-native-sfp-license-features.md).
+Tidak ada perubahan kode produksi; commit/push menunggu izin.
+
+**Tambahan 2026-10-08 (R&D sesi ketiga) — KANAL PRIVAT DITEMUKAN: ioctl
+SIOCDEVPRIVATE 0x89F0–0x89FE; sumber GPL diunduh.** Mirror
+`github.com/tikoci/mikrotik-gpl` (tag per versi; tautan box.mikrotik.com
+resmi mati) menyediakan snapshot 7.24.4: tarball 209.020.188 byte (SHA-256
+`b59d505b…`) berisi pohon vanilla linux-5.6.3 lengkap (1 GB) +
+`linux-5.6.3.patch` MikroTik (24,9 MB) + configs/. Temuan patch: default
+`allow_unsupported_sfp` ixgbe diubah 0→1; **nol** penambahan
+get_module_info/eeprom, statistik ethtool SFP kustom, sysfs `ros_`, atau
+genl keluarga eth — kanal DOM tidak ada di GPL dump. Terobosan lewat scan
+rentang ioctl penuh pada `net` x86 DAN arm: keduanya menerbitkan keluarga
+**privat 0x89F0–0x89FE** (jumlah situs per kode identik lintas arsitektur)
+plus SIOCGMIIPHY/MIIREG. Dua situs 0x89F0/0x89F1 berada di klaster fungsi
+SFP (`~0x8074f72/0x8074fc2`): net menyiapkan struct ifreq via helper,
+wrapper ioctl menerima request di ECX, hasil disimpan di struct interface
+(+0xd4/+0xd8) dengan sentinel -1 dan gate byte. Handler keluarga ini hanya
+ada di driver NIC biner MikroTik sendiri (tidak dalam GPL dump); ixgbe/
+bnx2x vanilla hanya punya handler standar. **Kesimpulan R&D: jalur native
+DOM x86 tanpa option.npk = implementasi protokol privat 0x89Fx pada ixgbe
+(X520) / bnx2x (BCM57800)**, bersumber dari pembaca EEPROM SFF yang sudah
+ada di driver, dikirim sebagai .ko terganti di NPK system — terkunci versi
+kernel, konsisten dengan "cuma 7.23.1" milik teman. Langkah berikut:
+reverse format wire tiap 0x89Fx (cross-check x86/arm dan 7.23.1 vs 7.24.4),
+identifikasi perintah identitas/DOM + layout reply, prototipe handler,
+build dengan configs GPL (Module.symvers belum terverifikasi tersedia),
+uji stub protokol (QEMU tak bisa emulasi EEPROM SFP; verifikasi akhir
+butuh NIC fisik). Rincian di JSON bukti §33. Tidak ada perubahan kode
+produksi; commit/push menunggu izin pemilik.

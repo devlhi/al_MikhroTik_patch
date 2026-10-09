@@ -445,7 +445,7 @@ def patch_squashfs(path, key_dict, stats: dict | None = None,
             if (any(parent.is_symlink() for parent in (file, file.parent, file.parent.parent))
                     or not file.is_file() or file.stat().st_nlink != 1):
                 raise ValueError('runtime policy requires regular unlinked files: ' + relative)
-        if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+        if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
             import hashlib
             for relative, expected in _X86_INSTALLER_COMPONENT_SHA256.items():
                 if hashlib.sha256((Path(path) / relative).read_bytes()).hexdigest() != expected:
@@ -529,17 +529,34 @@ def _validate_key_dict(key_dict):
 
 _CHR_RUNTIME_POLICY = 'chr-x86-7.24.4'
 _X86_INSTALLER_RUNTIME_POLICY = 'x86-installer-7.24.4'
+_X86_INSTALLER_RUNTIME_POLICY_7245 = 'x86-installer-7.24.5'
 # Caller-declared installed-x86 path, NOT product autodetection. The evidence
 # qualifies this retained pristine source by exact 582-file/metadata equality
 # after generic mapping against the old installer ISO. It does not authenticate
 # vendor signatures or establish readiness for another ISO or physical hardware.
 # docs/evidence/x86-installer-runtime-investigation-20261005T181703Z-9c41b8a2.json
 _X86_INSTALLER_SOURCE_SHA256 = '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+# 7.24.5 qualification (2026-10-08): vendor system NPK SHA-256 below; the
+# pinned components keyman/loader/mode are byte-identical in the 7.24.5
+# squashfs (re-verified), kernel remains 5.6.3-64, and the SFP RPC surface
+# (SIOCETHTOOL sites, 0xA0B1, netlink 27) is unchanged.
+_X86_INSTALLER_SOURCE_SHA256_7245 = 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
 _X86_INSTALLER_COMPONENT_SHA256 = {
     'nova/bin/loader': '792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7',
     'nova/bin/keyman': 'ace0e5fa8de1fdd4098540102b59ae0ab734f2c8bc9bf13a0c86103c2b419ac0',
     'nova/bin/mode': 'f55ae4709fcdf62227fba0985aee8429058d1543d048751cedd86485cd67102a',
 }
+
+
+def _x86_installer_policies():
+    return (_X86_INSTALLER_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY_7245)
+
+
+def _x86_installer_version_pins():
+    """Version -> qualified pristine source pin, read at call time so tests
+    may patch the pinned constants."""
+    return {'7.24.4.final': _X86_INSTALLER_SOURCE_SHA256,
+            '7.24.5.final': _X86_INSTALLER_SOURCE_SHA256_7245}
 
 
 def _npk_source_sha256(package):
@@ -562,14 +579,20 @@ def _part(package, part_id, required=True):
 
 def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key,
                              *, source_npk=None):
-    if runtime_policy not in (_CHR_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY):
+    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy not in _x86_installer_policies():
         raise ValueError('unsupported runtime policy')
     if getattr(package, '_packages', []):
         product = 'CHR ' if runtime_policy == _CHR_RUNTIME_POLICY else ''
         raise ValueError('runtime policy only supports single-package ' + product + 'system NPK')
     info = _part(package, NpkPartID.NAME_INFO).data
-    if info.name != 'system' or info.version != '7.24.4.final':
-        raise ValueError('runtime policy requires system 7.24.4.final')
+    if runtime_policy == _CHR_RUNTIME_POLICY:
+        expected_versions = ('7.24.4.final',)
+        version_note = 'runtime policy requires system 7.24.4.final'
+    else:
+        expected_versions = tuple(_x86_installer_version_pins())
+        version_note = 'runtime policy requires system 7.24.4.final or 7.24.5.final'
+    if info.name != 'system' or info.version not in expected_versions:
+        raise ValueError(version_note)
     parts = list(package)
     signature = _part(package, NpkPartID.SIGNATURE)
     signature_index = parts.index(signature)
@@ -589,14 +612,14 @@ def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_k
     _validate_key_dict(key_dict)
     _part(package, NpkPartID.FILE_CONTAINER)
     _part(package, NpkPartID.SQUASHFS)
-    if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
         import hashlib
         # Parsed state loses declared part lengths and cannot prove provenance.
         # Direct callers must supply the original full wire bytes, not a digest
         # or a reserialization of an untrusted parsed package.
         if not isinstance(source_npk, bytes):
             raise ValueError('x86-installer runtime policy requires original source_npk wire bytes')
-        if hashlib.sha256(source_npk).hexdigest() != _X86_INSTALLER_SOURCE_SHA256:
+        if hashlib.sha256(source_npk).hexdigest() != _x86_installer_version_pins()[info.version]:
             raise ValueError('x86-installer runtime policy requires exact qualified pristine source NPK')
         if (len(source_npk) < 8
                 or struct.unpack_from('<II', source_npk) != (NovaPackage.NPK_MAGIC, len(source_npk) - 8)):
@@ -638,6 +661,10 @@ def _squashfs_metadata(image, work_dir):
             raise ValueError('runtime policy requires all-root source SquashFS')
         if path in entries:
             raise ValueError('duplicate SquashFS metadata path')
+        if mode[0] == 'l':
+            # Linux ignores symlink permission bits (always 0777 there); a
+            # macOS/APFS round-trip can surface 0755. Compare the type only.
+            mode = 'l' + '-' * 9
         entries[path] = (mode, uid, gid, None if mode[0] == 'd' else size.strip(), mtime)
     if 'squashfs-root' not in entries:
         raise ValueError('empty SquashFS metadata inventory')
@@ -653,8 +680,15 @@ def _tree_metadata(root):
     for path in paths:
         st = path.lstat()
         relative = path.relative_to(root).as_posix()
-        link = os.readlink(path) if stat_module.S_ISLNK(st.st_mode) else None
-        entries[relative] = (st.st_mode, st.st_mtime_ns, link, st.st_rdev)
+        mode = st.st_mode
+        if stat_module.S_ISLNK(mode):
+            link = os.readlink(path)
+            # Linux ignores symlink permission bits (always 0777); a macOS
+            # round-trip can surface 0755. Compare type and target only.
+            mode = stat_module.S_IFLNK
+        else:
+            link = None
+        entries[relative] = (mode, st.st_mtime_ns, link, st.st_rdev)
         if not stat_module.S_ISDIR(st.st_mode):
             inodes.setdefault((st.st_dev, st.st_ino), []).append(relative)
     links = sorted(tuple(sorted(names)) for names in inodes.values())
@@ -764,9 +798,13 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                 raise ValueError('repacked SquashFS inode/link metadata mismatch; signing blocked')
         if runtime_policy:
             report['runtime_policy'] = runtime_policy
-            if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+            if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
+                import hashlib as _hashlib
                 report['source_qualification'] = {
-                    'npk_sha256': _X86_INSTALLER_SOURCE_SHA256,
+                    'npk_sha256': (_hashlib.sha256(source_npk).hexdigest()
+                                   if isinstance(source_npk, bytes)
+                                   else _x86_installer_version_pins().get(
+                                       _part(package, NpkPartID.NAME_INFO).data.version)),
                     'context': 'caller-declared x86 installer; not product autodetection',
                     'basis': '582-file and metadata equality to investigated old ISO',
                 }
@@ -782,12 +820,12 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
                    runtime_policy=None, license_public_key=None, *, terminal_banner=None):
     provenance = {}
-    if runtime_policy == _X86_INSTALLER_RUNTIME_POLICY:
+    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
         import hashlib
         # Parse the same immutable bytes we pin; never reopen the input between
         # qualification and parsing, or normalize unknown input into a pin.
         source_npk = Path(input_file).read_bytes()
-        if hashlib.sha256(source_npk).hexdigest() != _X86_INSTALLER_SOURCE_SHA256:
+        if hashlib.sha256(source_npk).hexdigest() not in _x86_installer_version_pins().values():
             raise ValueError('x86-installer runtime policy requires exact qualified pristine source NPK')
         npk = NovaPackage(source_npk[8:])
         provenance['source_npk'] = source_npk
@@ -821,7 +859,7 @@ if __name__ == '__main__':
     npk_parser.add_argument('input', type=str, help='Input file')
     npk_parser.add_argument('-O', '--output', type=str, help='Output file')
     npk_parser.add_argument('--runtime-policy',
-                            choices=[_CHR_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY],
+                            choices=[_CHR_RUNTIME_POLICY, *_x86_installer_policies()],
                             help='Explicit caller-declared CHR or x86 installer path policy; '
                                  'x86 installer requires pinned pristine single system source, '
                                  'not product autodetection or physical readiness')

@@ -152,6 +152,18 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(patcher._replace_keys(data, KEYS, 'loader', stats), elf32(instructions(NEW)))
         self.assertEqual(stats, {OLD: 1})
 
+    def test_metadata_listing_normalizes_symlink_permission_bits(self):
+        # Linux ignores symlink permission bits; a macOS/APFS round-trip can
+        # surface 0755 where the image stores 0777. Both must compare equal.
+        lines = (b'drwxr-xr-x 0/0 32 2020-01-02 03:04:05 squashfs-root\n'
+                 b'lrwxrwxrwx 0/0 5 2020-01-02 03:04:05 squashfs-root/link -> target\n')
+        repacked = lines.replace(b'lrwxrwxrwx', b'lrwxr-xr-x')
+
+        def listing(data):
+            with mock.patch.object(patcher, '_run_tools', return_value=(data, b'')):
+                return patcher._squashfs_metadata(Path('fixture'), Path('.'))
+        self.assertEqual(listing(lines), listing(repacked))
+
     def test_metadata_listing_rejects_nonroot_and_unknown_lines(self):
         good = b'drwxr-xr-x 0/0 42 2020-01-02 03:04:05 squashfs-root\n'
         for data in (good.replace(b'0/0', b'1000/0'), b'unknown\n', b''):

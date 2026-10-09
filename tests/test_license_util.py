@@ -61,6 +61,34 @@ class LicenseUtilTests(unittest.TestCase):
             self.assertIn(software_id, fields["Software ID"])
             self.assertEqual(fields["License valid"], "True")
 
+    # --- ROS feature nibble (byte 7 = feature bits << 4 | level) ----------
+
+    def test_generate_ros_default_keeps_legacy_feature_byte(self):
+        fields = self.util.parse(
+            self.util.generate_ros("4JZ2-H049", self.private_key.hex()),
+            self.public_key.hex())
+        # Legacy community value 0x16: level 6 + feature bit 1 rendered by
+        # RouterOS as "extra-channels" in the License Features field.
+        self.assertEqual(fields.get("License Level"), "6")
+        self.assertEqual(fields.get("Feature Bits"), "1")
+
+    def test_generate_ros_feature_bits_zero_round_trips(self):
+        lic = self.util.generate_ros(
+            "4JZ2-H049", self.private_key.hex(), feature_bits=0)
+        fields = self.util.parse(lic, self.public_key.hex())
+        self.assertEqual(fields["kind"], "ros")
+        self.assertIn("4JZ2-H049", fields.get("Software ID", ""))
+        self.assertEqual(fields.get("License valid"), "True")
+        self.assertEqual(fields.get("License Level"), "6")
+        self.assertEqual(fields.get("Feature Bits"), "0")
+
+    def test_generate_ros_rejects_invalid_feature_bits(self):
+        for bad in (-1, 16, 1.5, "1", None, True):
+            with self.subTest(bad=repr(bad)):
+                with self.assertRaises(ValueError):
+                    self.util.generate_ros(
+                        "4JZ2-H049", self.private_key.hex(), feature_bits=bad)
+
     # --- identifier validation -------------------------------------------
 
     def test_generate_ros_rejects_malformed_software_id(self):
