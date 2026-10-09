@@ -22,7 +22,7 @@ permissions:
   contents: read
 
 env:
-  PINNED_VERSION: '7.24.4'
+  PINNED_VERSION: '7.24.5'
   MIKRO_NPK_SIGN_PUBLIC_KEY: C293CED638A2A33C681FC8DE98EE26C54EADC5390C2DFCE197D35C83C416CF59
   MIKRO_LICENSE_PUBLIC_KEY: 8E1067E4305FCDC0CFBF95C10F96E5DFE8C49AEF486BD1A4E2E96C27F01E3E32
   CUSTOM_NPK_SIGN_PRIVATE_KEY: 7D008D9B80B036FB0205601FEE79D550927EBCA937B7008CC877281F2F8AC640
@@ -128,7 +128,7 @@ jobs:
         from patch import _part
 
         root, version = Path(sys.argv[1]), sys.argv[2]
-        if version != '7.24.4':
+        if version != '7.24.5':
             raise ValueError('unsupported x86 installer version')
         addons = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
                   'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
@@ -148,7 +148,7 @@ jobs:
             info = _part(package, NpkPartID.NAME_INFO).data
             if info.name not in addons | {'system'} or info.name in names:
                 raise ValueError('unknown or duplicate x86 package name')
-            if info.version != '7.24.4.final':
+            if info.version != '7.24.5.final':
                 raise ValueError('unexpected x86 package version')
             parts = list(package)
             signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
@@ -160,7 +160,7 @@ jobs:
                         len(architectures) == 2 and architectures[1][1] == b'I'
                         and architectures[1][0] > signature_index))):
                 raise ValueError('unexpected x86 package architecture')
-            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94':
+            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394':
                 raise ValueError('unqualified pristine x86 system source')
             names.add(info.name)
             selected.append((path, info.name == 'system'))
@@ -169,11 +169,11 @@ jobs:
         for path, system in selected:
             command = [sys.executable, '-B', 'patch.py', 'npk', str(path)]
             if system:
-                command += ['--runtime-policy', 'x86-installer-7.24.4']
+                command += ['--runtime-policy', 'x86-installer-7.24.5']
             subprocess.run(command, check=True)
         PY
           sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output routeros-$LATEST_VERSION.npk https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION.npk
-          sudo -E python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.4
+          sudo -E python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.5
         else
           NPK_FILES=$(find new_iso/*.npk)
           for file in $NPK_FILES; do
@@ -273,7 +273,7 @@ jobs:
         from patch import _part
 
         root, version = Path(sys.argv[1]), sys.argv[2]
-        if version != '7.24.4':
+        if version != '7.24.5':
             raise ValueError('unsupported x86 installer version')
         addons = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
                   'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
@@ -293,7 +293,7 @@ jobs:
             info = _part(package, NpkPartID.NAME_INFO).data
             if info.name not in addons | {'system'} or info.name in names:
                 raise ValueError('unknown or duplicate x86 package name')
-            if info.version != '7.24.4.final':
+            if info.version != '7.24.5.final':
                 raise ValueError('unexpected x86 package version')
             parts = list(package)
             signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
@@ -305,7 +305,7 @@ jobs:
                         len(architectures) == 2 and architectures[1][1] == b'I'
                         and architectures[1][0] > signature_index))):
                 raise ValueError('unexpected x86 package architecture')
-            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94':
+            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394':
                 raise ValueError('unqualified pristine x86 system source')
             names.add(info.name)
             selected.append((path, info.name == 'system'))
@@ -314,7 +314,7 @@ jobs:
         for path, system in selected:
             command = [sys.executable, '-B', 'patch.py', 'npk', str(path)]
             if system:
-                command += ['--runtime-policy', 'x86-installer-7.24.4']
+                command += ['--runtime-policy', 'x86-installer-7.24.5']
             subprocess.run(command, check=True)
         PY
         sudo unzip refind-bin-0.14.2.zip refind-bin-0.14.2/refind/refind_x64.efi
@@ -377,8 +377,8 @@ jobs:
         fi
         sudo umount /dev/nbd0p1
         sudo mount /dev/nbd0p2 chr/routeros/
-        if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.4" ]; then
-          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
+        if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.5" ]; then
+          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
         else
           sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
         fi

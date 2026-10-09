@@ -1,5 +1,21 @@
 # HANDOFF — Ali Patch Code
 
+**C3 SELESAI + RILIS 7.24.5 2026-10-09 (sesi kelima-belas): pipeline dinaikkan
+ke 7.24.5 sesuai arahan pemilik ("releases sesuai versi baru").** Perubahan:
+`patch7.yml` PINNED_VERSION/validator-inline(x2: versi+hash d97831be+kebijakan
+x86-installer-7.24.5)/gerbang banner CHR (chr-x86-7.24.5; string kebijakan
+banner tetap); `patch.py` kebijakan CHR versi-sadar (_chr_policies/_chr_version_
+pins) + validator banner menerima 7.24.5.final (pin komponen tak berubah —
+login/logo byte-identik). Tes aktual hijau sesi ini: branding 39 OK, chr 27,
+x86-installer 31, banner 23, coverage 23+7, license 18. `test_release_assets`
+(66) GAGAL DI macOS — terbukti pre-existing via baseline-stash pristine HEAD
+(gagal identik tanpa perubahan C3; historis hijau di Linux/WSL; kode
+release_assets.py tidak diubah C3; verifikasi sesungguhnya = CI Linux).
+Draft 7.24.4 run 37933539130 dihapus (HTTP 204; run sukses tapi tak diterbitkan
+sesuai arahan versi baru; tag/aset lama utuh). Run 7.24.4 baru dianulir via
+dispatch ulang di commit C3. Hasil dispatch/verifikasi/publish dicatat
+menyusul.
+
 **PUSH & RILIS 2026-10-09 (sesi keempatbelas): izin pemilik diberikan
 ("kalau udah anda jalankan push dan releases tag").** Pre-flight lulus:
 diff-check bersih, test_license_util 18 OK + test_chr_runtime_policy 27 OK

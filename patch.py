@@ -445,7 +445,7 @@ def patch_squashfs(path, key_dict, stats: dict | None = None,
             if (any(parent.is_symlink() for parent in (file, file.parent, file.parent.parent))
                     or not file.is_file() or file.stat().st_nlink != 1):
                 raise ValueError('runtime policy requires regular unlinked files: ' + relative)
-        if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
+        if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
             import hashlib
             for relative, expected in _X86_INSTALLER_COMPONENT_SHA256.items():
                 if hashlib.sha256((Path(path) / relative).read_bytes()).hexdigest() != expected:
@@ -528,6 +528,7 @@ def _validate_key_dict(key_dict):
 
 
 _CHR_RUNTIME_POLICY = 'chr-x86-7.24.4'
+_CHR_RUNTIME_POLICY_7245 = 'chr-x86-7.24.5'
 _X86_INSTALLER_RUNTIME_POLICY = 'x86-installer-7.24.4'
 _X86_INSTALLER_RUNTIME_POLICY_7245 = 'x86-installer-7.24.5'
 # Caller-declared installed-x86 path, NOT product autodetection. The evidence
@@ -550,6 +551,18 @@ _X86_INSTALLER_COMPONENT_SHA256 = {
 
 def _x86_installer_policies():
     return (_X86_INSTALLER_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY_7245)
+
+
+def _chr_policies():
+    return (_CHR_RUNTIME_POLICY, _CHR_RUNTIME_POLICY_7245)
+
+
+def _chr_version_pins():
+    """Version -> CHR runtime policy, read at call time so tests may patch
+    the pinned constants. Unlike the installer path there is no source-hash
+    pin, so the policy label itself binds the qualified system version."""
+    return {'7.24.4.final': _CHR_RUNTIME_POLICY,
+            '7.24.5.final': _CHR_RUNTIME_POLICY_7245}
 
 
 def _x86_installer_version_pins():
@@ -579,15 +592,16 @@ def _part(package, part_id, required=True):
 
 def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_key,
                              *, source_npk=None):
-    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy not in _x86_installer_policies():
+    if runtime_policy not in _chr_policies() and runtime_policy not in _x86_installer_policies():
         raise ValueError('unsupported runtime policy')
     if getattr(package, '_packages', []):
-        product = 'CHR ' if runtime_policy == _CHR_RUNTIME_POLICY else ''
+        product = 'CHR ' if runtime_policy in _chr_policies() else ''
         raise ValueError('runtime policy only supports single-package ' + product + 'system NPK')
     info = _part(package, NpkPartID.NAME_INFO).data
-    if runtime_policy == _CHR_RUNTIME_POLICY:
-        expected_versions = ('7.24.4.final',)
-        version_note = 'runtime policy requires system 7.24.4.final'
+    if runtime_policy in _chr_policies():
+        expected_versions = tuple(version for version, policy
+                                  in _chr_version_pins().items() if policy == runtime_policy)
+        version_note = 'runtime policy requires system version matching the CHR policy'
     else:
         expected_versions = tuple(_x86_installer_version_pins())
         version_note = 'runtime policy requires system 7.24.4.final or 7.24.5.final'
@@ -612,7 +626,7 @@ def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_k
     _validate_key_dict(key_dict)
     _part(package, NpkPartID.FILE_CONTAINER)
     _part(package, NpkPartID.SQUASHFS)
-    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
+    if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
         import hashlib
         # Parsed state loses declared part lengths and cannot prove provenance.
         # Direct callers must supply the original full wire bytes, not a digest
@@ -699,8 +713,10 @@ def _validate_terminal_banner_package(package, policy):
     if policy != TERMINAL_BANNER_POLICY or getattr(package, '_packages', []):
         raise ValueError('terminal banner requires supported single-package policy')
     info = _part(package, NpkPartID.NAME_INFO).data
-    if info.name != 'system' or info.version != '7.24.4.final':
-        raise ValueError('terminal banner requires system 7.24.4.final')
+    if info.name != 'system' or info.version not in ('7.24.4.final', '7.24.5.final'):
+        # Banner pins are unchanged: the pinned login/console logo consumers
+        # are byte-identical in the 7.24.5 squashfs.
+        raise ValueError('terminal banner requires system 7.24.4.final or 7.24.5.final')
     parts = list(package)
     signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
     archs = [(i, part.data) for i, part in enumerate(parts)
@@ -798,7 +814,7 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                 raise ValueError('repacked SquashFS inode/link metadata mismatch; signing blocked')
         if runtime_policy:
             report['runtime_policy'] = runtime_policy
-            if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
+            if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
                 import hashlib as _hashlib
                 report['source_qualification'] = {
                     'npk_sha256': (_hashlib.sha256(source_npk).hexdigest()
@@ -820,7 +836,7 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
                    runtime_policy=None, license_public_key=None, *, terminal_banner=None):
     provenance = {}
-    if runtime_policy != _CHR_RUNTIME_POLICY and runtime_policy in _x86_installer_policies():
+    if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
         import hashlib
         # Parse the same immutable bytes we pin; never reopen the input between
         # qualification and parsing, or normalize unknown input into a pin.
@@ -859,7 +875,7 @@ if __name__ == '__main__':
     npk_parser.add_argument('input', type=str, help='Input file')
     npk_parser.add_argument('-O', '--output', type=str, help='Output file')
     npk_parser.add_argument('--runtime-policy',
-                            choices=[_CHR_RUNTIME_POLICY, *_x86_installer_policies()],
+                            choices=[*_chr_policies(), *_x86_installer_policies()],
                             help='Explicit caller-declared CHR or x86 installer path policy; '
                                  'x86 installer requires pinned pristine single system source, '
                                  'not product autodetection or physical readiness')

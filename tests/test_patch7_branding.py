@@ -39,7 +39,7 @@ def condition_selected(condition, profile, arch, cache_hit="false", has_new_vers
 
 class WorkflowTests(unittest.TestCase):
     def test_routeros_target_is_pinned_to_7_24_4(self):
-        self.assertEqual(workflow()["env"].get("PINNED_VERSION"), "7.24.4")
+        self.assertEqual(workflow()["env"].get("PINNED_VERSION"), "7.24.5")
 
     def test_version_resolution_uses_pin_not_upstream_latest(self):
         run = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
@@ -179,8 +179,8 @@ class WorkflowTests(unittest.TestCase):
         # The else branch deliberately preserves the generic path for ARM64 and
         # other versions if the workflow pin is changed in a future release.
         expected = '''sudo mount /dev/nbd0p2 chr/routeros/
-if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.4" ]; then
-  sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
+if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.5" ]; then
+  sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
 else
   sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
 fi
@@ -200,14 +200,14 @@ sudo umount /dev/nbd0p2'''
                          ['mikrotik', 'mikrotik', 'install-image', 'chr'])
         self.assertEqual(flagged[-1], (
             "patch", "Patch chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img",
-            "sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.4 "
+            "sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 "
             "--terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image",
         ))
         # Also reject policy injection through env or elsewhere outside run blocks.
         serialized = yaml.safe_dump(config)
         self.assertEqual(serialized.count("--runtime-policy"), 4)
-        self.assertEqual(serialized.count("x86-installer-7.24.4"), 3)
-        self.assertEqual(serialized.count("chr-x86-7.24.4"), 2)
+        self.assertEqual(serialized.count("x86-installer-7.24.5"), 3)
+        self.assertEqual(serialized.count("chr-x86-7.24.5"), 1)
         self.assertEqual(serialized.count("--terminal-banner"), 1)
         self.assertEqual(serialized.count("chr-x86-7.24.4-ali-media-patch"), 1)
         run = next(s['run'] for s in config['jobs']['patch']['steps']
@@ -228,7 +228,7 @@ sudo umount /dev/nbd0p2'''
                          ["$PINNED_VERSION"])
         # Matrix/profile selection is checked above; no profile can bypass
         # this shared CHR step or resolve a version from an upstream latest feed.
-        self.assertEqual(config["env"]["PINNED_VERSION"], "7.24.4")
+        self.assertEqual(config["env"]["PINNED_VERSION"], "7.24.5")
 
     def test_no_guard_bypass_or_failure_suppression(self):
         for job in workflow()["jobs"].values():
@@ -472,8 +472,8 @@ sudo umount /dev/nbd0p2'''
         ]
         self.assertNotEqual(tags[0], tags[1], "Reruns must not reuse an existing release tag")
         self.assertEqual(tags, [
-            f"ali-patch-code-7.24.4-run{run_id}-attempt1",
-            f"ali-patch-code-7.24.4-run{run_id}-attempt2",
+            f"ali-patch-code-7.24.5-run{run_id}-attempt1",
+            f"ali-patch-code-7.24.5-run{run_id}-attempt2",
         ])
 
     def test_release_tag_targets_exact_built_commit(self):
@@ -490,7 +490,7 @@ sudo umount /dev/nbd0p2'''
         for arch in ALL_ARCHS[1:]:
             with self.subTest(arch=arch):
                 suffix = "-" + arch
-                run = (step["run"].replace("$LATEST_VERSION", "7.24.4")
+                run = (step["run"].replace("$LATEST_VERSION", "7.24.5")
                        .replace("$ARCH", suffix))
                 commands = [shlex.split(line) for line in run.splitlines() if line.strip()]
                 self.assertEqual(len(commands), 2)
@@ -501,10 +501,10 @@ sudo umount /dev/nbd0p2'''
                     output = tokens[tokens.index("--output") + 1]
                     self.assertNotIn(output, downloads)
                     downloads[output] = tokens[-1]
-                base = "https://download.mikrotik.com/routeros/7.24.4/"
+                base = "https://download.mikrotik.com/routeros/7.24.5/"
                 self.assertEqual(downloads, {
-                    f"routeros-7.24.4{suffix}.npk": base + f"routeros-7.24.4{suffix}.npk",
-                    f"all_packages{suffix}-7.24.4.zip": base + f"all_packages-{arch}-7.24.4.zip",
+                    f"routeros-7.24.5{suffix}.npk": base + f"routeros-7.24.5{suffix}.npk",
+                    f"all_packages{suffix}-7.24.5.zip": base + f"all_packages-{arch}-7.24.5.zip",
                 })
 
     def test_x86_package_outputs_use_standalone_policy_and_patched_iso_archive(self):
@@ -513,7 +513,7 @@ sudo umount /dev/nbd0p2'''
         run = step['run']
         self.assertIn('if [ "${{ matrix.arch }}" == "x86" ]; then\n  sudo -E python3 -B - new_iso', run)
         self.assertIn('https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION.npk', run)
-        self.assertIn('python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.4', run)
+        self.assertIn('python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.5', run)
         export = run[run.index('# Only x86 exports ISO packages.'):]
         self.assertIn("-iname '*.npk' -exec cp -t all_packages_iso$ARCH-$LATEST_VERSION/ {} +", export)
         self.assertIn('sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *', export)
@@ -567,9 +567,9 @@ def installer_selector_sources():
 class InstallerSelectorTests(unittest.TestCase):
     ADDONS = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
               'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
-    PIN = '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+    PIN = 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
 
-    def run_selector(self, context='new_iso', mutation=None, version='7.24.4', fail=False):
+    def run_selector(self, context='new_iso', mutation=None, version='7.24.5', fail=False):
         # Execute exact workflow Python, replacing ONLY parsing, hashes, subprocess
         # with inert synthetic doubles; no firmware, credentials or signing.
         with tempfile.TemporaryDirectory() as temp:
@@ -583,7 +583,7 @@ class InstallerSelectorTests(unittest.TestCase):
             for index, name in enumerate(sorted(names)):
                 path = root / ('ROUTEROS.NPK' if name == 'system' else f'{index}.npk')
                 path.write_bytes(b'SYNTHETIC, NOT FIRMWARE')
-                info = types.SimpleNamespace(name=name, version='7.24.4.final')
+                info = types.SimpleNamespace(name=name, version='7.24.5.final')
                 parts = [types.SimpleNamespace(id=1, data=info),
                          types.SimpleNamespace(id=2, data=b'i386'),
                          types.SimpleNamespace(id=3, data=b'signature'),
@@ -640,7 +640,7 @@ class InstallerSelectorTests(unittest.TestCase):
                 flagged = [c for c in calls if '--runtime-policy' in c]
                 self.assertEqual(len(flagged), 1)
                 self.assertTrue(flagged[0][4].endswith('ROUTEROS.NPK'))
-                self.assertEqual(flagged[0][-2:], ['--runtime-policy', 'x86-installer-7.24.4'])
+                self.assertEqual(flagged[0][-2:], ['--runtime-policy', 'x86-installer-7.24.5'])
                 self.assertTrue(all(c[:4] == [sys.executable, '-B', 'patch.py', 'npk'] for c in calls))
                 self.assertTrue(all(len(c) == 5 for c in calls if c not in flagged))
 
@@ -657,7 +657,7 @@ class InstallerSelectorTests(unittest.TestCase):
         def feature_marker(root, packages):
             next(iter(packages.values()))._has_pkg = True
         def wrong_version(root, packages):
-            next(iter(packages.values()))[0].data.version = '7.24.5.final'
+            next(iter(packages.values()))[0].data.version = '7.24.4.final'
         def wrong_arch(root, packages):
             next(iter(packages.values()))[1].data = b'arm'
         def duplicate_arch(root, packages):
@@ -671,7 +671,7 @@ class InstallerSelectorTests(unittest.TestCase):
                 self.assertEqual(calls, [])
 
     def test_wrong_context_or_version_and_unqualified_system_fail_closed(self):
-        for context, version in (('other', '7.24.4'), ('new_iso', '7.24.5')):
+        for context, version in (('other', '7.24.5'), ('new_iso', '7.24.4')):
             calls, error = self.run_selector(context=context, version=version)
             self.assertIsInstance(error, ValueError)
             self.assertEqual(calls, [])
@@ -706,9 +706,9 @@ class Package(list):
     _has_pkg = False
 def load(path):
     name = Path(path).stem
-    info = types.SimpleNamespace(name=name, version='7.24.4.final')
+    info = types.SimpleNamespace(name=name, version='7.24.5.final')
     if scenario == 'metadata' and name == 'calea':
-        info.version = '7.24.5.final'
+        info.version = '7.24.4.final'
     return Package([types.SimpleNamespace(id=1, data=info),
                     types.SimpleNamespace(id=2, data=b'i386'),
                     types.SimpleNamespace(id=3, data=b'signature'),
@@ -724,7 +724,7 @@ npk.NpkPartID = ids
 patch = types.ModuleType('patch')
 patch._part = part
 sys.modules.update(npk=npk, patch=patch)
-pin = '0' * 64 if scenario == 'wire' else '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94'
+pin = '0' * 64 if scenario == 'wire' else 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
 hashlib.sha256 = lambda data: types.SimpleNamespace(hexdigest=lambda: pin)
 import subprocess
 subprocess.run = lambda command, check: record('NPK ' + json.dumps(command))
@@ -756,7 +756,7 @@ sudo() {
                         (image / f'{name}.npk').write_bytes(b'SYNTHETIC NOT FIRMWARE')
                     (root / 'attempts.log').write_text('')
                     env = {**os.environ, 'SELECTOR_SCENARIO': scenario,
-                           'LATEST_VERSION': '7.24.5' if scenario == 'version' else '7.24.4',
+                           'LATEST_VERSION': '7.24.4' if scenario == 'version' else '7.24.5',
                            'ARCH': '', 'PYTHONDONTWRITEBYTECODE': '1'}
                     result = subprocess.run([bash], input=(harness + step['run']).encode(),
                                             cwd=root, env=env, capture_output=True, timeout=30)

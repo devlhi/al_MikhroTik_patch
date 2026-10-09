@@ -15,7 +15,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts/release_assets.py"
-VERSION = "7.24.4"
+VERSION = "7.24.5"
 ALL_ARCHS = ["x86", "arm", "arm64", "mipsbe", "mmips", "smips", "ppc", "tile"]
 METADATA_FILES = ("SHA256SUMS", "manifest.json", "RELEASE_NOTES.md")
 TOTAL_ASSETS = 39
