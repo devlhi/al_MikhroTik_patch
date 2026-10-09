@@ -17,7 +17,7 @@
       "note": "Byte-identical to the pinned qualified source NPK in patch.py (_X86_INSTALLER_SOURCE_SHA256) and to docs/sfp-driver-findings.md 'vendor.npk'.",
       "name_info": "system 7.24.4.final (verified via repo npk.py)"
     },
-    "extraction": "unsquashfs -cat per file (full-tree extraction stops on APFS case collision xt_DSCP.ko/xt_dscp.ko, same as HANDOFF \u00a77). Files traced: nova/bin/* (78 binaries), bnx2x.ko."
+    "extraction": "unsquashfs -cat per file (full-tree extraction stops on APFS case collision xt_DSCP.ko/xt_dscp.ko, same as HANDOFF §7). Files traced: nova/bin/* (78 binaries), bnx2x.ko."
   },
   "references_found": [
     {
@@ -214,5 +214,46 @@
     "result": "IDENTICAL ethtool surface to 7.24.4: 12 SIOCETHTOOL sites, observed cmd set 0x01/0x03/0x13/0x1a/0x1d/0x4c; zero GMODULEINFO(0x42)/GMODULEEEPROM(0x43) stores into ethtool structs. Both builds contain exactly 36 immediate-0x42 and 18 immediate-0x43 instructions; context disassembly shows these are a media/speed enum switch and sequential property-serialization field IDs (0x3f..0x43), not ioctl commands.",
     "conclusion": "The claim that 7.23.1 x86 natively reads SFP tx/rx (and 7.24.2 lost it) is NOT corroborated at the userland binary level for standard-driver NICs. No screenshot or device output supporting the claim was provided. A genuine working example (monitor output with sfp-rx-power plus /system resource print showing an x86 board and the NIC involved) would be valuable contrary evidence to examine.",
     "limits": "Static x86 userland comparison of exactly two versions (7.23.1, 7.24.4); 7.24.2 not separately downloaded because 7.24.4 already establishes the 7.24.x behavior and the claim's working version (7.23.1) was the decisive test."
+  },
+  "addendum_2026_10_09_7_23_1_lab_sfp_port": {
+    "result": "Port of the proven 7.24.4/7.24.5 SFP-DOM net patch to RouterOS 7.23.1 x86, qualified, built, signed and regression-tested in QEMU (graceful degradation on e1000). Owner request: make 7.23.1 the same as 7.24.4/7.24.5. Artifacts (scratch, /tmp/ali-sfp-research/port7231/): net-patched-7231 (1505624 B, sha256 e0b3e046...bb34fa), routeros-7.23.1-lab-sfp.npk (20433149 B, sha256 c85ba25b...159a8c), monitor7231-transcript.txt, serial logs.",
+    "source_qualification": {
+      "vendor_npk": "routeros-7.23.1.npk sha256 a45ab9a0d60684fb269c0efe00f056204a31969c9a3f396f49500bbed930030f (20755340 B; matches the asset recorded in addendum_2026_10_08_version_7_23_1; wire bytes re-hashed 2026-10-09)",
+      "components_from_vendor_squashfs": {
+        "nova/bin/loader": "792d120d... byte-identical to 7.24.4/7.24.5 pin",
+        "nova/bin/keyman": "a6e96a27... differs from 7.24.4/7.24.5 (ace0e5fa...)",
+        "nova/bin/mode": "e8562a37... differs from 7.24.4/7.24.5 (f55ae470...)",
+        "nova/bin/net": "5e2af12b... (1505624 B)",
+        "kernel": "5.6.3-64 (module dir unchanged)"
+      },
+      "policy": "patch.py gained _X86_INSTALLER_RUNTIME_POLICY_7231 = 'x86-installer-7.23.1', source pin a45ab9a0..., and per-version component pins (_x86_installer_component_pins(); loader shared, keyman/mode 7.23.1-specific). CLI choices and version note updated; scoped test suites match the pristine-HEAD macOS baseline exactly (no new failures; negative-probe regex updated from 'system 7.24.4' to 'system 7.23.1' because the version-note now lists 7.23.1 first)."
+    },
+    "anchor_mapping_verified_by_disassembly": {
+      "net_input": "cat7231/nova/bin/net = system7231.sfs nova/bin/net, sha256 5e2af12b..., 1505624 B",
+      "cross_version_search": "27 anchor signatures of the proven 7.24.4 map searched in 7.23.1 (port7231/anchors.py): 15 exact hits located the SFP cluster, monitor fn, DOM serializer and RPC block; the 7.23.1-specific sites were then verified by full disassembly (port7231/probe1.py, probe2.py).",
+      "patch_a_gate": "test byte [esi+0xc0],1 ; je — byte-identical context incl. rel8 0x37 at VA 0x80770f6; je at VA 0x80770fd (file 0x2f0fd) flips 0x74->0xEB; je target 0x8077136 is the module-state creation block (ctor 0x8076ce2 called at 0x8077161), mirroring 7.24.4.",
+      "patch_b_call_site": "VA 0x8075489 (file 0x2d489): mov eax,[ebx+0x1b8]; mov edx,[ebx+0x10]; add eax,0xc; call 0x806ef92 — same fastcall contract eax=S, edx=I.",
+      "validator_0x806ef92_contract": "getJiffies@PLT 0x8053e90; jiffies cache [S+0x28] with +0x64 window; valid flag [S+8]; buffer at [S]+0x10; iface name at I+0xc via thunk; CC checks via bytesum 0x806cc4f (eax=buf,edx=lo,ecx=hi) comparing A0[0..0x3f] vs 0x4f and A0[0x40..0x5f] vs 0x6f — identical to 7.24.4/7.24.5.",
+      "ethtool_thunk": "0x8175d0f — (eax=name obj; edx=ethtool struct) builds ifreq string, push 0x8946, call ifreqDataIoctl PLT 0x80556c0, return al. SIOCETHTOOL dword sites: 12 (unchanged count vs 7.24.x); no 0x42/0x43 construction (consistent with addendum_2026_10_08_version_7_23_1).",
+      "cave_placement": "RX LOAD phdr[3] off 0xb000 va 0x8053000 filesz=memsz=0x12cbf5 (file end 0x137bf5); next segment file off 0x138000 va 0x8180000; gap 0x40b verified all-zero; cave 356 B at VA 0x817fc00 (file 0x137c00, end 0x137d64); phdr extended 0x12cbf5 -> 0x12d000 filling the gap exactly. Cave code byte-identical to 7.24.4/7.24.5 (only call targets differ), capstone-verified before write."
+    },
+    "build_and_signature": [
+      "patch_net7231.py (clone of the proven patcher): input sha/size asserted, original gate/call bytes asserted, call rel32 recomputed 0x10a772 -> 0x817fc00, padding-zero and phdr-geometry assertions; output net-patched-7231 sha256 e0b3e0460ff58442232fd57cd412bd9f9c80a4412d8f39ee73a1769899bb34fa.",
+      "Qualified base: patch_npk_file(runtime_policy='x86-installer-7.23.1') over the pinned vendor wire bytes -> system-patched-7231.npk (20433149 B, sha256 2d297648...d51562), coverage-passed; extraction ran with TMPDIR on the case-sensitive lab volume (unsquashfs name collisions /nova/bin/login and /pckg/option/bin/bash exist in ALL inspected versions).",
+      "Lab NPK: build_npk7231.py swapped net-patched-7231 into the squashfs, re-signed with workflow keys read in-process (never printed), signature verified against the public counterparts, and a roundtrip re-extraction of nova/bin/net from the saved NPK matched e0b3e046... exactly -> routeros-7.23.1-lab-sfp.npk (20433149 B, sha256 c85ba25b0f2aa2999e342145b9113a79a342724d326d23092f5a13e78c159a8c)."
+    ],
+    "regression_qemu_7_23_1": [
+      "Installer flow differs from the 7.24.4 install-image: the 7.23.1 ISO boots a bzImage (isolinux/linux, 4024544 B, sha256 aca3af10..., initramfs embedded, no separate initrd) with append 'load_ramdisk=1 root=/dev/ram0 -install -cdrom'; prompts run package menu ('i') THEN disk confirm ('Continue? [y/n]' answered 'y'), not the 7.24.4 ENTER-confirm order.",
+      "A stock installer rejects the custom-signed system ('installation of system-7.23.1 failed: broken package'); patch_kernel(key_dict) on the installer kernel (initramfs mapping 2, replacements 2) produces linux7231-patched (sha 256c07ef... prefix) which accepts it. This matches the proven 7.24.4 flow, where the verify-boot kernel bootx64.dump is byte-identical (a88d9a8c...) to the patched installer kernel linux-patched.",
+      "Boot-time package verification also lives in the boot kernel initramfs: booting the swapped custom-signed image with the STOCK kernel panics ('ERROR: no system package found!'); booting with linux7231-patched succeeds.",
+      "Fresh 1G disk installed from the patched-kernel ISO (install7231-patched.iso rebuilt with hdiutil makehybrid, system npk replaced by system-patched-7231.npk), then /var/pdb/system/image swapped to routeros-7.23.1-lab-sfp.npk via debugfs (inode 23812, 20433149 B).",
+      "Verify boot: first-login chain (license y, EULA q, password wizard) completed; /system resource print -> version 7.23.1 (stable), board x86 QEMU; /interface ethernet monitor ether1 once run TWICE (second call exercises the 100-jiffie cache path) — full standard field set (status link-ok, rate 1Gbps, full-duplex yes), prompt returned both times, system alive at the end, no crash, no sfp fields on e1000 (graceful degradation, same as 7.24.4/7.24.5). Transcript: monitor7231-transcript.txt (scratch)."
+    ],
+    "remaining_risks": [
+      "Same class as 7.24.4/7.24.5: DOM display on real hardware (B6) still unproven — QEMU e1000 has no SFP EEPROM; the cave only enables standard ETHTOOL GMODULEINFO/GMODULEEEPROM on the monitor path.",
+      "7.23.1 monitor field plumbing was verified structurally (serializer 0x817cae8 = exact-hit of the 7.24.4 dom_serializer signature; DOM gate byte and property consumers unchanged), not by positive DOM output.",
+      "The 7.23.1 lab NPK is for systems installed/patched with this repo's custom keys; it cannot install on stock RouterOS (by design)."
+    ],
+    "next": "B6 hardware proof on BCM57800/X520 with a DOM-capable optical module (works for all three lab-sfp NPKs); B8 pipeline integration after hardware proof; release lab-sfp-7231-netdom-1 (prerelease, not Latest)."
   }
 }

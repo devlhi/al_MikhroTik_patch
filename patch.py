@@ -447,7 +447,7 @@ def patch_squashfs(path, key_dict, stats: dict | None = None,
                 raise ValueError('runtime policy requires regular unlinked files: ' + relative)
         if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
             import hashlib
-            for relative, expected in _X86_INSTALLER_COMPONENT_SHA256.items():
+            for relative, expected in _x86_installer_component_pins()[runtime_policy].items():
                 if hashlib.sha256((Path(path) / relative).read_bytes()).hexdigest() != expected:
                     raise ValueError('x86-installer runtime policy requires qualified pristine component: '
                                      + relative)
@@ -531,6 +531,7 @@ _CHR_RUNTIME_POLICY = 'chr-x86-7.24.4'
 _CHR_RUNTIME_POLICY_7245 = 'chr-x86-7.24.5'
 _X86_INSTALLER_RUNTIME_POLICY = 'x86-installer-7.24.4'
 _X86_INSTALLER_RUNTIME_POLICY_7245 = 'x86-installer-7.24.5'
+_X86_INSTALLER_RUNTIME_POLICY_7231 = 'x86-installer-7.23.1'
 # Caller-declared installed-x86 path, NOT product autodetection. The evidence
 # qualifies this retained pristine source by exact 582-file/metadata equality
 # after generic mapping against the old installer ISO. It does not authenticate
@@ -542,15 +543,28 @@ _X86_INSTALLER_SOURCE_SHA256 = '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa179
 # squashfs (re-verified), kernel remains 5.6.3-64, and the SFP RPC surface
 # (SIOCETHTOOL sites, 0xA0B1, netlink 27) is unchanged.
 _X86_INSTALLER_SOURCE_SHA256_7245 = 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
+# 7.23.1 qualification (2026-10-09): vendor system NPK SHA-256 below (source
+# asset measured in evidence sfp-x86-userland-ethtool-trace-2026-10-07.json
+# §33 addendum; wire bytes re-hashed 2026-10-09). Kernel remains 5.6.3-64 and
+# the SFP ioctl surface (12 SIOCETHTOOL sites, no 0x42/0x43) is unchanged;
+# keyman/mode binaries differ from 7.24.4/7.24.5, so component pins are
+# per-version (loader is byte-identical across all three).
+_X86_INSTALLER_SOURCE_SHA256_7231 = 'a45ab9a0d60684fb269c0efe00f056204a31969c9a3f396f49500bbed930030f'
 _X86_INSTALLER_COMPONENT_SHA256 = {
     'nova/bin/loader': '792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7',
     'nova/bin/keyman': 'ace0e5fa8de1fdd4098540102b59ae0ab734f2c8bc9bf13a0c86103c2b419ac0',
     'nova/bin/mode': 'f55ae4709fcdf62227fba0985aee8429058d1543d048751cedd86485cd67102a',
 }
+_X86_INSTALLER_COMPONENT_SHA256_7231 = {
+    'nova/bin/loader': '792d120d40529a17003f58b8ed4c1df45511d960c37d17a8e64ce6d112efe9d7',
+    'nova/bin/keyman': 'a6e96a2712c90e1d046acb927ecb05cfa4225c9d8e948b6affc0237a2b32b7fa',
+    'nova/bin/mode': 'e8562a3785c9f91acf0c5326b3434bec35a0314e2bb8196c04f5167f9af26e7e',
+}
 
 
 def _x86_installer_policies():
-    return (_X86_INSTALLER_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY_7245)
+    return (_X86_INSTALLER_RUNTIME_POLICY, _X86_INSTALLER_RUNTIME_POLICY_7245,
+            _X86_INSTALLER_RUNTIME_POLICY_7231)
 
 
 def _chr_policies():
@@ -569,7 +583,18 @@ def _x86_installer_version_pins():
     """Version -> qualified pristine source pin, read at call time so tests
     may patch the pinned constants."""
     return {'7.24.4.final': _X86_INSTALLER_SOURCE_SHA256,
-            '7.24.5.final': _X86_INSTALLER_SOURCE_SHA256_7245}
+            '7.24.5.final': _X86_INSTALLER_SOURCE_SHA256_7245,
+            '7.23.1.final': _X86_INSTALLER_SOURCE_SHA256_7231}
+
+
+def _x86_installer_component_pins():
+    """Runtime policy -> required pristine component pins, read at call time.
+    7.24.4/7.24.5 share byte-identical keyman/loader/mode; 7.23.1 differs in
+    keyman/mode (loader identical), measured from the vendor 7.23.1 system
+    squashfs."""
+    return {_X86_INSTALLER_RUNTIME_POLICY: _X86_INSTALLER_COMPONENT_SHA256,
+            _X86_INSTALLER_RUNTIME_POLICY_7245: _X86_INSTALLER_COMPONENT_SHA256,
+            _X86_INSTALLER_RUNTIME_POLICY_7231: _X86_INSTALLER_COMPONENT_SHA256_7231}
 
 
 def _npk_source_sha256(package):
@@ -604,7 +629,7 @@ def _validate_runtime_policy(package, key_dict, runtime_policy, license_public_k
         version_note = 'runtime policy requires system version matching the CHR policy'
     else:
         expected_versions = tuple(_x86_installer_version_pins())
-        version_note = 'runtime policy requires system 7.24.4.final or 7.24.5.final'
+        version_note = 'runtime policy requires system 7.23.1.final, 7.24.4.final or 7.24.5.final'
     if info.name != 'system' or info.version not in expected_versions:
         raise ValueError(version_note)
     parts = list(package)

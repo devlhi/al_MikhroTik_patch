@@ -1,5 +1,44 @@
 # HANDOFF — Ali Patch Code
 
+**PORT LAB SFP KE 7.23.1 SELESAI 2026-10-10 (sesi kedelapanbelas): pola
+7.24.4/7.24.5 direplikasi penuh untuk 7.23.1 atas permintaan pemilik
+("7.23.1 ini jg ya klw bisa samakan").** Pekerjaan: (1) kualifikasi sumber
+resmi — pin wire `routeros-7.23.1.npk` sha256 `a45ab9a0…` (asset §33);
+komponen diukur ulang: `loader` byte-identik dengan pin 7.24.4/7.24.5,
+`keyman`/`mode` **berbeda** → `patch.py` kini punya pin komponen PER-VERSI
+(`_x86_installer_component_pins()`), kebijakan `x86-installer-7.23.1`,
+pin versi `7.23.1.final`, CLI + catatan versi diperbarui; probe-negatif tes
+disesuaikan (`'system 7.24.4'` → `'system 7.23.1'` karena pesan versi kini
+mendaftar 7.23.1 lebih dulu). Suite tercakup (x86-installer 59, branding,
+chr) = **identik baseline pristine-HEAD macOS** (14 fail + 9 error
+pre-existing; 0 kegagalan baru). (2) Anchor net 7.23.1 (`5e2af12b…`,
+1.505.624 B) diverifikasi disassembly: gate `test byte [esi+0xc0],1; je`
+byte-identik @0x80770f6 (je @0x80770fd, file 0x2f0fd), call site
+@0x8075489 → validator 0x806ef92 (kontrak S/I sama: jiffies [S+0x28]+0x64,
+valid [S+8], buf [S]+0x10, nama I+0xc), thunk 0x8175d0f, bytesum 0x806cc4f
+(CC A0 0..0x3f/0x4f & 0x40..0x5f/0x6f persis 7.24.x), PLT jiffies 0x8053e90;
+cave 356 B @0x817fc00 (gap 0x40b nol diverifikasi), phdr 0x12cbf5→0x12d000.
+Patcher = klon B5/B7 dengan assertion penuh → `net-patched-7231`
+sha256 `e0b3e046…`. (3) Build: base terkualifikasi via kebijakan baru
+(`system-patched-7231.npk` `2d297648…`, coverage-passed; ekstraksi perlu
+TMPDIR di volume case-sensitive — tabrakan nama `login`/`bash` ada di SEMUA
+versi), lalu swap+re-sign in-process+roundtrip → `routeros-7.23.1-lab-sfp.npk`
+(20.433.149 B, sha256 `c85ba25b…`). (4) Regresi QEMU hijau setelah dua
+pelajaran alur 7.23.1: installer ISO memakai bzImage+initramfs tertanam
+(`isolinux/linux`, prompt urutan menu-paket-'i' → `Continue? [y/n]`='y'),
+dan verifikasi paket terjadi di initramfs kernel — kernel installer maupun
+kernel boot harus `patch_kernel` (bukti silang: `bootx64.dump` B5 ==
+`linux-patched` byte-identik `a88d9a8c…`); stok menolak custom
+("broken package"/"no system package found"). Dengan kernel terpatch:
+install bersih → swap image via debugfs → boot → wizard login OK →
+`monitor ether1 once` 2× (path cache) tanpa crash, field standar utuh,
+degradasi anggun di e1000, versi 7.23.1 (stable). (5) Rilis prerelease
+bukan-Latest `lab-sfp-7231-netdom-1` + SHA256SUMS menyusul setelah push
+dokumentasi ini. Bukti tahan lama: addendum
+`addendum_2026_10_09_7_23_1_lab_sfp_port` di JSON §33. Batas TIDAK berubah:
+DOM di hardware (B6) tetap belum terbukti untuk ketiga versi; B8 menunggu
+bukti hardware. Artefak scratch `/tmp/ali-sfp-research/port7231/`.
+
 **B7 SELESAI + RILIS LAB SFP 7.24.5 2026-10-09 (sesi ketujuh-belas): patch
 SFP di-porting ke 7.24.5, pola identik, regresi hijau, rilis lab terbit.**
 Agent B7 (`/tmp/ali-sfp-research/agent-b7/`): cave 356-byte yang sama; alamat

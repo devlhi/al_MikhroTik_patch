@@ -74,7 +74,7 @@ class InstallerScopeTests(unittest.TestCase):
                               ('system', '7.24.3.final'), ('system', '7.24.4.test')]:
             p = package()
             p._parts[0].data = NpkNameInfo(name, version)
-            with self.subTest(name=name, version=version), self.assertRaisesRegex(ValueError, 'system 7.24.4'):
+            with self.subTest(name=name, version=version), self.assertRaisesRegex(ValueError, 'system 7.23.1'):
                 self.validate(p)
         for arch in (b'x86', b'x86_64', b'arm', b'I'):
             p = package()
