@@ -1,5 +1,21 @@
 # HANDOFF — Ali Patch Code
 
+**B7 SELESAI + RILIS LAB SFP 7.24.5 2026-10-09 (sesi ketujuh-belas): patch
+SFP di-porting ke 7.24.5, pola identik, regresi hijau, rilis lab terbit.**
+Agent B7 (`/tmp/ali-sfp-research/agent-b7/`): cave 356-byte yang sama; alamat
+helper dilokasi ulang dinamis dari fetcher asli 7.24.5 (thunk 0x817b2c5,
+jiffies 0x8053e90, bytesum 0x806cc8d); Patch A @VA 0x8074397 (74→EB), call
+@0x807677f → cave 0x8184be0, phdr 0x131bd5→0x132000 (laporan B4 memuat salah
+hitung file-offset Patch A — VA-nya benar, tanpa dampak). NPK lab di-sign +
+verify publik + roundtrip disk; **regresi QEMU hijau percobaan pertama**
+(7.24.5 + e1000, `monitor` tanpa crash). Parent verifikasi ulang byte-level:
+0xEB@file 0x2c397, redirect → 0x8184be0, filesz 0x132000, prolog cave ada.
+Rilis: tag `lab-sfp-7245-netdom-1` prerelease bukan-Latest; aset
+`routeros-7.24.5-lab-sfp.npk` (20.525.117 B, sha256 e44a3891…) + SHA256SUMS.
+Anomali `untagged-…` saat publish diperbaiki via PATCH + ref liar dihapus.
+DOM tetap belum terbukti hardware (menunggu B6 di BCM57800 — kini paket lab
+tersedia untuk KEDUA versi).
+
 **RILIS LAB SFP TERBIT 2026-10-09 (sesi keenam-belas):** atas permintaan
 pemilik ("build 7.24.4 dengan nama lab sfp"), artifact B5 diverifikasi ulang
 utuh (signature custom VALID; `net` di dalam NPK == build 1688dd64…) lalu
