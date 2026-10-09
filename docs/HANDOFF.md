@@ -34,7 +34,12 @@ install bersih → swap image via debugfs → boot → wizard login OK →
 `monitor ether1 once` 2× (path cache) tanpa crash, field standar utuh,
 degradasi anggun di e1000, versi 7.23.1 (stable). (5) Rilis prerelease
 bukan-Latest `lab-sfp-7231-netdom-1` + SHA256SUMS menyusul setelah push
-dokumentasi ini. Bukti tahan lama: addendum
+dokumentasi ini. **[Addendum: terbit 2026-10-10 — tag `lab-sfp-7231-netdom-1`
+di f68006b (=main), prerelease=true, draft=false, aset
+`routeros-7.23.1-lab-sfp.npk` (20.433.149 B) + `SHA256SUMS.txt`; pembuatan
+draft via API, upload aset di `uploads.github.com`, publish via PATCH
+make_latest=false — pola B7; rilis/tag lama tak tersentuh.]** Bukti tahan
+lama: addendum
 `addendum_2026_10_09_7_23_1_lab_sfp_port` di JSON §33. Batas TIDAK berubah:
 DOM di hardware (B6) tetap belum terbukti untuk ketiga versi; B8 menunggu
 bukti hardware. Artefak scratch `/tmp/ali-sfp-research/port7231/`.
