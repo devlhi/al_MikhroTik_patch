@@ -255,5 +255,18 @@
       "The 7.23.1 lab NPK is for systems installed/patched with this repo's custom keys; it cannot install on stock RouterOS (by design)."
     ],
     "next": "B6 hardware proof on BCM57800/X520 with a DOM-capable optical module (works for all three lab-sfp NPKs); B8 pipeline integration after hardware proof; release lab-sfp-7231-netdom-1 (prerelease, not Latest)."
+  },
+  "addendum_2026_10_10_7_23_1_license_fb0": {
+    "result": "License feature-bits=0 (empty Features, Level 6) PROVEN on RouterOS 7.23.1 x86 in QEMU, on the same system image that carries the 7.23.1 lab-sfp net patch — completing lab parity with the friend's build (SFP-capable system + clean license) for all of 7.23.1/7.24.4/7.24.5.",
+    "method": [
+      "Phase 0: durable admin password (set + clean in-guest reboot; QEMU image switched to cache=writethrough after a hard-terminate was observed losing the earlier wizard-set password).",
+      "Phase A: /system license print captured the QEMU software-id; an fb0 ROS license (Level 6, feature nibble 0) was generated in-process via license_server._workflow_private_key() + license_util.generate_ros(feature_bits=0) (keys never printed), parsed back as level 6 / feature-bits 0, imported via /system license import and a clean reboot.",
+      "Phase B: fresh boot, login, /system license print -> 'nlevel: 6' and 'features:' EMPTY (no 'extra channel' string), /system resource print -> version 7.23.1 (stable), /interface ethernet monitor ether1 once -> standard fields, prompt returned, system alive. Raw serial logs are scratch-only and software-id is redacted here (XXXX-XXXX)."
+    ],
+    "lab_notes": [
+      "After login on an unlicensed 7.23.1 system a 'Please press Enter to continue' license-notice screen appears before the prompt; serial drivers must answer it (new vs the 7.24.4 flow).",
+      "The import dialog accepted the pasted key without a visible key-id> prompt; success signal is the 'Reboot?' question, answered y (clean reboot, durable)."
+    ],
+    "boundary": "Same as before: DOM display on real hardware (B6) remains unproven for all three versions; license evidence here is lab activation/display only, not a MikroTik-granted license."
   }
 }

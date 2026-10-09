@@ -1,5 +1,27 @@
 # HANDOFF — Ali Patch Code
 
+**LISENSI fb0 TERBUKTI DI 7.23.1 2026-10-10 (sesi kesembilanbelas): paritas
+lab dengan build teman lengkap untuk ketiga versi.** Permintaan pemilik:
+"buat 7.23.1 sama dengan pnya kawan sy bisa support sfp". Bagian SFP sudah
+rampung (sesi 18); sesi ini menutup bagian lisensi yang belum pernah diuji
+di 7.23.1 (keyman 7.23.1 biner berbeda dari 7.24.x). Siklus QEMU penuh di
+disk yang SAMA dengan lab-sfp npk terpasang: password admin dibuat
+tahan-reboot (set + reboot bersih in-guest; disk cache=writethrough —
+terminate-keras terbukti bisa kehilangan password dari wizard), lisensi fb0
+dihasilkan in-process (level 6 / feature-bits 0, kunci tak pernah dicetak),
+`/system license import` → reboot bersih → boot ulang → `/system license
+print` menampilkan **nlevel: 6 dan `features:` KOSONG** (tanpa string
+"extra channel"), `/system resource print` → 7.23.1 (stable), `monitor
+ether1 once` tetap normal dan sistem hidup — patch SFP dan lisensi bersih
+berdampingan. Dua catatan alur 7.23.1 baru: layar "Please press Enter"
+notifikasi lisensi muncul sebelum prompt saat belum berlisensi (driver
+serial wajib menjawab), dan dialog import menerima key tanpa prompt
+key-id> (sinyal sukses = pertanyaan "Reboot?"). Bukti tahan lama:
+`addendum_2026_10_10_7_23_1_license_fb0` di JSON §33 (software-id
+disanitasi; log serial mentah hanya di scratch). Batas tetap: DOM di
+hardware nyata (B6) belum terbukti untuk ketiga versi; ini bukti lab, bukan
+lisensi resmi MikroTik.
+
 **PORT LAB SFP KE 7.23.1 SELESAI 2026-10-10 (sesi kedelapanbelas): pola
 7.24.4/7.24.5 direplikasi penuh untuk 7.23.1 atas permintaan pemilik
 ("7.23.1 ini jg ya klw bisa samakan").** Pekerjaan: (1) kualifikasi sumber
