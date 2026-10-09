@@ -1,5 +1,17 @@
 # HANDOFF — Ali Patch Code
 
+**RILIS LAB SFP TERBIT 2026-10-09 (sesi keenam-belas):** atas permintaan
+pemilik ("build 7.24.4 dengan nama lab sfp"), artifact B5 diverifikasi ulang
+utuh (signature custom VALID; `net` di dalam NPK == build 1688dd64…) lalu
+diterbitkan sebagai prerelease **bukan Latest**: tag `lab-sfp-7244-netdom-1`,
+aset `routeros-7.24.4-lab-sfp.npk` (20.524.705 B) + SHA256SUMS, catatan rilis
+memuat batas bukti (regresi QEMU hijau; DOM belum terbukti hardware),
+instruksi uji B6 (upload via Files → reboot → `monitor`), dan prosedur
+rollback. Provenance: NPK system vendor 7.24.4 resmi (46de2e3d…) → pipeline
+terkualifikasi → cave net B5 → re-sign in-process. Rilis/tag lama tak
+tersentuh. Pembuatan rilis via API sempat 422 (commitish/SHA ditolak) —
+diselesaikan dengan target `main`.
+
 **C3 SELESAI + RILIS 7.24.5 2026-10-09 (sesi kelima-belas): pipeline dinaikkan
 ke 7.24.5 sesuai arahan pemilik ("releases sesuai versi baru").** Perubahan:
 `patch7.yml` PINNED_VERSION/validator-inline(x2: versi+hash d97831be+kebijakan
