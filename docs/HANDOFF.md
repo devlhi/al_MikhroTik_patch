@@ -3219,3 +3219,26 @@ Rencana lab v3: bangun 7.23.1 kita (lisensi+fb0) + transplantasi verbatim
 halaman teman (hunk phdr/redirect/page/rename-port; tanpa hunk domain),
 verifikasi QEMU (e1000: halaman gagal-anggun), pin di patch.py, rilis.
 Artefak analisa: /home/djundev/mikpatch-labv2/friend-page-disasm.txt (scratch).
+
+### 38. Rilis 7.23.1 lab v3: transplantasi halaman SFP build teman (2026-10-11)
+
+Esekusi rencana §37. Build lokal via patcher produksi (kunci workflow, tak
+dicetak): policy `x86-installer-7.23.1` coverage-passed; net 7.23.1 diverifikasi
+bebas byte-kunci (pipeline net == vendor net) sehingga transplantasi bersih.
+net lab-v3 = vendor + hunk phdr/redirect/halaman-4KiB/rename sfp28 — verbatim
+byte-identik dengan net build teman KECUALI hunk domain-server (17 byte area
+0x1579e4, tidak ditransplant). Repack squashfs dengan parity metadata +
+carve-out ukuran net (pola banner); re-sign in-process; signature custom VALID.
+NPK 20.433.149 B, sha256 `3af29811…`.
+
+Rilis prerelease bukan-Latest: tag `lab-v3-7231-friendsfp-1` (ID 409578106),
+aset NPK + SHA256SUMS. Catatan rilis memuat: teknik asal terbukti di hardware
+pemilik via image teman (laporan pemilik, bukan verifikasi agent); runtime QEMU
+NPK persis ini BELUM dijalankan — dibedakan tegas dari bukti build/signature.
+Alur pemakai: install image teman → upload npk lab v3 → license via generator
+repo (fb0) → monitor port SFP. Rollback: NPK system lain.
+
+Batas/lanjut: uji runtime QEMU lab v3 (boot + monitor e1000) tertunda; port
+halaman ke 7.24.4 (pemetaan alamat helper 0x8054790/0x8055120/0x80542d0/
+0x8055500/konstanta 0x818a9a4 ke net 7.24.4) menyusul; integrasi pin di
+patch.py setelah validasi runtime. Scratch build script: .zcode/tmp (sesi).
