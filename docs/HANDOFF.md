@@ -3108,3 +3108,19 @@ include_lab_sfp_net=true create_draft_release=true; verifikasi aset; publikasi
 prerelease "7.24.4 lab v2" (tag baru, bukan Latest, rilis/tag lama utuh);
 HANDOFF penutup + push. Prosedur push: cabang sementara lokal → fast-forward
 main → hapus cabang → push hanya main (pola yang pemilik setujui di §28).
+
+**Penutup §34 (2026-10-11 UTC):** commit `0e1b22e` dipush hanya main via cabang
+sementara lokal yang sudah dihapus. CI run 38116864986 (x86-all, pinned 7.24.4,
+include_lab_sfp_net=true): patch (x86) 5m08s + release 29s, keduanya sukses.
+Rilis ID409461269 terbit: **"7.24.4 lab v2 — Ali Media Patch — x86 full set +
+SFP lab (prerelease)"**, tag `ali-patch-code-7.24.4-run38116864986-attempt1`,
+21 aset (18 produk + 3 metadata), prerelease=true, bukan Latest. Verifikasi
+aset unduhan: NPK standalone SHA-256 `bd5cf561…` cocok SHA256SUMS; signature
+custom kcdsa+eddsa PASS; `nova/bin/net` = pin `1688dd64…`; seluruh part
+non-signature identik dengan build lokal terverifikasi. Delapan rilis lama dan
+asetnya utuh; Latest tetap 7.24.4 (401538288). Catatan rilis memuat batas,
+instruksi uji B6, dan rollback. CHR dalam rilis ini tidak membawa patch net
+(sumber system image berbeda; NIC virtual). Batas terbuka tetap: DOM hardware
+pemilik (monitor port SFP belum dijalankan), runtime/boot aset CI ini, key lama
+pemilik ber-extra-channels/berbatas waktu sampai regenerasi fb0 dan impor ulang.
+Rincian lengkap di evidence JSON §34.

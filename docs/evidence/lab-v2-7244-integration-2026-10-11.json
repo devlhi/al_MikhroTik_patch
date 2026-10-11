@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "session": "lab-v2-7244-integration",
-  "generated_at_utc": "2026-10-11T06:02:10Z",
-  "status": "LOCAL_INTEGRATION_VERIFIED_PENDING_CI",
+  "generated_at_utc": "2026-10-11T06:35:00Z",
+  "status": "PUBLISHED_SCOPED_X86_PRERELEASE",
   "owner_request": "generator license tanpa extra-channels; build 7.24.4 lengkap dengan patch SFP; rilis bernama 7.24.4 lab v2",
   "source_baseline": {
     "commit": "4088206a29eaa984eda88ef21869c2feb7d6cf96",
@@ -53,12 +53,44 @@
       "fix": "literal digenerate ulang programatik dari biner sumber"
     }
   ],
-  "pending": [
-    "Dispatch CI x86-all pinned_version=7.24.4 include_lab_sfp_net=true create_draft_release=true",
-    "Publikasi draft sebagai '7.24.4 lab v2' prerelease bukan Latest dengan tag baru",
-    "Verifikasi aset CI (net sha, signature, anchor readback)",
-    "Batas tetap: DOM pada hardware fisik belum terbukti; runtime/boot aset CI belum diuji"
-  ],
+  "pending": [],
+  "ci_and_publication": {
+    "commit": "0e1b22e3e1232c9e4921cb4a6258a78e475056bb",
+    "workflow_run": {
+      "run_id": 38116864986,
+      "url": "https://github.com/devlhi/al_MikhroTik_patch/actions/runs/38116864986",
+      "profile": "x86-all",
+      "pinned_version": "7.24.4",
+      "include_lab_sfp_net": true,
+      "jobs": "patch (x86) 5m08s success; release 29s success"
+    },
+    "release": {
+      "id": 409461269,
+      "name": "7.24.4 lab v2 — Ali Media Patch — x86 full set + SFP lab (prerelease)",
+      "tag": "ali-patch-code-7.24.4-run38116864986-attempt1",
+      "url": "https://github.com/devlhi/al_MikhroTik_patch/releases/tag/ali-patch-code-7.24.4-run38116864986-attempt1",
+      "assets": 21,
+      "prerelease": true,
+      "not_latest": true
+    },
+    "asset_verification": {
+      "standalone_npk": {
+        "file": "ali-patch-code-x86-routeros-7.24.4-patched.npk",
+        "size": 20524705,
+        "sha256": "bd5cf561adecbfb5cc7f598e0c977f66e759f188553b63f2c25cd9713f6d9bd1",
+        "sha256sums_match": true,
+        "signature_custom_verify": "PASS (kcdsa+eddsa custom)",
+        "net_sha256_pinned_match": "1688dd642ce8da689d08bc29998b0d2797191e6c59504c4c9159145fa669ac8c",
+        "nonsignature_parts_vs_local_verified_build": "identical"
+      },
+      "old_releases_parity": "semua 8 rilis lama utuh (aset dan tag tidak berubah); Latest tetap 7.24.4 (401538288)"
+    },
+    "limitations_still_open": [
+      "DOM pada hardware fisik (B6) belum terbukti untuk semua versi",
+      "Boot/runtime/aktivasi aset CI run ini belum diuji ulang",
+      "CHR tidak membawa patch net lab-sfp (sumber system image berbeda; NIC virtual)"
+    ]
+  },
   "provenance_sources": {
     "vendor_npk_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
     "lab_sfp_release_asset_sha256": "3f034f6092d79aabc6342f2e8fcf72036ef9d5d8665f2c10b4fe6ca96ced2a6e",
