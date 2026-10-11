@@ -597,6 +597,80 @@ def _x86_installer_component_pins():
             _X86_INSTALLER_RUNTIME_POLICY_7231: _X86_INSTALLER_COMPONENT_SHA256_7231}
 
 
+def x86_installer_qualification(version):
+    """RouterOS version like '7.24.4' -> (runtime_policy, source_sha256, final).
+
+    Kept strict: an unpinned version fails instead of falling back."""
+    final = version + '.final'
+    policy = 'x86-installer-' + version
+    sha = _x86_installer_version_pins().get(final)
+    if sha is None or policy not in _x86_installer_policies():
+        raise ValueError('unsupported x86 installer version: ' + version)
+    return policy, sha, final
+
+
+def chr_runtime_policy_for(version):
+    """RouterOS version like '7.24.4' -> its qualified CHR runtime policy."""
+    policy = _chr_version_pins().get(version + '.final')
+    if policy is None:
+        raise ValueError('unsupported CHR version: ' + version)
+    return policy
+
+
+# Lab SFP-DOM prototype (release lab-sfp-7244-netdom-1). A pinned four-hunk,
+# length-preserving byte patch on nova/bin/net that makes the x86 monitor path
+# query module EEPROM through standard ETHTOOL_GMODULEINFO/GMODULEEEPROM
+# ioctls via the existing SIOCETHTOOL helper, then lets net's own SFF decoder
+# publish the sfp-* properties. Hunks are the exact byte-diff between the
+# qualified pristine vendor net and the published lab asset's net (both
+# 1,530,168 bytes): phdr text 0x131d15->0x132000, JE->JMP at file 0x2c4ba,
+# call redirect to cave VA 0x8184d18, and the 356-byte cave at file 0x13cd18,
+# matching the verified B4/B5 disassembly. QEMU regression is green; DOM on
+# physical hardware remains unproven, so this stays opt-in per invocation.
+_LAB_SFP_NET_SIZE = 1530168
+_LAB_SFP_NET_SOURCE_SHA256_7244 = (
+    '3c4da9074172ad42d4efb56f755e055964a7a91eec90def2d1dc1791c2af69d2')
+_LAB_SFP_NET_PATCHED_SHA256_7244 = (
+    '1688dd642ce8da689d08bc29998b0d2797191e6c59504c4c9159145fa669ac8c')
+_LAB_SFP_NET_PATCH_7244 = (
+    (0x0000A4, '151d1300151d', '002013000020'),
+    (0x02C4BA, '74', 'eb'),
+    (0x02E8A2, '6c88ffff', '72e41000'),
+    (0x13CD18, '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', '5356575589c689d7e86bf1ecff8b4e2883c16439c10f8605000000e92d01000083ec28c704244200000089f889e2e8c066ffff84c00f841f0100008b6c240483c42881ec90000000c7042443000000c744240400000000c744240800000000c744240c8000000089f889e2e88366ffff84c00f84dc0000008b1e31c98b448c1089448b104183f92072f281c49000000081fd000200000f855100000081ec90000000c7042443000000c744240400000000c744240800010000c744240c8000000089f889e2e82966ffff84c00f84820000008b1e31c98b448c1089848b900000004183f92072ef81c4900000008b1e807b10030f85410000008d431031d2b93f000000e8af7feeff3a434f0f85200000008d4310ba40000000b95f000000e8947feeff3a436f0f8505000000e909000000c6460800e904000000c6460801e835f0ecff894628b001e912000000b001e90b00000081c49000000083c42831c05d5f5e5bc3'),
+)
+
+
+def _lab_sfp_net_pins():
+    """Runtime policy -> (source_sha256, patched_sha256, hunks), read at call
+    time so tests may patch the pinned constants."""
+    return {_X86_INSTALLER_RUNTIME_POLICY: (
+        _LAB_SFP_NET_SOURCE_SHA256_7244, _LAB_SFP_NET_PATCHED_SHA256_7244,
+        _LAB_SFP_NET_PATCH_7244)}
+
+
+def lab_sfp_net_supported(version):
+    """True when the lab SFP-DOM net patch has pinned hunks for a version."""
+    try:
+        policy, _, _ = x86_installer_qualification(version)
+    except ValueError:
+        return False
+    return policy in _lab_sfp_net_pins()
+
+
+def _apply_lab_sfp_net_patch(data, hunks):
+    """Apply pinned, strictly length-preserving hunks; fail on any context
+    mismatch instead of guessing an offset."""
+    for offset, old_hex, new_hex in hunks:
+        old, new = bytes.fromhex(old_hex), bytes.fromhex(new_hex)
+        if len(old) != len(new):
+            raise ValueError('lab-sfp net hunks must preserve length')
+        if data[offset:offset + len(old)] != old:
+            raise ValueError('lab-sfp net patch context mismatch at ' + hex(offset))
+        data = data[:offset] + new + data[offset + len(old):]
+    return data
+
+
+
 def _npk_source_sha256(package):
     """Fingerprint canonical package state, NOT original-wire provenance."""
     import hashlib
@@ -755,7 +829,9 @@ def _validate_terminal_banner_package(package, policy):
 
 
 def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key=None,
-                      *, terminal_banner=None, source_npk=None):
+                      *, terminal_banner=None, source_npk=None, lab_sfp_net=False):
+    if lab_sfp_net and runtime_policy not in _lab_sfp_net_pins():
+        raise ValueError('lab-sfp net patch requires a qualified pinned x86-installer policy')
     if terminal_banner is not None:
         _validate_terminal_banner_package(package, terminal_banner)
     if runtime_policy is not None:
@@ -808,6 +884,33 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
         else:
             _run_tools(extract_args, work_dir)
             patch_squashfs(extract_dir, key_dict, squashfs_stats)
+        if lab_sfp_net:
+            # Applied after generic mapping so the in-pin proves the extracted
+            # net is still the pristine pinned bytes (net carries no key
+            # occurrences); length-preserving so strict metadata parity holds.
+            import hashlib
+            source_sha, patched_sha, hunks = _lab_sfp_net_pins()[runtime_policy]
+            net = extract_dir / 'nova/bin/net'
+            if (any(path.is_symlink() for path in (net, net.parent, net.parent.parent))
+                    or not net.is_file() or net.stat().st_nlink != 1):
+                raise ValueError('lab-sfp net patch requires a regular unlinked nova/bin/net')
+            stat = net.stat()
+            data = net.read_bytes()
+            if (len(data) != _LAB_SFP_NET_SIZE
+                    or hashlib.sha256(data).hexdigest() != source_sha):
+                raise ValueError('lab-sfp net patch requires the pinned pristine nova/bin/net')
+            patched = _apply_lab_sfp_net_patch(data, hunks)
+            if (len(patched) != _LAB_SFP_NET_SIZE
+                    or hashlib.sha256(patched).hexdigest() != patched_sha):
+                raise ValueError('lab-sfp net patch output failed its pinned digest')
+            net.write_bytes(patched)
+            os.chmod(net, stat_module.S_IMODE(stat.st_mode))
+            os.utime(net, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+            report['lab_sfp_net'] = {
+                'path': 'nova/bin/net', 'size': _LAB_SFP_NET_SIZE,
+                'source_sha256': source_sha, 'patched_sha256': patched_sha,
+                'scope': 'lab SFP-DOM prototype; QEMU regression only, physical DOM unproven',
+            }
         if preserve_metadata and _tree_metadata(extract_dir) != tree_metadata:
             raise ValueError('metadata changed during scoped patch')
         report['replacements'] = [
@@ -859,7 +962,10 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 
 
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
-                   runtime_policy=None, license_public_key=None, *, terminal_banner=None):
+                   runtime_policy=None, license_public_key=None, *, terminal_banner=None,
+                   lab_sfp_net=False):
+    if lab_sfp_net and runtime_policy not in _lab_sfp_net_pins():
+        raise ValueError('lab-sfp net patch requires a qualified pinned x86-installer policy')
     provenance = {}
     if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
         import hashlib
@@ -880,10 +986,12 @@ def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, o
     if len(npk._packages) > 0:
         for package in npk._packages:
             reports.append(patch_npk_package(package, key_dict, runtime_policy, license_public_key,
-                                            terminal_banner=terminal_banner, **provenance))
+                                            terminal_banner=terminal_banner, lab_sfp_net=lab_sfp_net,
+                                            **provenance))
     else:
         reports.append(patch_npk_package(npk, key_dict, runtime_policy, license_public_key,
-                                         terminal_banner=terminal_banner, **provenance))
+                                         terminal_banner=terminal_banner, lab_sfp_net=lab_sfp_net,
+                                         **provenance))
     for report in reports:
         print(f"package {report['package']}: {report['status']}")
     npk.sign(kcdsa_private_key, eddsa_private_key)
@@ -906,6 +1014,9 @@ if __name__ == '__main__':
                                  'not product autodetection or physical readiness')
     npk_parser.add_argument('--terminal-banner', choices=[TERMINAL_BANNER_POLICY],
                             help='Opt-in actual terminal logo resource patch (not system note)')
+    npk_parser.add_argument('--lab-sfp-net', action='store_true',
+                            help='Opt-in pinned lab SFP-DOM net patch; requires a qualified '
+                                 'pinned x86-installer runtime policy (physical DOM unproven)')
     banner_parser = subparsers.add_parser('terminal-banner',
                                          help='Validate extracted tree and write logo copy; no keys')
     banner_parser.add_argument('root', help='Extracted SquashFS root (read-only)')
@@ -940,11 +1051,13 @@ if __name__ == '__main__':
     eddsa_private_key = bytes.fromhex(
         os.environ['CUSTOM_NPK_SIGN_PRIVATE_KEY'])
     if args.command == 'npk':
+        if args.lab_sfp_net and not args.runtime_policy:
+            parser.error('--lab-sfp-net requires --runtime-policy with a qualified pinned policy')
         print(f'patching {args.input} ...')
         patch_npk_file(key_dict, kcdsa_private_key,
                        eddsa_private_key, args.input, args.output,
                        runtime_policy=args.runtime_policy, license_public_key=license_public_key,
-                       terminal_banner=args.terminal_banner)
+                       terminal_banner=args.terminal_banner, lab_sfp_net=args.lab_sfp_net)
     elif args.command == 'kernel':
         print(f'patching {args.input} ...')
         data = patch_kernel(open(args.input, 'rb').read(), key_dict)

@@ -93,6 +93,47 @@ class LicenseCLITests(unittest.TestCase):
         self.assert_license(self.output, 'ros', '4JZ2-H049')
         self.assert_safe(result)
 
+    def test_ros_default_feature_bits_are_zero_not_extra_channels(self):
+        # The .bat path generates with defaults; the owner requirement is an
+        # empty RouterOS Features field (no "extra-channels").
+        result = self.run_cli(*self.flags('ros', '4JZ2-H049'))
+        self.assertEqual(result.returncode, 0)
+        fields = license_util.parse(self.output.read_text(encoding='utf-8'),
+                                    self.public.hex())
+        self.assertEqual(fields['License Level'], '6')
+        self.assertEqual(fields['Feature Bits'], '0')
+
+    def test_ros_feature_bits_option_round_trips(self):
+        self.output.unlink(missing_ok=True)
+        result = self.run_cli(*self.flags('ros', '4JZ2-H049'), '--feature-bits', '1')
+        self.assertEqual(result.returncode, 0)
+        fields = license_util.parse(self.output.read_text(encoding='utf-8'),
+                                    self.public.hex())
+        self.assertEqual(fields['Feature Bits'], '1')
+        self.assert_safe(result)
+
+    def test_ros_feature_bits_invalid_values_are_rejected_sanitized(self):
+        # Out-of-range values and non-integers must both fail through the
+        # sanitized parser-error path; only the marker is unique enough to
+        # assert non-leak against random temporary path names.
+        for bad, marker in (('16', None), ('-1', None),
+                            ('SECRET_FEATURE_MARKER', 'SECRET_FEATURE_MARKER')):
+            with self.subTest(value=bad):
+                self.output.unlink(missing_ok=True)
+                result = self.run_cli(*self.flags('ros', '4JZ2-H049'),
+                                      '--feature-bits', bad)
+                self.assertEqual(result.returncode, 2)
+                self.assertFalse(self.output.exists())
+                if marker:
+                    self.assertFalse(marker in result.stdout + result.stderr)
+                self.assert_safe(result)
+
+    def test_feature_bits_is_ros_only(self):
+        result = self.run_cli(*self.flags(), '--feature-bits', '0')
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(self.output.exists())
+        self.assert_safe(result)
+
     def test_interactive_chr_menu_uses_python_input_and_default_repo_output(self):
         (self.repo / '.ali_license_private_key').write_text(
             self.private.hex(), encoding='utf-8')

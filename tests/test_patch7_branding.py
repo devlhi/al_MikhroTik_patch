@@ -1,5 +1,6 @@
 """Workflow regressions; optional real ISO packer tests use synthetic files only."""
 import json
+import os
 import re
 import shlex
 import shutil
@@ -38,8 +39,38 @@ def condition_selected(condition, profile, arch, cache_hit="false", has_new_vers
 
 
 class WorkflowTests(unittest.TestCase):
-    def test_routeros_target_is_pinned_to_7_24_4(self):
-        self.assertEqual(workflow()["env"].get("PINNED_VERSION"), "7.24.5")
+    def pinned_version_input(self):
+        trigger = workflow().get("on", workflow().get(True))
+        return trigger["workflow_dispatch"]["inputs"]["pinned_version"]
+
+    def test_routeros_target_is_pinned_through_a_strict_version_input(self):
+        pin = self.pinned_version_input()
+        self.assertEqual(pin["type"], "choice")
+        self.assertIs(pin["required"], True)
+        self.assertEqual(pin["default"], "7.24.5")
+        self.assertEqual(pin["options"], ["7.24.4", "7.24.5"])
+        for job_name in ("patch", "release"):
+            job = workflow()["jobs"][job_name]
+            self.assertEqual(job["env"].get("PINNED_VERSION"),
+                             "${{ inputs.pinned_version }}", job_name)
+
+    def test_lab_sfp_net_input_is_opt_in_and_never_reaches_chr(self):
+        trigger = workflow().get("on", workflow().get(True))
+        flag = trigger["workflow_dispatch"]["inputs"]["include_lab_sfp_net"]
+        self.assertEqual(flag["type"], "boolean")
+        self.assertIs(flag["required"], False)
+        self.assertIs(flag["default"], False)
+        config = workflow()
+        serialized = yaml.safe_dump(config)
+        self.assertEqual(serialized.count("--lab-sfp-net"), 3)
+        self.assertEqual(serialized.count("LAB_SFP_NET: ${{ inputs.include_lab_sfp_net }}"), 1)
+        # The gate is the pinned-version helper, never a hard-coded version list
+        # (import + call per selector, import + call in the standalone lookup).
+        self.assertEqual(serialized.count("lab_sfp_net_supported"), 6)
+        chr_step = next(s for s in config["jobs"]["patch"]["steps"]
+                        if s["name"].startswith("Patch chr-"))
+        self.assertNotIn("lab-sfp", chr_step["run"])
+        self.assertNotIn("LAB_SFP", chr_step["run"])
 
     def test_version_resolution_uses_pin_not_upstream_latest(self):
         run = next(s["run"] for s in workflow()["jobs"]["patch"]["steps"]
@@ -175,12 +206,11 @@ class WorkflowTests(unittest.TestCase):
     def test_chr_runtime_policy_is_scoped_to_x86_exact_version_and_internal_npk(self):
         step = next(s for s in workflow()["jobs"]["patch"]["steps"]
                     if s["name"].startswith("Patch chr-"))
-        # Keep the policy at this call site, not in a global option/environment.
-        # The else branch deliberately preserves the generic path for ARM64 and
-        # other versions if the workflow pin is changed in a future release.
+        # The policy resolves through patch.py's pinned table; an unpinned
+        # version resolves no policy and falls back to the generic path.
         expected = '''sudo mount /dev/nbd0p2 chr/routeros/
-if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.5" ]; then
-  sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
+if [ "${{ matrix.arch }}" == "x86" ] && CHR_POLICY=$(python3 -B -c "import sys; sys.path.insert(0, '.'); from patch import chr_runtime_policy_for; print(chr_runtime_policy_for('$LATEST_VERSION'))" 2>/dev/null) && [ -n "$CHR_POLICY" ]; then
+  sudo -E python3 patch.py npk --runtime-policy "$CHR_POLICY" --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
 else
   sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
 fi
@@ -200,14 +230,17 @@ sudo umount /dev/nbd0p2'''
                          ['mikrotik', 'mikrotik', 'install-image', 'chr'])
         self.assertEqual(flagged[-1], (
             "patch", "Patch chr-${{ env.LATEST_VERSION }}${{ env.ARCH }}.img",
-            "sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 "
+            'sudo -E python3 patch.py npk --runtime-policy "$CHR_POLICY" '
             "--terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image",
         ))
         # Also reject policy injection through env or elsewhere outside run blocks.
         serialized = yaml.safe_dump(config)
         self.assertEqual(serialized.count("--runtime-policy"), 4)
-        self.assertEqual(serialized.count("x86-installer-7.24.5"), 3)
-        self.assertEqual(serialized.count("chr-x86-7.24.5"), 1)
+        # Every installer policy/pin resolves through the pinned table in
+        # patch.py: import + call in each of the two identical selectors plus
+        # the standalone lookup, never a hard-coded version string.
+        self.assertEqual(serialized.count("x86_installer_qualification"), 6)
+        self.assertEqual(serialized.count("chr_runtime_policy_for"), 2)
         self.assertEqual(serialized.count("--terminal-banner"), 1)
         self.assertEqual(serialized.count("chr-x86-7.24.4-ali-media-patch"), 1)
         run = next(s['run'] for s in config['jobs']['patch']['steps']
@@ -228,7 +261,8 @@ sudo umount /dev/nbd0p2'''
                          ["$PINNED_VERSION"])
         # Matrix/profile selection is checked above; no profile can bypass
         # this shared CHR step or resolve a version from an upstream latest feed.
-        self.assertEqual(config["env"]["PINNED_VERSION"], "7.24.5")
+        self.assertEqual(workflow()["jobs"]["patch"]["env"]["PINNED_VERSION"],
+                         "${{ inputs.pinned_version }}")
 
     def test_no_guard_bypass_or_failure_suppression(self):
         for job in workflow()["jobs"].values():
@@ -463,17 +497,18 @@ sudo umount /dev/nbd0p2'''
         publish = next(s for s in config["jobs"]["release"]["steps"]
                        if s.get("uses", "").startswith("softprops/action-gh-release@"))
         tag_template = publish["with"]["tag_name"]
+        pin = self.pinned_version_input()["default"]
         run_id = "123456789"
         tags = [
-            tag_template.replace("${{ env.PINNED_VERSION }}", config["env"]["PINNED_VERSION"])
+            tag_template.replace("${{ env.PINNED_VERSION }}", pin)
             .replace("${{ github.run_id }}", run_id)
             .replace("${{ github.run_attempt }}", str(attempt))
             for attempt in (1, 2)
         ]
         self.assertNotEqual(tags[0], tags[1], "Reruns must not reuse an existing release tag")
         self.assertEqual(tags, [
-            f"ali-patch-code-7.24.5-run{run_id}-attempt1",
-            f"ali-patch-code-7.24.5-run{run_id}-attempt2",
+            f"ali-patch-code-{pin}-run{run_id}-attempt1",
+            f"ali-patch-code-{pin}-run{run_id}-attempt2",
         ])
 
     def test_release_tag_targets_exact_built_commit(self):
@@ -513,7 +548,16 @@ sudo umount /dev/nbd0p2'''
         run = step['run']
         self.assertIn('if [ "${{ matrix.arch }}" == "x86" ]; then\n  sudo -E python3 -B - new_iso', run)
         self.assertIn('https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION.npk', run)
-        self.assertIn('python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.5', run)
+        self.assertIn('X86_POLICY=$(python3 -B -c "import sys; sys.path.insert(0, \'.\'); '
+                      'from patch import x86_installer_qualification; '
+                      'print(x86_installer_qualification(\'$LATEST_VERSION\')[0])")', run)
+        self.assertIn('if [ "$LAB_SFP_NET" == "true" ] && python3 -B -c "import sys; '
+                      'sys.path.insert(0, \'.\'); from patch import lab_sfp_net_supported; '
+                      'sys.exit(0 if lab_sfp_net_supported(\'$LATEST_VERSION\') else 1)"; then', run)
+        self.assertIn('lab_sfp_args+=(--lab-sfp-net)', run)
+        self.assertIn('python3 -B patch.py npk routeros-$LATEST_VERSION.npk '
+                      '-O routeros-$LATEST_VERSION-patched.npk '
+                      '--runtime-policy "$X86_POLICY" "${lab_sfp_args[@]}"', run)
         export = run[run.index('# Only x86 exports ISO packages.'):]
         self.assertIn("-iname '*.npk' -exec cp -t all_packages_iso$ARCH-$LATEST_VERSION/ {} +", export)
         self.assertIn('sudo zip ../all_packages$ARCH-$LATEST_VERSION-patched.zip *', export)
@@ -569,7 +613,34 @@ class InstallerSelectorTests(unittest.TestCase):
               'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
     PIN = 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
 
-    def run_selector(self, context='new_iso', mutation=None, version='7.24.5', fail=False):
+    def fake_patch_module(self, supported_lab=False):
+        """Mirror the real pinned table: both versions build; only 7.24.4 has
+        pinned lab-sfp hunks today."""
+        module = types.ModuleType('patch')
+
+        def qualification(version):
+            table = {'7.24.5': ('x86-installer-7.24.5', self.PIN, '7.24.5.final'),
+                     '7.24.4': ('x86-installer-7.24.4',
+                                '46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94',
+                                '7.24.4.final')}
+            if version not in table:
+                raise ValueError('unsupported x86 installer version: ' + version)
+            return table[version]
+
+        module.x86_installer_qualification = qualification
+        module.lab_sfp_net_supported = lambda version: supported_lab and version == '7.24.4'
+        return module
+
+    def table_pin(self, version):
+        try:
+            return self.fake_patch_module().x86_installer_qualification(version)[1]
+        except ValueError:
+            # Unsupported versions never reach the hash comparison; the
+            # selector fails earlier inside qualification.
+            return self.PIN
+
+    def run_selector(self, context='new_iso', mutation=None, version='7.24.5', fail=False,
+                     lab_sfp_env=None, fixture_version='7.24.5.final', tamper_hash=False):
         # Execute exact workflow Python, replacing ONLY parsing, hashes, subprocess
         # with inert synthetic doubles; no firmware, credentials or signing.
         with tempfile.TemporaryDirectory() as temp:
@@ -583,7 +654,7 @@ class InstallerSelectorTests(unittest.TestCase):
             for index, name in enumerate(sorted(names)):
                 path = root / ('ROUTEROS.NPK' if name == 'system' else f'{index}.npk')
                 path.write_bytes(b'SYNTHETIC, NOT FIRMWARE')
-                info = types.SimpleNamespace(name=name, version='7.24.5.final')
+                info = types.SimpleNamespace(name=name, version=fixture_version)
                 parts = [types.SimpleNamespace(id=1, data=info),
                          types.SimpleNamespace(id=2, data=b'i386'),
                          types.SimpleNamespace(id=3, data=b'signature'),
@@ -602,7 +673,7 @@ class InstallerSelectorTests(unittest.TestCase):
             npk = types.ModuleType('npk')
             npk.NpkPartID = ids
             npk.NovaPackage = types.SimpleNamespace(load=lambda path: packages[path])
-            patch = types.ModuleType('patch')
+            patch = self.fake_patch_module(supported_lab=lab_sfp_env is not None)
             patch._part = part
             calls = []
             def run(command, check):
@@ -611,9 +682,17 @@ class InstallerSelectorTests(unittest.TestCase):
                 if fail is True or (fail == 'system' and '--runtime-policy' in command):
                     import subprocess
                     raise subprocess.CalledProcessError(1, command)
+            environment = dict(os.environ)
+            if lab_sfp_env is None:
+                environment.pop('LAB_SFP_NET', None)
+            else:
+                environment['LAB_SFP_NET'] = lab_sfp_env
+            hash_pin = '0' * 64 if tamper_hash else self.table_pin(version)
             with mock.patch.dict(sys.modules, {'npk': npk, 'patch': patch}), \
                     mock.patch.object(sys, 'argv', ['-', str(root), version]), \
-                    mock.patch('hashlib.sha256', return_value=types.SimpleNamespace(hexdigest=lambda: self.PIN)), \
+                    mock.patch.dict(os.environ, environment, clear=False), \
+                    mock.patch('hashlib.sha256', return_value=types.SimpleNamespace(
+                        hexdigest=lambda: hash_pin)), \
                     mock.patch('subprocess.run', side_effect=run):
                 try:
                     exec(compile(installer_selector_sources()[0], '<workflow-selector>', 'exec'), {})
@@ -643,6 +722,30 @@ class InstallerSelectorTests(unittest.TestCase):
                 self.assertEqual(flagged[0][-2:], ['--runtime-policy', 'x86-installer-7.24.5'])
                 self.assertTrue(all(c[:4] == [sys.executable, '-B', 'patch.py', 'npk'] for c in calls))
                 self.assertTrue(all(len(c) == 5 for c in calls if c not in flagged))
+
+    def test_lab_sfp_flag_requires_env_opt_in_and_supported_version(self):
+        # Mirrors the real pinned table: 7.24.4 has lab hunts, 7.24.5 does not.
+        calls, error = self.run_selector(version='7.24.4', lab_sfp_env='true',
+                                         fixture_version='7.24.4.final')
+        self.assertIsNone(error)
+        flagged = [c for c in calls if '--runtime-policy' in c]
+        self.assertEqual(len(flagged), 1)
+        self.assertEqual(flagged[0][-3:],
+                         ['--runtime-policy', 'x86-installer-7.24.4', '--lab-sfp-net'])
+        for scenario, kwargs in (('env-false', {'lab_sfp_env': 'false'}),
+                                 ('env-unset', {'lab_sfp_env': None}),
+                                 ('version-unsupported',
+                                  {'lab_sfp_env': 'true', 'version': '7.24.5'})):
+            with self.subTest(scenario=scenario):
+                calls, error = self.run_selector(**kwargs)
+                self.assertIsNone(error)
+                flagged = [c for c in calls if '--runtime-policy' in c]
+                self.assertEqual(len(flagged), 1)
+                self.assertNotIn('--lab-sfp-net', flagged[0])
+        # An unpinned build version still fails closed before any patch call.
+        calls, error = self.run_selector(version='7.24.2', fixture_version='7.24.2.final')
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, [])
 
     def test_unknown_missing_duplicate_and_multipackage_fail_before_any_patch(self):
         def mutate_name(name):
@@ -675,10 +778,9 @@ class InstallerSelectorTests(unittest.TestCase):
             calls, error = self.run_selector(context=context, version=version)
             self.assertIsInstance(error, ValueError)
             self.assertEqual(calls, [])
-        with mock.patch.object(self, 'PIN', '0' * 64):
-            calls, error = self.run_selector()
-            self.assertIsInstance(error, ValueError)
-            self.assertEqual(calls, [])
+        calls, error = self.run_selector(tamper_hash=True)
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, [])
 
     def test_full_fat_shell_rejects_bad_inputs_before_any_boot_or_npk_write(self):
         import os
@@ -723,6 +825,16 @@ npk.NovaPackage = types.SimpleNamespace(load=load)
 npk.NpkPartID = ids
 patch = types.ModuleType('patch')
 patch._part = part
+def qualification(version):
+    # Always the real pin so the wire-tamper scenario still mismatches.
+    table = {'7.24.5': ('x86-installer-7.24.5',
+                        'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394',
+                        '7.24.5.final')}
+    if version not in table:
+        raise ValueError('unsupported x86 installer version: ' + version)
+    return table[version]
+patch.x86_installer_qualification = qualification
+patch.lab_sfp_net_supported = lambda version: False
 sys.modules.update(npk=npk, patch=patch)
 pin = '0' * 64 if scenario == 'wire' else 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394'
 hashlib.sha256 = lambda data: types.SimpleNamespace(hexdigest=lambda: pin)

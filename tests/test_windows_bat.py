@@ -167,6 +167,9 @@ class BatNativeCmdTests(unittest.TestCase):
                                  self.public.hex())
         self.assertEqual(fields['kind'], 'ros')
         self.assertEqual(fields['Software ID'], '4JZ2-H049')
+        # The interactive .bat flow must issue the empty-Features key by default.
+        self.assertEqual(fields['License Level'], '6')
+        self.assertEqual(fields['Feature Bits'], '0')
 
     def test_invalid_identifier_exits_nonzero_and_writes_no_file(self):
         self.make_venv()

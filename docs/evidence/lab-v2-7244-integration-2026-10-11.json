@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "session": "lab-v2-7244-integration",
+  "generated_at_utc": "2026-10-11T06:02:10Z",
+  "status": "LOCAL_INTEGRATION_VERIFIED_PENDING_CI",
+  "owner_request": "generator license tanpa extra-channels; build 7.24.4 lengkap dengan patch SFP; rilis bernama 7.24.4 lab v2",
+  "source_baseline": {
+    "commit": "4088206a29eaa984eda88ef21869c2feb7d6cf96",
+    "branch": "main",
+    "divergence_before_work": "0/0"
+  },
+  "changes": {
+    "patch.py": [
+      "Konstanta lab-sfp: ukuran net 1530168, pin SHA-256 net vendor 3c4da9074172ad42d4efb56f755e055964a7a91eec90def2d1dc1791c2af69d2 dan net terpatch 1688dd642ce8da689d08bc29998b0d2797191e6c59504c4c9159145fa669ac8c",
+      "Empat hunk length-preserving (0xA4 phdr, 0x2c4ba JE->JMP, 0x2e8a2 call redirect, 0x13cd18 cave 356B) digenerate programatik dari beda-byte net vendor vs net dalam aset rilis lab-sfp-7244-netdom-1",
+      "patch_npk_package/patch_npk_file/CLI: parameter lab_sfp_net opt-in, validasi kebijakan terpin, swap net di tree ekstraksi dengan preserve mode/mtime, laporan report['lab_sfp_net']",
+      "Helper versi: x86_installer_qualification(), chr_runtime_policy_for(), lab_sfp_net_supported() fail-closed"
+    ],
+    "scripts/license_cli.py": [
+      "--feature-bits (default 0; ROS only; ditolak untuk CHR) - generate-license.bat kini menghasilkan key Level 6 dengan Features kosong secara default"
+    ],
+    ".github/workflows/patch7.yml": [
+      "Input pinned_version (7.24.4/7.24.5, default 7.24.5) dan include_lab_sfp_net (default false)",
+      "PINNED_VERSION kini env per-job dari input (nilainya tidak di-hard-code)",
+      "Selector inline ISO/install-image identik dan version-parametrik via x86_installer_qualification; flag --lab-sfp-net digate LAB_SFP_NET + lab_sfp_net_supported",
+      "Lookup NPK standalone memakai X86_POLICY + lab_sfp_args; langkah CHR memakai chr_runtime_policy_for dengan fallback generik"
+    ]
+  },
+  "verification_local": {
+    "real_net_diff": "hunk diterapkan pada net vendor asli -> byte-identik dengan net dalam aset rilis; SHA cocok pin 1688dd64",
+    "production_build": {
+      "command": "patch.py npk routeros-7.24.4.npk -O ... --runtime-policy x86-installer-7.24.4 --lab-sfp-net",
+      "result": "coverage-passed; npk 20524705 byte (sama dengan aset rilis); net di dalam squashfs SHA pin match"
+    },
+    "tree_equivalence": "892 entri squashfs build lokal vs aset rilis: path, tipe, symlink, dan konten file identik (signature berbeda karena signing baru, diharapkan)",
+    "suites": {
+      "full_wsl": "558 tests, 0 failure/error, 13 skipped (venv python dengan capstone; XORRISO/skip semantik lama)",
+      "coverage_optimized": "test_patch_coverage* -O: 28 tests OK",
+      "pipeline_focused": "test_lab_sfp_net + test_patch7_branding + x86-installer + chr: 107 OK (1 xorriso skip)",
+      "windows_license": "test_license_cli + test_license_util + test_license_server: 75 OK setelah perbaikan marker tes; test_license_cli+test_windows_bat: 41 OK"
+    }
+  },
+  "incidents": [
+    {
+      "what": "Edit workflow salah menyalin CUSTOM_LICENSE_PUBLIC_KEY (66 hex, 33 byte)",
+      "caught_by": "guard _validate_key_dict (panjang old/new harus sama) pada build lokal pertama",
+      "fix": "nilai dipulihkan programatik dari HEAD 4088206; diff bersih dari perubahan kunci",
+      "exposure": "nilai kunci tidak dicetak/di-commit dalam keadaan salah"
+    },
+    {
+      "what": "Konstanta hunk-4 sempat salah panjang (377 vs 356 byte) akibat transkripsi manual",
+      "caught_by": "assert panjang pada _apply_lab_sfp_net_patch + verifikasi byte vs biner riil",
+      "fix": "literal digenerate ulang programatik dari biner sumber"
+    }
+  ],
+  "pending": [
+    "Dispatch CI x86-all pinned_version=7.24.4 include_lab_sfp_net=true create_draft_release=true",
+    "Publikasi draft sebagai '7.24.4 lab v2' prerelease bukan Latest dengan tag baru",
+    "Verifikasi aset CI (net sha, signature, anchor readback)",
+    "Batas tetap: DOM pada hardware fisik belum terbukti; runtime/boot aset CI belum diuji"
+  ],
+  "provenance_sources": {
+    "vendor_npk_sha256": "46de2e3d61a6f5cdb7142f5cb62e3f2e4a28e283ef4fa17984b5511882031a94",
+    "lab_sfp_release_asset_sha256": "3f034f6092d79aabc6342f2e8fcf72036ef9d5d8665f2c10b4fe6ca96ced2a6e",
+    "lab_sfp_release_tag": "lab-sfp-7244-netdom-1"
+  }
+}

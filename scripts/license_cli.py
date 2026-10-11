@@ -22,13 +22,27 @@ class _Parser(argparse.ArgumentParser):
         self.exit(2, 'Argumen tidak valid; gunakan --help. Kunci hanya melalui berkas/env.\n')
 
 
+def _flag_provided(argv, flag):
+    source = sys.argv[1:] if argv is None else (argv or [])
+    return any(argument == flag or argument.startswith(flag + '=') for argument in source)
+
+
 def _run(argv=None):
     parser = _Parser(description=WARNING, allow_abbrev=False)
     parser.add_argument('--kind', choices=('chr', 'ros'))
     parser.add_argument('--id')
     parser.add_argument('--output')
     parser.add_argument('--private-key-file')
+    parser.add_argument('--feature-bits', type=int, default=None,
+                        help='ROS feature nibble 0-15 (default 0: Features field '
+                             'stays empty; legacy 1 rendered "extra-channels")')
     args = parser.parse_args(argv)
+    if args.feature_bits is None:
+        args.feature_bits = 0
+    elif not 0 <= args.feature_bits <= 15:
+        parser.error('Argumen tidak valid; gunakan --help. Kunci hanya melalui berkas/env.')
+    if args.kind == 'chr' and _flag_provided(argv, '--feature-bits'):
+        parser.error('Argumen tidak valid; gunakan --help. Kunci hanya melalui berkas/env.')
     if argv == [] or (argv is None and len(sys.argv) == 1):
         print(WARNING)
         print('1. CHR\n2. RouterOS')
@@ -64,7 +78,10 @@ def _run(argv=None):
         return 2
     generate = license_util.generate_chr if args.kind == 'chr' else license_util.generate_ros
     try:
-        text = generate(args.id, key)
+        if args.kind == 'chr':
+            text = generate(args.id, key)
+        else:
+            text = generate(args.id, key, feature_bits=args.feature_bits)
     except ValueError:
         print('ID atau kunci tidak valid; tidak ada berkas disimpan.', file=sys.stderr)
         return 2

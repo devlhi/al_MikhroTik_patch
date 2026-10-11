@@ -12,6 +12,19 @@ on:
           - all
           - chr-x86
           - x86-all
+      pinned_version:
+        description: 'Qualified RouterOS version to build (must have pinned sources/policies in patch.py)'
+        required: true
+        type: choice
+        default: 7.24.5
+        options:
+          - 7.24.4
+          - 7.24.5
+      include_lab_sfp_net:
+        description: 'Also apply the pinned lab SFP-DOM net patch (x86 installer products; physical DOM unproven)'
+        required: false
+        type: boolean
+        default: false
       create_draft_release:
         description: 'Create a draft (never published) GitHub Release with the branded assets'
         required: false
@@ -22,7 +35,6 @@ permissions:
   contents: read
 
 env:
-  PINNED_VERSION: '7.24.5'
   MIKRO_NPK_SIGN_PUBLIC_KEY: C293CED638A2A33C681FC8DE98EE26C54EADC5390C2DFCE197D35C83C416CF59
   MIKRO_LICENSE_PUBLIC_KEY: 8E1067E4305FCDC0CFBF95C10F96E5DFE8C49AEF486BD1A4E2E96C27F01E3E32
   CUSTOM_NPK_SIGN_PRIVATE_KEY: 7D008D9B80B036FB0205601FEE79D550927EBCA937B7008CC877281F2F8AC640
@@ -33,6 +45,9 @@ env:
 jobs:
   patch:
     runs-on: ubuntu-latest
+    env:
+      PINNED_VERSION: ${{ inputs.pinned_version }}
+      LAB_SFP_NET: ${{ inputs.include_lab_sfp_net }}
     strategy:
       fail-fast: false
       matrix:
@@ -121,15 +136,16 @@ jobs:
         if [ "${{ matrix.arch }}" == "x86" ]; then
           sudo -E python3 -B - new_iso "$LATEST_VERSION" <<'PY'
         import hashlib
+        import os
         from pathlib import Path
         import subprocess
         import sys
         from npk import NovaPackage, NpkPartID
-        from patch import _part
+        from patch import _part, x86_installer_qualification, lab_sfp_net_supported
 
         root, version = Path(sys.argv[1]), sys.argv[2]
-        if version != '7.24.5':
-            raise ValueError('unsupported x86 installer version')
+        policy, source_sha, final_version = x86_installer_qualification(version)
+        lab_sfp = os.environ.get('LAB_SFP_NET') == 'true' and lab_sfp_net_supported(version)
         addons = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
                   'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
         if root.name not in ('new_iso', 'install-image'):
@@ -148,7 +164,7 @@ jobs:
             info = _part(package, NpkPartID.NAME_INFO).data
             if info.name not in addons | {'system'} or info.name in names:
                 raise ValueError('unknown or duplicate x86 package name')
-            if info.version != '7.24.5.final':
+            if info.version != final_version:
                 raise ValueError('unexpected x86 package version')
             parts = list(package)
             signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
@@ -160,7 +176,7 @@ jobs:
                         len(architectures) == 2 and architectures[1][1] == b'I'
                         and architectures[1][0] > signature_index))):
                 raise ValueError('unexpected x86 package architecture')
-            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394':
+            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != source_sha:
                 raise ValueError('unqualified pristine x86 system source')
             names.add(info.name)
             selected.append((path, info.name == 'system'))
@@ -169,11 +185,18 @@ jobs:
         for path, system in selected:
             command = [sys.executable, '-B', 'patch.py', 'npk', str(path)]
             if system:
-                command += ['--runtime-policy', 'x86-installer-7.24.5']
+                command += ['--runtime-policy', policy]
+                if lab_sfp:
+                    command += ['--lab-sfp-net']
             subprocess.run(command, check=True)
         PY
+          X86_POLICY=$(python3 -B -c "import sys; sys.path.insert(0, '.'); from patch import x86_installer_qualification; print(x86_installer_qualification('$LATEST_VERSION')[0])")
+          lab_sfp_args=()
+          if [ "$LAB_SFP_NET" == "true" ] && python3 -B -c "import sys; sys.path.insert(0, '.'); from patch import lab_sfp_net_supported; sys.exit(0 if lab_sfp_net_supported('$LATEST_VERSION') else 1)"; then
+            lab_sfp_args+=(--lab-sfp-net)
+          fi
           sudo curl --fail --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 600 --output routeros-$LATEST_VERSION.npk https://download.mikrotik.com/routeros/$LATEST_VERSION/routeros-$LATEST_VERSION.npk
-          sudo -E python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy x86-installer-7.24.5
+          sudo -E python3 -B patch.py npk routeros-$LATEST_VERSION.npk -O routeros-$LATEST_VERSION-patched.npk --runtime-policy "$X86_POLICY" "${lab_sfp_args[@]}"
         else
           NPK_FILES=$(find new_iso/*.npk)
           for file in $NPK_FILES; do
@@ -266,15 +289,16 @@ jobs:
         sudo mount /dev/nbd0 install-image/
         sudo -E python3 -B - install-image "$LATEST_VERSION" <<'PY'
         import hashlib
+        import os
         from pathlib import Path
         import subprocess
         import sys
         from npk import NovaPackage, NpkPartID
-        from patch import _part
+        from patch import _part, x86_installer_qualification, lab_sfp_net_supported
 
         root, version = Path(sys.argv[1]), sys.argv[2]
-        if version != '7.24.5':
-            raise ValueError('unsupported x86 installer version')
+        policy, source_sha, final_version = x86_installer_qualification(version)
+        lab_sfp = os.environ.get('LAB_SFP_NET') == 'true' and lab_sfp_net_supported(version)
         addons = {'calea', 'container', 'dude', 'gps', 'iot', 'openflow',
                   'rose-storage', 'tr069-client', 'ups', 'user-manager', 'wireless'}
         if root.name not in ('new_iso', 'install-image'):
@@ -293,7 +317,7 @@ jobs:
             info = _part(package, NpkPartID.NAME_INFO).data
             if info.name not in addons | {'system'} or info.name in names:
                 raise ValueError('unknown or duplicate x86 package name')
-            if info.version != '7.24.5.final':
+            if info.version != final_version:
                 raise ValueError('unexpected x86 package version')
             parts = list(package)
             signature_index = parts.index(_part(package, NpkPartID.SIGNATURE))
@@ -305,7 +329,7 @@ jobs:
                         len(architectures) == 2 and architectures[1][1] == b'I'
                         and architectures[1][0] > signature_index))):
                 raise ValueError('unexpected x86 package architecture')
-            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != 'd97831be323d1b2b0236f344fb9d275c3ed72b26432670753a8ea30bdd647394':
+            if info.name == 'system' and hashlib.sha256(path.read_bytes()).hexdigest() != source_sha:
                 raise ValueError('unqualified pristine x86 system source')
             names.add(info.name)
             selected.append((path, info.name == 'system'))
@@ -314,7 +338,9 @@ jobs:
         for path, system in selected:
             command = [sys.executable, '-B', 'patch.py', 'npk', str(path)]
             if system:
-                command += ['--runtime-policy', 'x86-installer-7.24.5']
+                command += ['--runtime-policy', policy]
+                if lab_sfp:
+                    command += ['--lab-sfp-net']
             subprocess.run(command, check=True)
         PY
         sudo unzip refind-bin-0.14.2.zip refind-bin-0.14.2/refind/refind_x64.efi
@@ -377,8 +403,8 @@ jobs:
         fi
         sudo umount /dev/nbd0p1
         sudo mount /dev/nbd0p2 chr/routeros/
-        if [ "${{ matrix.arch }}" == "x86" ] && [ "$LATEST_VERSION" == "7.24.5" ]; then
-          sudo -E python3 patch.py npk --runtime-policy chr-x86-7.24.5 --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
+        if [ "${{ matrix.arch }}" == "x86" ] && CHR_POLICY=$(python3 -B -c "import sys; sys.path.insert(0, '.'); from patch import chr_runtime_policy_for; print(chr_runtime_policy_for('$LATEST_VERSION'))" 2>/dev/null) && [ -n "$CHR_POLICY" ]; then
+          sudo -E python3 patch.py npk --runtime-policy "$CHR_POLICY" --terminal-banner chr-x86-7.24.4-ali-media-patch chr/routeros/var/pdb/system/image
         else
           sudo -E python3 patch.py npk chr/routeros/var/pdb/system/image
         fi
@@ -506,6 +532,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      PINNED_VERSION: ${{ inputs.pinned_version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4

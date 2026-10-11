@@ -1,5 +1,19 @@
 # HANDOFF — Ali Patch Code
 
+**INTEGRASI LAB-SFP + fb0 KE PIPELINE 2026-10-11 (§34): atas perintah pemilik
+("build lengkap, release 7.24.4 lab v2, license tanpa extra-channels").**
+Patch net lab-sfp kini langkah pipeline resmi: hunk terpin (4 hunk, length-
+preserving, SHA in/out 3c4da907/1688dd64) di `patch.py` dengan flag CLI
+`--lab-sfp-net`, digate kebijakan x86-installer-7.24.4. Workflow dapat dispatch
+per versi (`pinned_version` 7.24.4/7.24.5) dan `include_lab_sfp_net`. Generator
+`.bat` kini default `feature_bits=0` → Level 6 + Features kosong (opsi
+`--feature-bits` untuk legacy). Bukti lokal: build produksi = coverage-passed,
+npk 20.524.705 B, tree squashfs 892 entri identik file-level dengan aset rilis
+lab-sfp; suite penuh WSL 558 tes 0 gagal. Bukti tahan lama:
+[evidence/lab-v2-7244-integration-2026-10-11.json](evidence/lab-v2-7244-integration-2026-10-11.json).
+CI/rilis "7.24.4 lab v2" menyusul pada sesi yang sama; DOM hardware tetap
+belum terbukti (B6 terbuka).**
+
 **LISENSI fb0 TERBUKTI DI 7.23.1 2026-10-10 (sesi kesembilanbelas): paritas
 lab dengan build teman lengkap untuk ketiga versi.** Permintaan pemilik:
 "buat 7.23.1 sama dengan pnya kawan sy bisa support sfp". Bagian SFP sudah
@@ -3040,3 +3054,57 @@ build dengan configs GPL (Module.symvers belum terverifikasi tersedia),
 uji stub protokol (QEMU tak bisa emulasi EEPROM SFP; verifikasi akhir
 butuh NIC fisik). Rincian di JSON bukti §33. Tidak ada perubahan kode
 produksi; commit/push menunggu izin pemilik.
+
+### 34. Integrasi lab-sfp + fb0 ke pipeline produksi (2026-10-11)
+
+Tanggal eksekusi lingkungan 2026-10-11 UTC. Perintah pemilik: (1) generator
+license `.bat` harus menghasilkan key tanpa "extra-channels", (2) build 7.24.4
+lengkap seperti NEW v2 dengan patch SFP, (3) rilis dinamai "7.24.4 lab v2".
+Baseline `4088206` diverifikasi 0/0 sebelum bekerja. Bukti tahan lama:
+[evidence/lab-v2-7244-integration-2026-10-11.json](evidence/lab-v2-7244-integration-2026-10-11.json).
+
+**Perubahan kode:** `patch.py` menambah patch net lab-sfp sebagai langkah
+opt-in: konstanta ukuran 1.530.168 byte, pin SHA-256 net vendor
+`3c4da907…` dan hasil `1688dd64…`, empat hunk length-preserving yang
+digenerate programatik dari beda-byte net vendor 46de2e3d vs net di dalam aset
+rilis lab-sfp-7244-netdom-1 (sha npk `3f034f60…`). Hunk cocok disassembly B4/B5
+terdokumentasi (phdr 0x131d15→0x132000, JE→JMP @0x2c4ba, redirect call ke cave
+VA 0x8184d18, cave 356B @0x13cd18). `patch_npk_package` menulis net terpatch di
+tree ekstraksi dengan preserve mode/mtime sehingga parity metadata ketat tetap
+berlaku tanpa carve-out; flag `--lab-sfp-net` CLI wajib kebijakan terpin;
+helper `x86_installer_qualification`/`chr_runtime_policy_for`/
+`lab_sfp_net_supported` fail-closed. Workflow: input `pinned_version`
+(7.24.4/7.24.5, default 7.24.5) + `include_lab_sfp_net` (default false);
+PINNED_VERSION jadi env per-job dari input; dua selector inline identik dan
+version-parametrik; CHR lookup kebijakan via helper. `license_cli.py`: opsi
+`--feature-bits` default 0 (ROS only) sehingga jalur `.bat` menghasilkan
+Level 6 + Features kosong; tes .bat diperkuat menegaskan ini.
+
+**Insiden tercatat jujur:** (a) edit workflow salah menyalin
+CUSTOM_LICENSE_PUBLIC_KEY (66 hex) — tertangkap guard panjang key_dict pada
+build lokal pertama, dipulihkan programatik dari HEAD; tidak ada nilai kunci
+yang dicetak. (b) konstanta hunk-4 sempat 377 vs 356 byte — tertangkap assert
+panjang + verifikasi byte; digenerate ulang dari biner.
+
+**Verifikasi aktual:** build produksi lokal (kunci workflow, tanpa dicetak)
+pada vendor npk asli: coverage-passed, npk 20.524.705 byte (sama aset rilis),
+net SHA pin match, dan tree squashfs 892 entri identik file-level dengan aset
+rilis (signature berbeda karena signing baru — diharapkan). Suite penuh WSL
+(venv capstone): **558 tes, 0 gagal, 13 skip**; kontrak cakupan -O: 28 OK;
+tes fokus pipeline 107 OK; tes lisensi Windows 75 lalu 41 OK setelah perbaikan
+marker nilai tes (karakter tunggal bisa muncul di nama path temp acak).
+Skip lama tetap (xorriso/Caddy/QEMU/Windows-only di POSIX).
+
+**Batas:** DOM pada hardware fisik (B6) TETAP belum terbukti — build ini
+membawa patch yang sama dengan npk lab yang sudah terpasang di mesin pemilik;
+tes `monitor ether3` pemilik masih menunggu. Runtime/boot aset CI belum diuji.
+fb0 generator berlaku untuk key BARU; key lama pemilik tetap menampilkan
+extra-channels dan punya masa kedaluwarsa sampai diimpor ulang. 7.24.5/7.23.1
+belum punya hunk lab-sfp di pipeline (aset rilisnya ada; pin bisa ditambah
+dengan prosedur sama). Non-x86 tetap fail-closed.
+
+**Langkah sesi lanjutan:** dispatch CI x86-all pinned_version=7.24.4
+include_lab_sfp_net=true create_draft_release=true; verifikasi aset; publikasi
+prerelease "7.24.4 lab v2" (tag baru, bukan Latest, rilis/tag lama utuh);
+HANDOFF penutup + push. Prosedur push: cabang sementara lokal → fast-forward
+main → hapus cabang → push hanya main (pola yang pemilik setujui di §28).
