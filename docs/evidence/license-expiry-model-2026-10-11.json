@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "session": "license-expiry-model",
+  "generated_at_utc": "2026-10-11T17:30:00Z",
+  "status": "EMPIRICAL_MODEL_VERIFIED_PERMANENT_ENCODING_NOT_IN_PAYLOAD",
+  "trigger": "Pemilik melaporkan expires-in ~2d23h tetap muncul pada key fb0 (features kosong) setelah install lab v2 dan import npk lab-sfp.",
+  "lab_environment": {
+    "qemu": "/home/djundev/.cache/mikpatch-audit/tools/usr/bin/qemu-system-x86_64 (TCG, pc, IDE, serial stdio)",
+    "disk": "activation-disposable-2.qcow2 (disk x86 ROS 7.24.4 teraktivasi level-6 pada 2026-10-05, software-id G353-EXPG; overlay qcow2 baru per eksperimen)",
+    "interaction": "serial: auto-Enter pada banner loader, login admin/password-kosong, Ctrl-C pada wizard password, import multi-baris via /system license import"
+  },
+  "verified_model": [
+    "Key lama (tail nol, extra-channels) yang sudah 6 hari melewati jendela 3-harinya tetap menampilkan nlevel 6 dan banner NEW SOFTWARE KEY; boot 2026-10-11 memberi jendela BARU 2d23h49m.",
+    "Import key 0xFF-fb0: print PENDING (pra-reboot) menampilkan nlevel 6 + features KOSONG TANPA expires-in.",
+    "Setelah aktivasi reboot bersih: nlevel 6 + features kosong + expires-in BARU 2d23h49m28s.",
+    "Kandidat CHR-style tail (0,87,134,244,3): tidak mengubah apa pun.",
+    "Kesimpulan: deadline 3-hari DIBUAT firmware saat aktivasi, TIDAK dibaca dari payload bytes 8-15; setiap siklus import/reaktivasi mendapat jendela baru; setelah habis router memasuki state pending (banner NEW SOFTWARE KEY + auto-reboot dalam sehari) lalu aktif kembali dengan jendela baru. Level 6 bertahan lintas siklus."
+  ],
+  "static_scans": {
+    "keyman_7244": "konstanta 0x278d00 (30d) hanya di jalur renewal CHR /ram/chrlreqonce dengan sentinel -1; 259200/86400 tidak ada sebagai immediate; pubkey lisensi tertanam sebagai immediate instruksi (konsisten matcher dua-round).",
+    "mode_net_sys2_loader": "tidak ada immediate 259200/0x278d00; loader tanpa konstanta hari.",
+    "open": "lokus pembuat jendela 3-hari belum teridentifikasi (kandidat: kernel / perhitungan tidak-langsung); butuh sesi RE lanjutan."
+  },
+  "chr_note": "Bukti CHR 7.24.4 (dist/chr-x86-7.24.4-runtime-fix): p-unlimited persisten 2 reboot + cold restart; expires-in tidak tercatat pada evidence tersebut.",
+  "implications_for_owner": [
+    "Router tidak mati saat countdown habis; ia memasuki siklus reaktivasi (auto-reboot) dan level 6 kembali dengan jendela baru.",
+    "Efek samping praktis: satu reboot otomatis kira-kira tiap 3-4 hari.",
+    "Tidak ada encoding payload yang menghilangkan deadline; solusi permanen = patch firmware pada logika klasifikasi demo saat aktivasi (task RE lanjutan, skala seperti B5)."
+  ],
+  "experiment_artifacts": {
+    "keys": "3 kandidat dibuat untuk G353-EXPG via workflow keys (nilai kunci tidak dicetak/di-commit)",
+    "logs": "qemu/lic-candB-import.log, lic-candB-verify.log, lic-candC-verify.log di scratch /home/djundev/mikpatch-labv2/qemu (dapat hilang); ringkasan tahan lama di JSON ini",
+    "note": "software-id lab G353-EXPG hanyalah id QEMU; bukan milik pemilik"
+  }
+}

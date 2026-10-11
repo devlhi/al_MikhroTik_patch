@@ -3160,3 +3160,29 @@ yang dites pemilik jelas tembaga (1G-baseT / 10-100M-baseT). Output
 **Keputusan:** belum ada perubahan kode; audit tercatat jujur. Item lanjut:
 (a) output `monitor [find] once` pemilik untuk SFP; (b) sesi RE payload
 lisensi ROS untuk menemukan encoding permanen (bandingkan juga key asli).
+
+### 36. Model expires-in ROS terverifikasi empiris: jendela 3-hari dibuat firmware saat aktivasi (2026-10-11)
+
+Kelanjutan §35 dengan lab QEMU aktif (disk aktivasi lama `activation-disposable-2`
++ overlay baru per eksperimen, serial interaksi otomatis, TCG). Bukti tahan lama:
+[evidence/license-expiry-model-2026-10-11.json](evidence/license-expiry-model-2026-10-11.json).
+
+Temuan terverifikasi: (1) key tail-nol yang sudah 6 hari lewat jendela tetap
+nlevel 6 dan mendapat jendela BARU saat boot; (2) key kandidat 0xFF×8+fb0
+DITERIMA (features kosong sebagai penanda) — print pending TANPA expires-in —
+namun setelah aktivasi reboot muncul expires-in BARU 2d23h49m; (3) kandidat
+CHR-style tail tidak berefek. Kesimpulan: deadline 3-hari dibuat firmware saat
+aktivasi, bukan dibaca dari payload bytes 8-15; siklusnya import/reaktivasi →
+jendela 3 hari → habis → pending (banner NEW SOFTWARE KEY, auto-reboot dalam
+sehari) → aktif lagi dengan jendela baru; level 6 bertahan lintas siklus.
+Implikasi pemilik: router tidak mati; auto-reboot tiap ±3-4 hari; tanpa
+encoding payload yang bisa menghilangkannya. Scan statis: konstanta hari tidak
+ada di keyman/mode/net/sys2/loader; lokus pembuat jendela belum ketemu (kandidat
+kernel/perhitungan tak-langsung). Perbaikan permanen = patch firmware logika
+klasifikasi demo saat aktivasi — task RE lanjutan skala B5.
+
+Koreksi jujur atas §35: hipotesis "hilang setelah reboot" salah; model di atas
+yang terverifikasi. Eksperimen QEMU juga menemukan: print PENDING tidak
+menampilkan expires-in — penjelasan mengapa beberapa kesan lab lama
+menyederhanakan. Tidak ada perubahan kode produksi sesi ini; log scratch dapat
+hilang, ringkasan ada di JSON bukti.
