@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "session": "friend-sfp-technique",
+  "generated_at_utc": "2026-10-11T18:20:00Z",
+  "status": "TECHNIQUE_FULLY_IDENTIFIED_PORT_PENDING",
+  "source_artifact": {
+    "path_owner_side": "C:/Users/AliMedia_PC/Downloads/Compressed/install-image-7.23.1.img/install-image-7.23.1-patched.img",
+    "sha256": "b4f2393c34e4bae252400d30ecfbc0d4c7e6b36285aa0fb5d447985d2f1789f1",
+    "claimed_by_owner": "build teman, SFP terbaca di hardware nyata (screenshot menyertai laporan pemilik)"
+  },
+  "system_npk": {
+    "file": "8.npk dalam image (name=system version=7.23.1.final)",
+    "component_diff_vs_vendor_7231": {
+      "nova/bin/net": "DIFF (file +5800 B)",
+      "nova/bin/keyman": "DIFF (patch lisensi milik build teman; nilai kunci tidak direkam)",
+      "nova/bin/mode": "DIFF",
+      "nova/bin/loader": "DIFF",
+      "boot/kernel|initrd.rgz|BOOTX64.EFI": "DIFF (patch kunci)",
+      "bnx2x.ko": "SAME byte-identik dengan vendor - driver tidak disentuh"
+    }
+  },
+  "net_technique": {
+    "summary": "net = vendor 7.23.1 murni + 1 halaman PT_LOAD baru; .text asli tidak digeser",
+    "hunks": [
+      {"offset": "0x000154-0x000171", "meaning": "slot phdr PT_GNU_STACK diganti entri PT_LOAD: off=0x170000 vaddr=0x81ba000 filesz=memsz=0x1000 flags=RX align=0x1000"},
+      {"offset": "0x02c944", "meaning": "cabang jae (jalur skip properti SFP) di VA 0x8074944 diganti jmp rel32 ke 0x81ba000 + nop"},
+      {"offset": "0x1422b5", "meaning": "string 'ether-pcie1' menjadi 'sfp28-1'"},
+      {"offset": "0x1422c9", "meaning": "string 'ether-pcie2' menjadi 'sfp28-2'"},
+      {"offset": "0x1579e4", "meaning": "string 'grade.mikrotik.com' menjadi '.smsolution.id' (server upgrade milik build teman)"}
+    ],
+    "appended_page": {
+      "vaddr": "0x81ba000", "file_offset": 1507328, "size": 4096,
+      "nonzero": 1089, "instructions": 288,
+      "behavior_verified_from_disassembly": [
+        "mengambil nama interface dari struct di [ebp+0xc] (+0x10 char*), validasi karakter 0x20-0x7e, salin <=15 byte ke ifreq",
+        "socket(AF_INET, SOCK_DGRAM, 0) via int 0x80 socketcall",
+        "ioctl SIOCETHTOOL dengan ETHTOOL_GMODULEINFO (0x42)",
+        "ioctl SIOCETHTOOL dengan ETHTOOL_GMODULEEEPROM (0x43) panjang 0x200 (512 byte A0+A2 penuh)",
+        "self-contained syscall; tidak memakai helper marshalling internal net"
+      ]
+    },
+    "comparison_to_ours": "Konsep sama dengan cave B5 (query ethtool standar dari userland net) tetapi via segmen ter-append + int 0x80 langsung; dibanding B5 kita: tidak bergantung thunk, membaca 512B sekaligus, dan redirect dipasang di cabang skip properti SFP."
+  },
+  "implications": [
+    "Teknik bisa ditransplantasi ke build kita (7.23.1: offset identik; 7.24.4: butuh pemetaan ulang site redirect).",
+    "Kunci lisensi build teman berbeda (keyman mereka) - key generator kita tidak berlaku pada image mereka; port ke build kita memakai kunci repo.",
+    "Belum diverifikasi agent: klaim berfungsinya di hardware (screenshot pemilik)."
+  ],
+  "next": "Bedah sisa halaman (write-back hasil ke struktur net) -> port ke pipeline 7.23.1 lalu 7.24.4 dengan pin ketat, tes QEMU, rilis lab v3."
+}

@@ -3186,3 +3186,36 @@ yang terverifikasi. Eksperimen QEMU juga menemukan: print PENDING tidak
 menampilkan expires-in — penjelasan mengapa beberapa kesan lab lama
 menyederhanakan. Tidak ada perubahan kode produksi sesi ini; log scratch dapat
 hilang, ringkasan ada di JSON bukti.
+
+### 37. Image teman dibedah: teknik SFP teridentifikasi penuh — siap transplantasi (2026-10-11)
+
+Pemilik menyerahkan install-image build teman (`install-image-7.23.1-patched.img`,
+sha256 `b4f2393c…`, klaim+pemilik mengonfirmasi SFP terbaca di hardware pemilik
+dengan image itu). Bukti tahan lama:
+[evidence/friend-sfp-technique-2026-10-11.json](evidence/friend-sfp-technique-2026-10-11.json).
+
+Temuan: system npk = vendor 7.23.1 (bnx2x.ko byte-identik vendor; keyman/mode/
+loader/kernel dipatch kunci milik build itu — nilai tidak direkam). `nova/bin/net`
+= vendor murni +5.800 byte: (1) slot phdr PT_GNU_STACK dipakai untuk entri
+PT_LOAD baru 4KiB RX @vaddr 0x81ba000/file 0x170000; (2) SATU redirect: cabang
+`jae` jalur-skip properti SFP @VA 0x8074944 → `jmp 0x81ba000`; (3) halaman 288
+instruksi: pembaca EEPROM self-contained via int 0x80 (socket+ioctl SIOCETHTOOL
+0x42/0x43, baca 512B A0+A2), decoder SFF-8472 lengkap (suhu ÷256 signed,
+tegangan ÷10, bias ÷500, TX/RX power terkalibrasi ×10 float dengan sentinel
+-25000, wavelength, string vendor/PN via helper string), lalu menerbitkan
+property lewat API internal net (setter 0x8054790; ID property 0x459/0x45a/
+0x45f-0x463/0x485); (4) string ether-pcie1/2 → sfp28-1/2; (5) domain server
+upgrade diganti milik build itu (tidak akan kita ikut).
+
+Implikasi: (a) konsep = sama dengan cave B5 kita (bukti arsitektur benar) tetapi
+eksekusi via syscall langsung + decoder + publisher lengkap — inilah bagian yang
+membuat field muncul; (b) alamat helper halaman tertanam untuk 7.23.1 →
+transplantasi ke build 7.23.1 kita langsung applicable (offset identik, kunci
+kita); port 7.24.4 butuh pemetaan ulang alamat helper; (c) karena pemilik sudah
+membuktikan image teman bekerja di hardwarenya, teknik ini = bukti-hardware
+pertama untuk jalur userland di mesin pemilik.
+
+Rencana lab v3: bangun 7.23.1 kita (lisensi+fb0) + transplantasi verbatim
+halaman teman (hunk phdr/redirect/page/rename-port; tanpa hunk domain),
+verifikasi QEMU (e1000: halaman gagal-anggun), pin di patch.py, rilis.
+Artefak analisa: /home/djundev/mikpatch-labv2/friend-page-disasm.txt (scratch).
