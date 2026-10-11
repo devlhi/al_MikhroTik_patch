@@ -3124,3 +3124,39 @@ instruksi uji B6, dan rollback. CHR dalam rilis ini tidak membawa patch net
 pemilik (monitor port SFP belum dijalankan), runtime/boot aset CI ini, key lama
 pemilik ber-extra-channels/berbatas waktu sampai regenerasi fb0 dan impor ulang.
 Rincian lengkap di evidence JSON §34.
+
+### 35. Audit keluhan pemilik: expires-in lisensi + SFP belum tampil (2026-10-11)
+
+Pemilik melaporkan setelah install dari lab v2: `expires-in: 2d23h…` tetap
+muncul (nlevel 6, features kosong ✓) dan field SFP belum terlihat (dites
+ether2/ether5). Audit sesi ini:
+
+**SFP media terbukti benar:** ISO lab v2 diunduh (sha256 `9f652cd7…` cocok
+SHA256SUMS), `routeros-7.24.4.npk` di dalamnya (20.524.705 B) diekstrak pakai
+7-Zip; `nova/bin/net` di dalamnya = pin `1688dd64…`. Jadi media rilis pasti
+membawa patch; field SFP hanya bisa muncul di port bermodul optik — dua port
+yang dites pemilik jelas tembaga (1G-baseT / 10-100M-baseT). Output
+`monitor [find] once` dari pemilik masih belum ada.
+
+**Diagnosis expires-in (baru, mengoreksi hipotesis lama):**
+- Riset web: demo x86 normal TIDAK berbatas waktu sejak ~6.45 — jadi countdown
+  3-hari ini bukan perilaku bawaan, melainkan klasifikasi key custom.
+- Data pemilik: dua kali import (install lama 10-08-ish, install baru 10-11
+  ~13:40) dua-duanya menampilkan sisa ±2d23h — deadline = waktu import +
+  259.200 detik (3 hari) persis. Import ulang me-reset countdown.
+- Konsekuensi: hipotesis sesi sebelumnya ("hilang setelah reboot aktif")
+  TIDAK TERBUKTI dan berdasarkan data pemilik kemungkinan salah — lab QEMU
+  tidak pernah mencatat ada/tidaknya expires-in; itu celah bukti.
+- RE keyman 7.24.4 (pyelftools+capstone, venv): konstanta 0x278d00 (30 hari)
+  ada di jalur **renewal CHR** (`/ram/chrlreqonce`, string "permanent licence
+  can not be renewed"); deadline CHR pakai sentinel -1. Konstanta 259200/86400
+  TIDAK ada sebagai immediate di keyman/mode/net; pubkey lisensi vendor tidak
+  ada sebagai blob 32-byte (tertanam sebagai immediate instruksi — konsisten
+  matcher dua-round). Sumber deadline ROS 3-hari belum terlokasi; butuh sesi
+  RE khusus (temukan konsumer payload[8:16] yang kita isi nol).
+- Workaround terbukti (data pemilik): generate+import ulang key sebelum
+  3 hari (±1 menit); countdown reset. Perilaku SETELAH habis belum diamati.
+
+**Keputusan:** belum ada perubahan kode; audit tercatat jujur. Item lanjut:
+(a) output `monitor [find] once` pemilik untuk SFP; (b) sesi RE payload
+lisensi ROS untuk menemukan encoding permanen (bandingkan juga key asli).
