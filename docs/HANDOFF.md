@@ -3336,3 +3336,54 @@ sekitar 0x667b44 (x86-64), kandidat tambal minimal (mis. ubah immediate
 lisensi QEMU yang terbukti jalan, integrasi pin di patch.py, rebuild image.
 Artefak: vmlinux-vendor7231.bin & vmlinux-friend7231.bin di scratch labv2.
 Tidak ada perubahan kode produksi.
+
+### 43. expires-in hilang total: model terpecahkan (domain uptime, penerbit keyman) + patch 6-byte + E2E dua kali + integrasi pipeline (2026-10-12)
+
+Kelanjutan §42; situs kernel "SCSI" 0x667b44 terbukti menyesatkan (string
+sekitarnya = driver 43w-9xxx). Rangkaian penentu sesi ini:
+
+1. **Model final (eksperimen, bukan hipotesis)**: countdown expires-in
+   berjalan di domain UPTIME guest — jam dinding digeser ke tanggal deadline
+   maupun 4 hari lewatnya tidak mengubah baris; reboot disk teraktivasi
+   mengembalikan ~jendela penuh. Record lisensi x86 = blob kunci 64-byte di
+   sektor MBR offset 0x110 (ditemukan via hunt payload kunci ter-decode di
+   seluruh disk); tidak ada deadline absolut di disk mana pun (p2/p1/store
+   pdb dibedah via debugfs; kandidat 259200 di cfg.0000 ternyata record
+   web-proxy).
+2. **Penerbit ditemukan**: keyman (userspace) menerbitkan properti id 6
+   'expires-in' lewat `nv::message::insert<u32_id>` dengan nilai
+   `((uptime/600) + 432 − used_buckets) × 600` — 432 bucket × 600 s = 259200 s
+   (3 hari) hardcoded `mov esi,0x1b0`. Satu-satunya call `nv::getUptime()` di
+   keyman = situs ini.
+3. **Patch 6-byte** pada file offset 0x0a143 keyman: `0f84b8000000` (je ke
+   blok insert) → `e90500000090` (jmp langsung ke blok penyelesaian) — jalur
+   lisensi demo (edi==0) tidak lagi meng-insert properti, identik perilaku
+   perpetual bawaan (jalur ebx==0). Situs identik byte-per-byte di 7.23.1 dan
+   7.24.4.
+4. **E2E dua kali di QEMU** (instalasi fresh dari image → import kunci fb0
+   level-6 → reboot → print): `software-id / nlevel: 6 / features` kosong,
+   **tanpa baris expires-in** — varian serial (syslinux +console=ttyS0, alat
+   lab) dan image plain (syslinux vendor asli). Bukti tahan lama:
+   docs/evidence/license-noexpire-2026-10-12.json.
+5. **Integrasi pipeline**: patch.py `--no-expires-in` /
+   `patch_npk_file(no_expires_in=True)` — pin pasca-rewrite 7.24.4 (source
+   64f423b7…, patched c26fa687…), fail-closed, urutan identik alur lab-sfp
+   (hunk setelah rewrite kunci, preservasi metadata ketat). CLI + laporan
+   `keyman_no_expires_in`. Catatan: rewrite instruksi butuh capstone — tanpa
+   itu matcher gagal-tutup (penyebab kegagalan lokal sesi ini; capstone
+   dipasang di WSL). Tes: tests/test_keyman_noexpire.py (10/10 WSL hijau,
+   termasuk validasi vendor riil dari cache); suite penuh WSL 568 OK
+   (13 skip). Windows python lokal tetap tanpa capstone → tes dekoder error
+   di mesin ini (lingkungan, bukan regresi).
+6. **Rilis "Ali Media Patch 7.23.1 lab v4"**: npk routeros-7.23.1-lab-v4.npk
+   (a92b2911…), install-image-7.23.1-ali-lab-v4.img (07f5b267…) + .zip
+   (c355d45f…) + SHA256SUMS. npk dibangun via splice lab-v3 + hunk (bukan
+   pipeline 7.23.1 — 7.23.1 bukan versi ter-pin pipeline; pipeline flag
+   berlaku untuk 7.24.4 ke depan).
+
+Sisa jujur: siklus perpanjangan demo 3-hari-uptime tetap berjalan di bawah
+tampilan (perilaku pada 3 hari uptime penuh — banner NEW SOFTWARE KEY /
+auto-reboot sys2+login — belum diuji); kunci tetap wajib diimpor ≤24 jam
+pasca-install; belum ada bukti perangkat fisik. Scratch labv2 memuat harness
+baru (cycle3.py: paging GPL + fase import/verify; v4install3.py: installer
+via serial setelah edit syslinux.cfg) dan semua log bukti.

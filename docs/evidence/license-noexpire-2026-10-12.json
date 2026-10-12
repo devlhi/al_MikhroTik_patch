@@ -1,0 +1,45 @@
+{
+  "title": "Penghilangan baris expires-in pada license print (lab 7.23.1 lab-v4)",
+  "date": "2026-10-12",
+  "scope": "lab QEMU saja; bukan bukti perangkat fisik",
+  "model_verified": {
+    "countdown_domain": "uptime guest (bukan jam dinding)",
+    "evidence_clock": [
+      "jam sistem digeser ke tanggal deadline (oct/15/2026) -> expires-in tidak berubah",
+      "jam digeser 4 hari lewat deadline (oct/19/2026) -> expires-in tetap 2d23h49m29s, level 6 tetap aktif",
+      "reboot ulang disk teraktivasi -> expires-in kembali ke ~2d23h49m3xs (mendekati jendela penuh 3 hari)"
+    ],
+    "license_storage": "record lisensi x86 = blob kunci 64-byte pada sektor MBR offset 0x110 (header state di 0x10a); tidak ada deadline absolut tersimpan di disk",
+    "publisher": "keyman (userspace, nova/bin/keyman) menerbitkan properti id 6 'expires-in' lewat nv::message::insert<u32_id> dengan nilai ((uptime/600) + 432 - used_buckets) * 600; konstanta 432 bucket x 600s = 259200s (3 hari) hardcoded"
+  },
+  "patch": {
+    "binary": "nova/bin/keyman",
+    "site_file_offset": "0x0a143",
+    "context_before": "0f84b8000000",
+    "context_after": "e90500000090",
+    "semantics": "jalur lisensi demo (edi==0) dilompati langsung ke blok penyelesaian respons sehingga properti id 6 tidak pernah di-insert; identik perilaku perpetual (jalur ebx==0 bawaan)",
+    "versions_byte_identical_site": ["7.23.1 (len 55412)", "7.24.4 (len 55444)"],
+    "pipeline_integration": "patch.py flag --no-expires-in / patch_npk_file(no_expires_in=True); pin pasca-rewrite 7.244: source 64f423b7..., patched c26fa687...; fail-closed"
+  },
+  "e2e_runs_qemu": [
+    {
+      "image": "install-image-7.23.1-ali-lab-v4.img (syslinux vendor asli)",
+      "sha256": "07f5b267a333923aed3c8835d4ab7565dc72d57edf433ee50c9dc408efbef40c",
+      "steps": "instalasi fresh ke disk kosong -> boot -> import kunci fb0 (level 6, fitur kosong, sid lab C74Z-3IFR) -> reboot -> /system license print",
+      "result": "software-id + nlevel: 6 + features kosong; TIDAK ADA baris expires-in",
+      "logs_scratch": "qemu/lic3-v4p-import.log, qemu/lic3-v4p-verify.log (scratch, dapat hilang)"
+    },
+    {
+      "image": "varian serial (console=ttyS0 di syslinux.cfg, hanya alat lab)",
+      "steps": "sama seperti di atas",
+      "result": "sama: tanpa expires-in",
+      "logs_scratch": "qemu/lic3-v4-import.log, qemu/lic3-v4-verify.log"
+    }
+  ],
+  "residuals_honest": [
+    "siklus perpanjangan demo 3-hari-uptime tetap berjalan di bawah tampilan; perilaku pada 3 hari uptime penuh (banner NEW SOFTWARE KEY / reboot otomatis dari sys2/login) belum diuji",
+    "tempat kunci tetap harus diimpor dalam 24 jam setelah instalasi segar (model §41 HANDOFF)",
+    "belum diuji pada perangkat fisik; hardware Mini PC pemilik menunggu uji pemilik"
+  ],
+  "release": "Ali Media Patch 7.23.1 lab v4"
+}

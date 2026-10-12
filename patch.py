@@ -648,6 +648,41 @@ def _lab_sfp_net_pins():
         _LAB_SFP_NET_PATCH_7244)}
 
 
+# keyman 'expires-in' suppression: keyman publishes license property 6
+# ('expires-in') as ((uptime/600) + 432 - used_buckets) * 600 on the demo
+# license path (edi==0). Routing that path straight to the response finish
+# block skips the property insert, matching the perpetual-license behavior
+# the binary already has for ebx==0. 7.23.1 and 7.24.4 keyman share the
+# byte-identical site. The source pin binds the keyman AFTER the generic key
+# rewrite (keyman carries one instruction-level key occurrence), so it binds
+# version + key mapping together; verified end-to-end in QEMU on 7.23.1.
+_KEYMAN_NOEXPIRE_HUNK = (
+    (0x00A143, '0f84b8000000', 'e90500000090'),
+)
+_KEYMAN_NOEXPIRE_SIZE_7244 = 55444
+_KEYMAN_NOEXPIRE_SOURCE_SHA256_7244 = (
+    '64f423b7dc7a9dab4c35f64b1a5d78f5da22f2dffe36f7d5791de1667b55c8bd')
+_KEYMAN_NOEXPIRE_PATCHED_SHA256_7244 = (
+    'c26fa687fbf1dc861724c7fb2ce4b9b009f957289c4fd82ef204106f789bc3ce')
+
+
+def _keyman_noexpire_pins():
+    """Runtime policy -> (size, source_sha256, patched_sha256, hunks), read at
+    call time so tests may patch the pinned constants."""
+    return {_X86_INSTALLER_RUNTIME_POLICY: (
+        _KEYMAN_NOEXPIRE_SIZE_7244, _KEYMAN_NOEXPIRE_SOURCE_SHA256_7244,
+        _KEYMAN_NOEXPIRE_PATCHED_SHA256_7244, _KEYMAN_NOEXPIRE_HUNK)}
+
+
+def no_expires_in_supported(version):
+    """True when the keyman no-expires-in patch has pinned hunks for a version."""
+    try:
+        policy, _, _ = x86_installer_qualification(version)
+    except ValueError:
+        return False
+    return policy in _keyman_noexpire_pins()
+
+
 def lab_sfp_net_supported(version):
     """True when the lab SFP-DOM net patch has pinned hunks for a version."""
     try:
@@ -829,9 +864,12 @@ def _validate_terminal_banner_package(package, policy):
 
 
 def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key=None,
-                      *, terminal_banner=None, source_npk=None, lab_sfp_net=False):
+                      *, terminal_banner=None, source_npk=None, lab_sfp_net=False,
+                      no_expires_in=False):
     if lab_sfp_net and runtime_policy not in _lab_sfp_net_pins():
         raise ValueError('lab-sfp net patch requires a qualified pinned x86-installer policy')
+    if no_expires_in and runtime_policy not in _keyman_noexpire_pins():
+        raise ValueError('keyman no-expires-in patch requires a qualified pinned x86-installer policy')
     if terminal_banner is not None:
         _validate_terminal_banner_package(package, terminal_banner)
     if runtime_policy is not None:
@@ -911,6 +949,39 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
                 'source_sha256': source_sha, 'patched_sha256': patched_sha,
                 'scope': 'lab SFP-DOM prototype; QEMU regression only, physical DOM unproven',
             }
+        if no_expires_in:
+            # Applied after the generic key mapping and the pristine component
+            # validation, mirroring the SFP flow: the in-pin proves the on-disk
+            # keyman is exactly the key-replaced pinned bytes; the hunk region
+            # carries no key material, so the pin binds version + key mapping.
+            import hashlib as _hashlib_mod
+            (km_size, km_source_sha, km_patched_sha,
+             km_hunks) = _keyman_noexpire_pins()[runtime_policy]
+            keyman_path = extract_dir / 'nova/bin/keyman'
+            if (any(path.is_symlink() for path in (keyman_path, keyman_path.parent,
+                                                   keyman_path.parent.parent))
+                    or not keyman_path.is_file() or keyman_path.stat().st_nlink != 1):
+                raise ValueError('keyman no-expires-in patch requires a regular '
+                                 'unlinked nova/bin/keyman')
+            km_stat = keyman_path.stat()
+            km_data = keyman_path.read_bytes()
+            if (len(km_data) != km_size
+                    or _hashlib_mod.sha256(km_data).hexdigest() != km_source_sha):
+                raise ValueError('keyman no-expires-in patch requires the pinned '
+                                 'pristine nova/bin/keyman')
+            km_patched = _apply_lab_sfp_net_patch(km_data, km_hunks)
+            if (len(km_patched) != km_size
+                    or _hashlib_mod.sha256(km_patched).hexdigest() != km_patched_sha):
+                raise ValueError('keyman no-expires-in output failed its pinned digest')
+            keyman_path.write_bytes(km_patched)
+            os.chmod(keyman_path, stat_module.S_IMODE(km_stat.st_mode))
+            os.utime(keyman_path, ns=(km_stat.st_atime_ns, km_stat.st_mtime_ns))
+            report['keyman_no_expires_in'] = {
+                'path': 'nova/bin/keyman', 'size': km_size,
+                'source_sha256': km_source_sha, 'patched_sha256': km_patched_sha,
+                'scope': ('lab demo-window display suppression; uptime renewal '
+                          'cycle still runs underneath'),
+            }
         if preserve_metadata and _tree_metadata(extract_dir) != tree_metadata:
             raise ValueError('metadata changed during scoped patch')
         report['replacements'] = [
@@ -963,9 +1034,11 @@ def patch_npk_package(package, key_dict, runtime_policy=None, license_public_key
 
 def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, output_file=None,
                    runtime_policy=None, license_public_key=None, *, terminal_banner=None,
-                   lab_sfp_net=False):
+                   lab_sfp_net=False, no_expires_in=False):
     if lab_sfp_net and runtime_policy not in _lab_sfp_net_pins():
         raise ValueError('lab-sfp net patch requires a qualified pinned x86-installer policy')
+    if no_expires_in and runtime_policy not in _keyman_noexpire_pins():
+        raise ValueError('keyman no-expires-in patch requires a qualified pinned x86-installer policy')
     provenance = {}
     if runtime_policy not in _chr_policies() and runtime_policy in _x86_installer_policies():
         import hashlib
@@ -987,11 +1060,11 @@ def patch_npk_file(key_dict, kcdsa_private_key, eddsa_private_key, input_file, o
         for package in npk._packages:
             reports.append(patch_npk_package(package, key_dict, runtime_policy, license_public_key,
                                             terminal_banner=terminal_banner, lab_sfp_net=lab_sfp_net,
-                                            **provenance))
+                                            no_expires_in=no_expires_in, **provenance))
     else:
         reports.append(patch_npk_package(npk, key_dict, runtime_policy, license_public_key,
                                          terminal_banner=terminal_banner, lab_sfp_net=lab_sfp_net,
-                                         **provenance))
+                                         no_expires_in=no_expires_in, **provenance))
     for report in reports:
         print(f"package {report['package']}: {report['status']}")
     npk.sign(kcdsa_private_key, eddsa_private_key)
@@ -1017,6 +1090,9 @@ if __name__ == '__main__':
     npk_parser.add_argument('--lab-sfp-net', action='store_true',
                             help='Opt-in pinned lab SFP-DOM net patch; requires a qualified '
                                  'pinned x86-installer runtime policy (physical DOM unproven)')
+    npk_parser.add_argument('--no-expires-in', action='store_true',
+                            help='Opt-in pinned keyman patch so the demo license print omits '
+                                 'expires-in; requires a qualified pinned x86-installer policy')
     banner_parser = subparsers.add_parser('terminal-banner',
                                          help='Validate extracted tree and write logo copy; no keys')
     banner_parser.add_argument('root', help='Extracted SquashFS root (read-only)')
@@ -1053,11 +1129,14 @@ if __name__ == '__main__':
     if args.command == 'npk':
         if args.lab_sfp_net and not args.runtime_policy:
             parser.error('--lab-sfp-net requires --runtime-policy with a qualified pinned policy')
+        if args.no_expires_in and not args.runtime_policy:
+            parser.error('--no-expires-in requires --runtime-policy with a qualified pinned policy')
         print(f'patching {args.input} ...')
         patch_npk_file(key_dict, kcdsa_private_key,
                        eddsa_private_key, args.input, args.output,
                        runtime_policy=args.runtime_policy, license_public_key=license_public_key,
-                       terminal_banner=args.terminal_banner, lab_sfp_net=args.lab_sfp_net)
+                       terminal_banner=args.terminal_banner, lab_sfp_net=args.lab_sfp_net,
+                       no_expires_in=args.no_expires_in)
     elif args.command == 'kernel':
         print(f'patching {args.input} ...')
         data = patch_kernel(open(args.input, 'rb').read(), key_dict)
