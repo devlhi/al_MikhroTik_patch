@@ -3424,3 +3424,36 @@ gambar error, jadi bentuk akhir diputuskan dari mekanisme yang sudah terbukti):
 Sisa jujur sama seperti §43 (siklus uptime 3 hari belum diuji; hardware belum).
 Gambar contoh pemilik tetap belum bisa dianalisis — jika bentuk branding di
 contohnya berbeda (mis. art khusus), itu revisi kecil berikutnya.
+
+### 45. Bukti hardware pemilik (SFP terminal + license bersih + branding) & riset tab SFP WinBox dibuka (2026-10-13)
+
+1. **Bukti dari mesin pemilik** (screenshot, bukan laporan verbal): `/interface
+   ethernet monitor ether3` menampilkan DOM penuh (SOURCEPHOTONICS, suhu,
+   tegangan, tx/rx power) pada Mini PC LENOVO x86 + `/system license print`
+   bersih (nlevel 6, features, tanpa expires-in) + prompt
+   `[admin@Ali-Media-Patch]` + banner. Misi SFP-terminal, license, branding =
+   TERBUKTI di hardware fisik. Port SFP pemilik muncul sebagai `ether3`
+   (rename bawaan sfp28 hanya untuk NIC tertentu; tidak memengaruhi monitor).
+   Pemilik juga mengonfirmasi tab SFP tidak muncul di dialog interface WinBox
+   — dan build kawan juga tidak memilikinya; pemilik meminta kita membangun
+   fitur tab SFP WinBox sendiri ("buat sendiri punya kita").
+2. **Model teknis yang terbentuk**: halaman SFP (net) mem-publish DOM lewat
+   setter 0x8054790 hanya ke objek hasil monitor (ID 0x45f suhu, 0x460
+   tegangan, 0x461 bias, 0x462/0x463 tx/rx, 0x485 wavelength, 0x459+
+   string) — objek interface yang dibaca WinBox tidak membawa properti itu.
+   Dugaan kerja: tab SFP WinBox muncul bila skema objek interface
+   mendaftarkan properti SFP (layout tab built-in di WinBox.exe dipicu
+   properti/schema dari router).
+3. **Infrastruktur riset siap**: (a) net vendor ARM 7.23.1 (perangkat SFP
+   asli; sha f6612c6a…) diekstrak di scratch ref-arm/ sebagai referensi
+   schema; (b) loop uji nyata: QEMU disk lab-v5 teraktivasi berjalan
+   persisten dengan hostfwd 127.0.0.1:8291 — WinBox Windows terbukti
+   connect (Test-NetConnection True); (c) WinBox.exe tersedia di mesin.
+   Scan byte mentah ID 0x459-0x485 x86-vs-ARM tidak konklusif (koincidensi
+   pattern) — perlu diff terstruktur tabel skema objek.
+4. **Rencana v6**: temukan tabel skema properti objek ethernet di net (bandingkan
+   ARM vs x86), uji publikasi properti SFP (nilai palsu) ke objek interface di
+   QEMU, verifikasi tab muncul di WinBox nyata, lalu sambungkan ke nilai ioctl
+   asli dan build v6. Verifikasi tampilan akhir tetap butuh hardware pemilik.
+
+Tidak ada perubahan kode produksi sesi ini (riset + infrastruktur).
