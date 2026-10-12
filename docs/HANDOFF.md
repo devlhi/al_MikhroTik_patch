@@ -3387,3 +3387,40 @@ auto-reboot sys2+login — belum diuji); kunci tetap wajib diimpor ≤24 jam
 pasca-install; belum ada bukti perangkat fisik. Scratch labv2 memuat harness
 baru (cycle3.py: paging GPL + fase import/verify; v4install3.py: installer
 via serial setelah edit syslinux.cfg) dan semua log bukti.
+
+### 44. Branding "Ali Media Patch" di terminal + identity + paket opsional; lab v5 (2026-10-12)
+
+Atas permintaan pemilik (banner ASCII "ali media patch" di terminal + kemunculan
+di package; contoh gambarnya tidak pernah berhasil dibuka agent — tool analisis
+gambar error, jadi bentuk akhir diputuskan dari mekanisme yang sudah terbukti):
+
+1. **Banner terminal**: `nova/lib/console/logo.txt` diganti pola CHR yang sudah
+   di-pin (`terminal_banner.py` REPLACEMENT — art MikroTik utuh + baris caption
+   `  Ali Media Patch`; logo 7.23.1 terbukti byte-identik dengan ORIGINAL yang
+   di-pin, konsumen `nova/bin/login` memuat path-nya).
+2. **Identity**: `autorun.scr` di FAT installer (semula kosong) diisi
+   `/system identity set name="Ali-Media-Patch"` — hook resmi RouterOS yang
+   berjalan pasca-install. defconf ternyata tidak berjalan di alur ini (identity
+   tetap x86) — baris identity di defconf dibiarkan (tidak berefek, tidak
+   berbahaya).
+3. **Paket `ali-media-patch`**: npk `calea` (24.721 B, lawful-intercept, tak
+   dipakai) di-NAME_INFO-rename jadi `ali-media-patch` + resign. CATATAN:
+   installer hanya memasang paket tercentang default (`system`) — agar baris
+   `ali-media-patch` muncul di `/system package print`, pengguna menekan `a`
+   (select all) atau spasi pada barisnya di menu install. Penomoran FAT vendor
+   dipertahankan (4.npk).
+4. **E2E final pada image yang dirilis** (04f237c6…): instalasi fresh →
+   "Ali-Media-Patch Login:" → banner ASCII "Ali Media Patch" → prompt
+   `[admin@Ali-Media-Patch] >` → `/system identity print` = Ali-Media-Patch →
+   `/system license print` bersih tanpa expires-in (level 6, fb0). Siklus
+   verifikasi pertama juga menampilkan notice "ROUTER HAS NEW SOFTWARE KEY …
+   active only after reboot" dari login — normal pada transisi pending→aktif.
+5. **Rilis lab v5**: routeros-7.23.1-lab-v5.npk (d475c971…), 
+   ali-media-patch-7.23.1.npk (b95ed583…), install-image-7.23.1-ali-lab-v5.img
+   (04f237c6…) + .zip (e7f95948…) + SHA256SUMS. SFP net + keyman no-expire
+   tetap (identik v4). Iterasi 0.npk (posisi nol) diuji lalu dikembalikan ke
+   penomoran vendor — perilaku install default identik.
+
+Sisa jujur sama seperti §43 (siklus uptime 3 hari belum diuji; hardware belum).
+Gambar contoh pemilik tetap belum bisa dianalisis — jika bentuk branding di
+contohnya berbeda (mis. art khusus), itu revisi kecil berikutnya.
