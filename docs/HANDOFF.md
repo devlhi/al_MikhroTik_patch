@@ -3272,3 +3272,21 @@ Rilis lab-v3-7231-friendsfp-1 diperbarui: +`install-image-7.23.1-ali-lab-v3.img.
 domain-server milik teman memang tidak ditransplant; seluruh isi dari vendor
 resmi + pipeline repo). Scratch: /home/djundev/mikpatch-labv2 (own/, qemu/,
 keys/ — dapat hilang).
+
+### 40. Tuntutan pemilik: hilangkan expires-in (target: murni nlevel 6) — perburuan dimulai (2026-10-12)
+
+Pemilik menetapkan target tampilan: hanya `software-id/nlevel/features`,
+TANPA baris expires-in (contoh disertakan). Status perburuan situs pemberi
+jendela 3-hari: scan raw 259200/0x3F480 di SELURUH binary vendor-root
+(<60MB, termasuk boot/kernel on-disk): hanya dhcp/hotspot/wproxy (masa lease,
+irrelevant). sys2: 7 situs immediate 86400, tidak satu pun berkonteks
+lisensi/demo/SHOW_LICENSE. keyman: tidak punya 259200/86400. Kesimpulan
+sementara: nilai 3-hari dibentuk tidak-langsung (rantai kali kecil, struct
+rodata, atau di kernel terkompresi/initramfs yang lolos scan karena
+kompresi). Hipotesis kerja berikutnya: (a) dekompres kernel bzImage/initrd
+lalu scan ulang; (b) telusuri setter deadline ROS di keyman dari fungsi
+pembaca store 0x804f718 (pasangan jalur CHR 0x8052c3e yang sudah dipetakan
+dengan sentinel -1); (c) lab QEMU untuk menguji patch kandidat keyman.
+Belum ada perubahan kode. Posisi jujur ke pemilik: fungsi hari ini = level 6
+persisten dengan self-renewal; baris expires-in murni kosmetik siklus, dan
+menghilangkannya menuntut patch firmware terarah yang situsnya belum ketemu.
