@@ -3290,3 +3290,23 @@ dengan sentinel -1); (c) lab QEMU untuk menguji patch kandidat keyman.
 Belum ada perubahan kode. Posisi jujur ke pemilik: fungsi hari ini = level 6
 persisten dengan self-renewal; baris expires-in murni kosmetik siklus, dan
 menghilangkannya menuntut patch firmware terarah yang situsnya belum ketemu.
+
+### 41. Verifikasi keamanan penuh image build sendiri + temuan demo 24-jam install baru (2026-10-12)
+
+Atas permintaan pemilik ("pastikan dulu aman, tidak mau tes berulang"):
+driver konsol QEMU diselesaikan (jawab ESC[6n/ESC-Z, paging layar GPL dengan
+Enter cepat — layar notifikasi = teks GPL/LGPL bertingkat, login, Ctrl-C
+wizard password). Hasil E2E pada `install-image-7.23.1-ali-lab-v3.img` persis
+yang dirilis: installer boot+install ✓, disk hasil install boot ✓, GPL dapat
+dilewati ✓, login admin ✓, prompt interaktif ✓, `/system license print` +
+`resource print` berjalan ✓ (7.23.1 stable, build-time vendor).
+
+**Temuan penting (catatan pemakaian):** install baru BELUM berlisensi
+menampilkan `expires-in ~22-24h` = demo 24 jam SEJAK INSTALL. Konsekuensi:
+key fb0 wajib diimpor dalam 24 jam setelah install (setelah itu jendela
+berubah siklus 3-hari self-renewing sesuai §36). Software-id lab disk:
+C74Z-3IFR (id QEMU, bukan milik pemilik).
+
+Log scratch: qemu/final-boot4.log (dapat hilang). Tidak ada perubahan kode
+produksi; catatan rilis belum diubah — pemilik sudah menerima instruksi
+impor-lisensi pada langkah pasca-install. Commit referensi rilis: b775eb1.
