@@ -3310,3 +3310,29 @@ C74Z-3IFR (id QEMU, bukan milik pemilik).
 Log scratch: qemu/final-boot4.log (dapat hilang). Tidak ada perubahan kode
 produksi; catatan rilis belum diubah — pemilik sudah menerima instruksi
 impor-lisensi pada langkah pasca-install. Commit referensi rilis: b775eb1.
+
+### 42. Expires-in: payload terbukti bukan faktor; kernel teman tidak menambal; situs 3-hari ditemukan di kernel (2026-10-12)
+
+Tiga temuan penentu sesi ini:
+
+1. **Kernel build teman = kernel vendor + TIGA hunk kunci saja** (2× pubkey
+   sign NPK, 1× immediate pubkey lisensi — pola c785/0f96 seperti patcher
+   kita). Situs 3-hari identik. Artinya build teman TIDAK menyelesaikan
+   expiry di kernel; logika demo yang sama berlaku untuk buildnya.
+2. **Kandidat timestamp masa-depan (bytes 8-12 = 0x7FFFFFFF/LE, fb0) diuji
+   penuh di lab QEMU**: diterima (features kosong), aktif pasca-reboot, tapi
+   expires-in TETAP jendela 3-hari baru. Dengan ini SEMUA encoding payload
+   (nol/0xFF/CHR-244/timestamp-2038) terbukti tidak memengaruhi deadline.
+3. **Konstanta 3-hari ditemukan di kernel terdekompresi** sebagai instruksi
+   `sub rax, 0x3f480` (file offset 0x667b44 pada vmlinux EFI xz; satunya di
+   seluruh kernel) dikelilingi matematika waktu dan string
+   expires/license/demo. Kandidat situs tambal berikutnya.
+
+Implikasi: hilangnya expires-in menuntut patch kernel terarah (ubah jendela
+demo atau cabang klasifikasinya) — bukan payload key, bukan keyman, dan
+BUKAN sesuatu yang dimiliki build teman. Rencana berikutnya: bedah fungsi di
+sekitar 0x667b44 (x86-64), kandidat tambal minimal (mis. ubah immediate
+0x3f480 → nilai sangat besar, atau bypass cabang demo), uji di harness
+lisensi QEMU yang terbukti jalan, integrasi pin di patch.py, rebuild image.
+Artefak: vmlinux-vendor7231.bin & vmlinux-friend7231.bin di scratch labv2.
+Tidak ada perubahan kode produksi.
