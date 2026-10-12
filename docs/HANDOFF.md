@@ -3242,3 +3242,33 @@ Batas/lanjut: uji runtime QEMU lab v3 (boot + monitor e1000) tertunda; port
 halaman ke 7.24.4 (pemetaan alamat helper 0x8054790/0x8055120/0x80542d0/
 0x8055500/konstanta 0x818a9a4 ke net 7.24.4) menyusul; integrasi pin di
 patch.py setelah validasi runtime. Scratch build script: .zcode/tmp (sesi).
+
+### 39. Install-image BUILD SENDIRI 7.23.1 lab v3 — E2E QEMU hijau (2026-10-12)
+
+Atas perintah pemilik ("ikuti punya teman, build sendiri, bukan pakai
+punyanya"): install-image dibangun penuh dari sumber vendor resmi. Vendor
+install-image-7.23.1.zip diunduh (sha256 `bcb17b1d…`; server MikroTik sering
+memutus koneksi — resume bertahap + verifikasi zipfile per percobaan; file
+resume-pertama korup dan dibuang). Build: 11 NPK vendor dipatch pipeline kunci
+repo (system = lab-v3 npk dengan halaman SFP transplan) + kernel installer
+`patch.py kernel` + FAT rebuild via mtools (diekstrak .deb lokal, tanpa root;
+bootloader syslinux vendor tak disentuh). Image final sha256 `7d37d4e7…`
+(201.326.592 B).
+
+**Verifikasi QEMU (TCG, BIOS, IDE, VGA cirrus + monitor sendkey):** menu
+installer tampil (screenshot — disk target pre-selected); sekuens ENTER → i → y
+menghasilkan install ke disk target: MBR 55AA + partisi p1 32MiB/p2 ~2GiB;
+installer reboot sendiri (bukti -no-reboot exit). Disk hasil install di-boot:
+loader 7.23.1 → login admin/kosong → banner MikroTik tampil (log e2e-boot.log).
+Catatan batas: capture `/system license print` dari guest belum berhasil —
+konsole serial mengirim query ESC[6n/ESC-Z yang menunggu jawaban driver
+(jawaban DSR/cursor sudah ditambahkan; masih tersisa quirk); sistem terbukti
+hidup+login, bukan sekadar build. Pelajaran teknis: rom VGA QEMU ada di dir
+seabios (perlu -L kedua); nama file `QEMU,VGA.bin` mengandung koma (diparse
+sebagai opsi — disalin ke nama netral).
+
+Rilis lab-v3-7231-friendsfp-1 diperbarui: +`install-image-7.23.1-ali-lab-v3.img.zip`
++SHA256SUMS baru (3 aset). Tidak ada byte artefak teman di image ini (hunk
+domain-server milik teman memang tidak ditransplant; seluruh isi dari vendor
+resmi + pipeline repo). Scratch: /home/djundev/mikpatch-labv2 (own/, qemu/,
+keys/ — dapat hilang).
