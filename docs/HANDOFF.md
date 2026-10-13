@@ -3457,3 +3457,34 @@ contohnya berbeda (mis. art khusus), itu revisi kecil berikutnya.
    asli dan build v6. Verifikasi tampilan akhir tetap butuh hardware pemilik.
 
 Tidak ada perubahan kode produksi sesi ini (riset + infrastruktur).
+
+### 46. Riset v6 lanjutan: loop uji WinBox berfungsi; handshake winbox terekam; visual = hanya pemilik (2026-10-13)
+
+Kelanjutan §45. Infrastruktur loop ujiWinBox selesai dan terbukti:
+
+1. **QEMU lab router kini punya konsol serial** (socket unix
+   qemu/winbox-serial.sock) + driver serial-cmd.py — IP 10.0.2.15/24
+   terpasang manual di ether1 (tanpa defconf, ether1 tidak punya DHCP
+   client — inilah penyebab hostfwd bisu di §45). Admin diberi password
+   lab via serial.
+2. **Proxy capture 8291→8294** (wbproxy.py) aktus — handshake winbox
+   terekam penuh: hello klien [u16be len][cmd 06][user\0][32B kunci],
+   balasan server 51B, lalu pesan auth terenkripsi 34B. Router menjawab
+   "invalid user name or password (6)" — login GUI belum lolos (dialog
+   login WinBox 4.4 digerakkan via SendKeys; state field terpolusi antar
+   percobaan; perlu retry bersih sesi berikutnya — cek /user print dulu).
+   Rantai Windows→proxy→QEMU→guest terbukti hidup (probe python 51 balasan).
+3. **Batas harness**: agent/subagent TIDAK dapat melihat gambar (Read =
+   CDN-URL saja); analyze_image MCP hanya jalan untuk gambar dari pipeline
+   pesan pemilik. Jadi verifikasi visual tab SFP = tes pemilik; sinyal
+   data yang bisa diautomasikan = console (`/interface ethernet print
+   detail` menunjukkan properti objek — jalur registry objek sama yang
+   dibaca WinBox).
+4. **Rencana teknis v6 final**: modifikasi halaman SFP agar SELAIN monitor
+   juga mem-publish properti DOM ke OBJEK INTERFACE (perlu bedah pointer
+   objek interface di frame pemanggil hook 0x8074944) → verifikasi via
+   console print detail → build v6 → tes visual tab oleh pemilik. Referensi
+   ARM net tetap tersedia (ref-arm/, sha f6612c6a…).
+
+Scratch sesi: qemu/winbox-capture.log (handshake), wbproxy.py,
+serial-cmd.py, qemu-winbox3.sh. Tidak ada perubahan kode produksi.
