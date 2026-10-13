@@ -3488,3 +3488,20 @@ Kelanjutan §45. Infrastruktur loop ujiWinBox selesai dan terbukti:
 
 Scratch sesi: qemu/winbox-capture.log (handshake), wbproxy.py,
 serial-cmd.py, qemu-winbox3.sh. Tidak ada perubahan kode produksi.
+
+### 47. v6: WinBox login ke lab router BERHASIL; sesi penuh terekam (terenkripsi) (2026-10-13)
+
+Penutup blok infrastruktur loop uji:
+
+1. **Login sukses**: `WinBox.exe <ip> <user> <password>` (argumen POSISIONAL,
+   tanpa `key=value`) — inilah sintaks yang jalan; `address=`/`key=value`
+   serta SendKeys ke dialog gagal fokus. Router lab (password diset via
+   serial: lablab123) menerima sesi penuh: **1,2 MB / 128 respons** tanpa
+   error — capture lengkap di qemu/winbox-capture.log.
+2. **Lalu lintas pasca-handshake terenkripsi** (DH + kunci sesi) — tanpa
+   implementasi kripto protokol winbox, isi sesi tidak bisa dibaca dari
+   capture. Sinyal data otomatis untuk riset = console `print detail`
+   (registry objek sama); referensi schema = net ARM (statis).
+3. Fokus blok berikutnya tetap: bedah hook 0x8074944 → pointer objek
+   interface → halaman SFP v2 (publish DOM ke objek interface, tidak hanya
+   monitor) → verifikasi console → build v6 → tes visual pemilik.
