@@ -3505,3 +3505,39 @@ Penutup blok infrastruktur loop uji:
 3. Fokus blok berikutnya tetap: bedah hook 0x8074944 → pointer objek
    interface → halaman SFP v2 (publish DOM ke objek interface, tidak hanya
    monitor) → verifikasi console → build v6 → tes visual pemilik.
+
+### 48. v6 terobosan: serializer getall sudah memuat properti SFP + peta struct + gerbang flag (2026-10-13)
+
+Bedah net 7.23.1 (labv4-tree) menghasilkan arsitektur final v6:
+
+1. **Serializer objek ethernet** = fungsi file 0x2a492 (VA 0x8072492): edi =
+   pesan keluaran, ebx = struct data interface. Insert: 0x454 (byte +0x12),
+   0x483 (+0x1b), 0x455 (+0x1f×100/1000), 0x482/0x456/0x457 (+0x23/+0x20/
+   +0x21 ×10), 0x458, 0x47f (+0x34) — lalu BLOK SFP:
+   - gerbang: `[ebx+0x22]` (sfp-present; 0 => seluruh blok SFP dilewati) dan
+     `[ebx+0x12]` tipe media (skip jika 0x20-0x23)
+   - 0x459 = concat(str@[ebx+0x38], str@[ebx+0x24]) via helper 0x8071c5a
+     (string 16-byte inline) — vendor name/OUI
+   - 0x45a = str@[ebx+0x38]; 0x45b = str4@[ebx+0x48] (helper 0x80715ba);
+     0x45c = str@[ebx+0x54] (serial); 0x45d = str@[ebx+0x64] via 0x8071c96+
+     0x8070b42 (mfg date); 0x45e = word BE [ebx+0x4c]×100 + byte [ebx+0x4e]
+     (wavelength); 0x474 = raw eeprom [ebx+0x70/0x76] (insert raw_id 0x8055430)
+2. **Salinan serializer kedua** di 0x817d0xx (modul lain) memakai struct esi
+   berbeda (+0x92 tipe, +0xa3, +0xca wavelength BE, +0x26 temp, +0x3a bias...)
+   dan menerbitkan 0x45d/0x45e/0x45f/0x460... — topologi dua struct
+   (driver-level vs objek-level?) masih dipetakan.
+3. **Implikasi desain v6**: cukup menulis data DOM ke struct interface
+   (+set [0x22]=1, pastikan [0x12] bukan 0x20-0x23) → serializer getall
+   otomatis membawa properti SFP ke WinBox; DDMI numerik tetap lewat jalur
+   monitor. Halaman kawan (yang sudah mem-parse DOM lengkap) tinggal
+   ditambah blok penulisan ke struct — kandidat lokasi kursor: registry walk
+   (ds:0x81b8618 → +0x6c4 → node, bandingkan [node+0x154] dengan id/esi)
+   seperti di handler monitor 0x807485a.
+4. Sisa v6: (a) petakan node→struct data pada registry walk, (b) tulis blok
+   baru di ruang bebas halaman 4KB (funnel 0x81ba431; ruang 0x170441+ nol),
+   (c) uji: console `/interface ethernet print detail` harus menampilkan
+   field sfp, lalu pemilik cek tab SFP WinBox di lab 127.0.0.1:8291, (d)
+   RC2 nilai nyata → build v6 → rilis.
+
+Semua alamat di atas = file offset untuk net 7.23.1 (delta VA .text 0x8048000;
+segmen halaman 0x81ba000 delta 0x804a000). Tidak ada perubahan kode produksi.
