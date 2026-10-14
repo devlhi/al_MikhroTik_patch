@@ -3571,3 +3571,24 @@ Rangkaian lengkap sesi v6 (kelanjutan §45-48):
    numerik tersedia via monitor); per-port tab = future work v7.
 
 Artefak scratch: net-v6final.bin, v6final.sfs, qemu/lic3-v6-*.log.
+
+### 50. URGENT FIX v6.1: LAN tidak terdeteksi setelah upgrade v6 — RC1 NOPs dikembalikan (2026-10-14)
+
+**Laporan pemilik**: setelah upload NPK v6 + reboot, LAN tidak terdeteksi di
+Mini PC. Akar masalah: tiga NOP yang saya pasang di RC1 pada gerbang serializer
+getall (0x8072562, 0x8072573, 0x807273d) menghapus guard yang melindungi
+interface non-SFP dari pembacaan field SFP yang tidak valid → serializer
+membaca garbage → crash/korupsi state interface.
+
+**Fix v6.1**: kembali ke basis net v5 (yang TERBUKTI di hardware pemilik —
+semua gerbang original), lalu tambahkan HANYA:
+1. `mov eax, [shadow_valid]` di 0x8072c8f (5 byte, menggantikan call predikat)
+2. `shadow_fill` di 0x81ba500 (fungsi assembly, mengisi shadow dari EEPROM ioctl)
+3. Hook halaman 0x81ba130 → shadow_fill
+4. phdr RWX
+
+TIDAK ADA perubahan gerbang serializer. NPK: routeros-7.23.1-lab-v6.1.npk
+(10e0b3c1…). Diupload ke rilis v6 yang sama.
+
+**Pelajaran**: gerbang serializer bukan hanya cosmetic filter — melindungi
+interface non-SFP dari akses memori invalid. NOP gerbang = break hardware.
