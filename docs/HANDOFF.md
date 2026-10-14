@@ -3541,3 +3541,33 @@ Bedah net 7.23.1 (labv4-tree) menghasilkan arsitektur final v6:
 
 Semua alamat di atas = file offset untuk net 7.23.1 (delta VA .text 0x8048000;
 segmen halaman 0x81ba000 delta 0x804a000). Tidak ada perubahan kode produksi.
+
+### 49. v6: Tab SFP WinBox berfungsi + build lengkap + E2E lolos (2026-10-14)
+
+Rangkaian lengkap sesi v6 (kelanjutan §45-48):
+
+1. **RC2 TERBUKTI** (bukti pemilik): `mov al,1` di 0x8072c8f → tab SFP
+   muncul di WinBox. Pemicu pasti: properti `b400` (bool 'sfp') di getall.
+2. **RC3-call GAGAL**: `call shadow_apply` (fungsi di appended segment) →
+   sistem stabil tapi tab tidak muncul. Penyebab: call lintas segment.
+3. **RC3-inline BERHASIL** (bukti pemilik): `mov eax,[0x81bac00]` (5 byte
+   inline, baca shadow_valid langsung tanpa call) → **tab SFP muncul** di
+   WinBox. Sistem stabil.
+4. **Data string di struct menyebabkan crash**: menulis vendor/OUI/serial/
+   date ke [ebx+offset] di shadow_apply → sistem gagal boot. Versi minimal
+   (hanya return + gate [ebx+0x22]) aman. Root cause belum pasti (mungkin
+   helper nv::string tidak menerima data non-native).
+5. **v6 FINAL**: RC3-inline REAL (shadow_valid=0 di binary) + shadow_fill
+   (fungsi di 0x81ba500 yang mengisi shadow dari EEPROM hasil ioctl saat
+   monitor SFP dijalankan) + semua fitur v5 (no-expire, branding, paket
+   ali-media-patch).
+6. **E2E lolos penuh**: install fresh 15 detik → import fb0 → reboot →
+   license print bersih (nlevel 6, tanpa expires-in) + banner Ali Media
+   Patch + tidak ada tab SFP di QEMU (benar — REAL version).
+7. **Rilis**: NPK `routeros-7.23.1-lab-v6.npk` (8288660e…) untuk upgrade
+   dari v5 + install image lengkap. Tag: lab-v6-7231-ali-media-3.
+8. **Batasan yang diakui**: shadow global (tab muncul di semua port ethernet
+   setelah SFP monitor pertama); data string di tab masih kosong (DDMI
+   numerik tersedia via monitor); per-port tab = future work v7.
+
+Artefak scratch: net-v6final.bin, v6final.sfs, qemu/lic3-v6-*.log.
