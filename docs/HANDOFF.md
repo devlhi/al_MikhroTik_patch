@@ -3606,3 +3606,29 @@ gerbang serializer menyebabkan crash di hardware nyata.
 
 NPK: routeros-7.24.4-lab-v1-sfp-fix.npk (7737c0cc…). Install image menyusul
 (menunggu download vendor dari MikroTik). Rilis: v1-lab-sfp-fix-7244.
+
+### 52. Status lengkap semua rilis + verifikasi keamanan 7.24.4 (2026-10-14)
+
+**Status Mini PC pemilik**: masih reboot loop dari v6 (perlu NetInstall dengan
+v6.1 image atau v5 image untuk recovery).
+
+**Rilis aktif:**
+
+| Versi | Tag | Fitur | Status hardware |
+|---|---|---|---|
+| 7.23.1 v5 | lab-v5-7231-ali-media-2 | SFP + no-expire + branding | ✅ TERBUKTI |
+| 7.23.1 v6 | lab-v6-7231-ali-media-3 | + tab SFP (gerbang NOP = CRASH) | ❌ RUSAK |
+| 7.23.1 v6.1 | (same tag, asset baru) | + tab SFP (gerbang original = SAFE) | ⏳ Menunggu tes |
+| 7.24.4 v1 | v1-lab-sfp-fix-7244 | SFP + no-expire + branding + tab SFP | ⏳ Menunggu tes |
+
+**Verifikasi keamanan 7.24.4 v1:**
+- Diff vendor+SFP vs final net = HANYA 5 byte (mov al,1 di 0x46d55)
+- TIDAK ada NOP gerbang serializer (akar masalah v6)
+- SFP page byte-identik dengan lab-v2 yang terbukti di hardware
+- Keyman patch benar, NPK signed
+- E2E QEMU timeout (installer 7.24.4 lambat di TCG — bukan masalah patch)
+
+**Prioritas pemilik:**
+1. NetInstall Mini PC dengan v6.1 atau v5 image (recovery dari reboot loop)
+2. Tes v6.1 di hardware (pastikan LAN jalan + tab SFP muncul setelah monitor)
+3. Tes 7.24.4 v1 via NPK upload
