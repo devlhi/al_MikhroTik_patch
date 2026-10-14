@@ -3592,3 +3592,17 @@ TIDAK ADA perubahan gerbang serializer. NPK: routeros-7.23.1-lab-v6.1.npk
 
 **Pelajaran**: gerbang serializer bukan hanya cosmetic filter — melindungi
 interface non-SFP dari akses memori invalid. NOP gerbang = break hardware.
+
+### 51. Build 7.24.4 v1 lab sfp fix — semua fitur 7.23.1 diport (2026-10-14)
+
+Build 7.24.4 dengan: SFP-DOM (pipeline lab-sfp-net patches 4 hunks),
+keyman no-expire (0xa143), branding (logo.txt + defconf identity), dan
+tab SFP WinBox (mov al,1 di predicate call site — SAFE, tanpa sentuh gerbang).
+
+Tab SFP hook site di 7.24.4: file 0x46d55 (VA 0x808ed55) — ditemukan via
+pola `push 0x400` + call predicate sebelumnya. Pendekatan mov al,1 dipilih
+(sama seperti RC2 yang terbukti aman) setelah pelajaran v6.1 bahwa NOP
+gerbang serializer menyebabkan crash di hardware nyata.
+
+NPK: routeros-7.24.4-lab-v1-sfp-fix.npk (7737c0cc…). Install image menyusul
+(menunggu download vendor dari MikroTik). Rilis: v1-lab-sfp-fix-7244.
