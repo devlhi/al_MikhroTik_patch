@@ -3651,3 +3651,28 @@ SFP di QEMU (benar — tidak ada SFP). Di hardware pemilik: tab hanya di ether3
 (port SFP), tidak di ether1/ether2.
 
 Rilis: lab-v7-7231-ali-media-4. NPK 39a47ed3…, img c9ce8817….
+
+### 54. v7.1: Per-port tab SFP via struct field set — TANPA .text modification (2026-10-14)
+
+v7 gagal karena code cave .text bukan area aman. v7.1 menggunakan pendekatan
+yang JAUH lebih aman: TIDAK mengubah .text sama sekali.
+
+**Arsitektur v7.1:**
+1. `shadow_fill` (appended page 0x81ba500): saat SFP monitor ioctl sukses,
+   SET `[struct+0x1b8] = shadow_eeprom_ptr` dan `[struct+0x1bc] = 512`
+   LANGSUNG di struct interface yang sedang di-monitor.
+2. Predikat ORIGINAL (`call 0x8070fc8` di 0x8072c8f): membaca field ini
+   dan return 1 hanya untuk interface yang dimodifikasi.
+3. Interface lain: struct tidak disentuh → field tetap 0 → return 0.
+
+**Diff dari v5 (terbukti): HANYA 78 byte — SEMUA di appended page, NOL .text.**
+- 0x16c (1B): phdr RW→RWX
+- 0x170130 (7B): page hook → shadow_fill
+- 0x170500 (91B): shadow_fill code
+
+E2E lolos: install 15 detik, license bersih, branding jalan.
+Rilis: lab-v7.1-7231-ali-media-5. NPK dfa92ff8….
+
+**Pelajaran v7 (dicatat):** code cave "kosong" di .text TIDAK aman — bisa
+berisi data internal (PLT, GOT, tabel relokasi). v7.1 menghindari .text
+sepenuhnya.
