@@ -3781,3 +3781,53 @@ TIDAK dirilis, hanya untuk verifikasi QEMU.
 
 **Netralisasi WinBox di mesin kerja**: pengujian WinBox-GUI dibatalkan
 (UI custom tanpa kontrol standar); proses winbox64.exe dimatikan.
+
+### 58. Audit keamanan tambahan (permintaan pemilik): bug off-by-4 shadow_fill DITEMUKAN → v7.4 (2026-10-16)
+
+**Laporan pemilik**: "pastikan dlu aman" sebelum flash v7.3. Audit stack
+ulang menemukan SATU bug nyata di v7.3: `shadow_fill` lupa memperhitungkan
+return address yang didorong instruksi `call` (hook = call, bukan jmp) —
+semua offset stack kekurangan 4:
+
+- `[esp+32]` seharusnya `[esp+36]` (ifr_name) → salinan nama tergeser 4B
+- `[esp+32+0x50]` seharusnya `[esp+36+0x50]` (EEPROM) → data tergeser 4B
+- instruksi asli yang dipindah: `mov edi,[esp+0x388]` setelah popad
+  (esp=S-4) seharusnya ditulis `[esp+0x38C]` agar membaca [S+0x388] EKSAK.
+  Versi salah membaca [S+0x384] → edi (pointer message untuk insert
+  properti 0x45f) mendapat nilai meleset → potensi crash saat monitor.
+
+Pola yang sama ada di rc3.S (basis v6.1) baris `mov edi,[esp+0x388]` —
+v6.1 selamat di hardware karena nilai stack yang salah itu kebetulan
+benign; v7.4 tidak lagi mengandalkan kebetulan. Fix diverifikasi lewat
+disassembly blob: `lea esi,[esp+0x24]`, `lea esi,[esp+0x74]`,
+`mov edi,[esp+0x38c]`.
+
+**Verifikasi tambahan (QEMU via gdbstub)**:
+1. **Jalur NON-MATCH hook** (belum pernah diuji sebelumnya): invokasi
+   sintetis pada build real (SHADOW_VALID=0) → trampoline jalan → EAX
+   TIDAK berubah (0x81bae18, passthrough benar) → SCRATCH nol semua →
+   kembali ke 0x8072497 tanpa crash (v73synth-nm.log).
+2. Kalibrasi protokol: gdbstub QEMU mengirim layout register 64-bit
+   (masing-masing 16 hex char, byte mentah LE) meski guest 32-bit —
+   parser lama salah kolom; edisi nilai sebenarnya: rsp=0xffffd9e8,
+   rdi=stack. Parser fixed: int.from_bytes(bytes.fromhex(field), 'little').
+3. Tes "serializer penuh dengan message nyata" (stub pengganti predikat
+   dengan edx=rdi) gagal metodologis: caller predikat pertama yang
+   terpicu monitor CLI = 0x81ed340 (bukan fungsi monitor yang dipetakan)
+   dan rdi di konteks itu bukan message → crash pada TES (bukan pada
+   v7.3). Insert dengan message nyata diwariskan buktinya dari v6.1 di
+   hardware (insert+predikat=1+struct asli = tab muncul di semua port,
+   tanpa crash) — salinan v7.3/v7.4 adalah byte-copy struct asli.
+4. Build fixed terbukti install+boot+login+monitor CLI (v73f2-real run).
+
+**Rilis**: lab-v7.4-7231-ali-media-8 — NPK routeros-7.23.1-lab-v7.4.npk
+(40a989db…) + install-image-7.23.1-ali-lab-v7.4.img. Konsistensi NPK dalam
+image diverifikasi (hash identik dengan NPK mandiri). Rilis v7.3
+(lab-v7.3-7231-ali-media-7) ditandai SUPERSEDED via edit NOTES saja —
+aset tidak disentuh (aturan: jangan ganti aset rilis lama).
+
+**Pelajaran**: (a) hook via `call` wajib memperhitungkan retaddr 4B dalam
+semua offset stack; (b) parser gdbstub harus dikalibrasi dari eip yang
+diketahui; (c) pgrep/pkill -f self-match dan proses yatim QEMU (pemegang
+port 1234) berulang kali mengacaukan eksperimen — bersihkan berbasis port
+(ss -tlnp), bukan pgrep.
