@@ -3697,3 +3697,87 @@ DATA NYATA. Predikat original → tab muncul hanya di port SFP.
 
 NOL perubahan .text (sama seperti v7.1). E2E lolos.
 Rilis: lab-v7.2-7231-ali-media-6. NPK 6ace1c5a….
+
+### 56. v7.2 CRASH di hardware + AKAR MASALAH DITEMUKAN (2026-10-15)
+
+**Laporan pemilik**: v7.2 masih crash di Mini PC (reboot loop, ke-3 kalinya).
+
+**Akar masalah — terbukti dari disassembly halaman kawan (net v5, file
+0x170000)**: pada titik hook 0x81ba130, register EBX berisi **file descriptor
+socket** (hasil `mov ebx,eax` di 0x81ba0a1 setelah socket(); fd = angka kecil
+≈3), BUKAN frame pointer. Kode v7.1/v7.2 `mov ebp,[esp+0x10]` mengambil
+saved-EBX itu sebagai "monitor ctx", lalu `[ebp+0x388]` = baca alamat ~0x3A8
+di **halaman NULL** → page fault → net mati → reboot loop. Di QEMU jalur
+monitor tidak pernah sukses (tidak ada modul SFP), jadi hook tidak pernah
+dieksekusi dan E2E selalu hijau — inilah celah QEMU-vs-hardware.
+
+Konteks terverifikasi di titik hook (dari disassembly halaman kawan):
+- `[esp+0]` = `ifr_name` — nama interface kernel (mis. "eth0"), 16B
+- `[esp+0x50]` = data EEPROM 512B hasil ioctl ETHTOOL_GMODULEEEPROM
+- Instruksi asli yang dipindah: `mov edi,[esp+0x388]` (7B)
+
+### 57. v7.3: virtualisasi struct — NOL tulis ke memori router (2026-10-15)
+
+**Prinsip**: semua tulis hanya ke halaman sendiri (0x81ba000+). Memori router
+(net heap/struct/driver) TIDAK PERNAH ditulis. Mode gagal = tab tidak muncul,
+bukan crash.
+
+**Arsitektur** (blob 566B di halaman, di-link dengan `ld -Ttext=0x81ba500`):
+1. `shadow_fill` (0x81ba700, hook 0x81ba130 `call` 7B): salin ifr_name →
+   SHADOW_NAME dan EEPROM → SHADOW_EEPROM (512B) dari stack frame halaman
+   kawan. Tidak ada dereference lain.
+2. `ser_hook` (0x81ba500, trampoline 5B `jmp` di entry serializer 0x8072492
+   menggantikan `push ebp; mov ebp,esp; push edi; push esi`):
+   - struct = `[eax]` — deref SAMA dengan instruksi asli 0x807249d (dipakai
+     oleh serializer sendiri → terverifikasi per-definisi)
+   - per-port: nama kernel di `[struct+0x0c]` = `{u32 len; char[]}`
+     (terverifikasi via GDB QEMU: dump menunjukkan `{4,"eth0"}`) dibandingkan
+     dengan SHADOW_NAME dari monitor
+   - match → salin struct 0x1c0B → SCRATCH (0x81bae20), overlay field SFP
+     dari EEPROM (+0x24 vendor, +0x38 OUI, +0x48 rev, +0x4c wavelength,
+     +0x54 serial, +0x64 date, +0x22 present=1, +0x12 connector=0x20,
+     +0x1b8/0x1bc=SHADOW_EEPROM/512), lalu saved-EAX diganti → WRAPPER_VA
+     (0x81bafe0) yang menunjuk SCRATCH
+   - tidak match → tidak ada substitusi (perilaku byte-identik v5)
+   - predikat original 0x8070fc8 TIDAK diubah — membaca pasangan di salinan
+     → return 1 hanya untuk port yang cocok → b400 'sfp' ter-emit
+3. Perubahan .text dari v5: HANYA 6 byte — 5B trampoline (0x2a492) + 1B
+   phdr RWX (0x16c). Semua gerbang serializer original.
+
+**Layout halaman**: kode kawan 0x000-0x441; ser_hook 0x500; shadow_fill
+0x700; SHADOW (valid/name/eeprom) 0xc00-0xe13; SCRATCH 0xe20-0xfdf;
+WRAPPER 0xfe0; TEST_FORCE 0xfec (varian test: 1 = paksa match semua).
+
+**Verifikasi (QEMU, sistem hidup, via gdbstub)**:
+1. E2E keselamatan v7.3 asli: install 15 detik, MBR ok, lisensi nlevel 6
+   TANPA expires-in, identitas Ali-Media-Patch (lic3-v73-*.log).
+2. Ground truth GDB (v73gdb.log): breakpoint predikat 0x8070fc8 terpicu
+   jalur monitor CLI (`/interface ethernet monitor ether1`); struct ether1
+   = 0x81f9620; `[struct+0x0c]` = `{4,"eth0"}`; CLI `/interface print`
+   TIDAK memanggil serializer 0x8072492 (jalur getall = winbox/nv saja).
+3. **Dress rehearsal** (varian dress: SHADOW terisi di file, nama="eth0",
+   EEPROM palsu SOURCEPHOTONICS; TEST_FORCE=0 = jalur produksi penuh):
+   invokasi sintetis via patch predikat stub 15B (`mov eax,fake_wrapper;
+   mov edx,imm; jmp 0x8072492`) — catatan: paket 'G' gdbstub memicu bug
+   mutex QEMU (assertion iothread), solusinya patch memori via 'M'.
+   HASIL (v73synth.log): STOP di 0x8072497 (trampoline kembali) ✓;
+   EAX=0x81bafe0 (wrapper palsu — match nama BERHASIL) ✓; [wrapper]=SCRATCH
+   ✓; vendor="SOURCEPHOTONICS " ✓; serial="PD1234567890ABCD" ✓;
+   pasangan +0x1b8/+0x1bc=0x81bac14/0x200 ✓ (predikat original akan
+   return 1 → b400 ter-emit → tab muncul).
+4. Audit blob terassemblé: jmp balik 0x8072497 benar (bug pertama: tanpa
+   -Ttext, GAS meng-encode jmp salah; bug kedua: tanpa `.org 0x200`,
+   shadow_fill menempel setelah ser_hook sementara hook menunjuk +0x200 —
+   kedua tertangkap sebelum dirilis).
+
+**Yang belum terbukti** (jujur): eksekusi hook monitor di hardware nyata
+(QEMU tak punya SFP); rendering akhir WinBox (insert = kode original);
+bentuk nama kernel di box pemilik (diasumsikan eth0/eth1/eth2). Semua mode
+gagal = tab tidak muncul, bukan crash.
+
+Rilis: lab-v7.3-7231-ali-media-7 (prerelease). NPK 913ac91c….
+Varian: v7.3-test (TEST_FORCE=1) dan v7.3-dress (SHADOW terisi) — keduanya
+TIDAK dirilis, hanya untuk verifikasi QEMU.
+
+**Netralisasi WinBox di mesin kerja**: pengujian WinBox-GUI dibatalkan
+(UI custom tanpa kontrol standar); proses winbox64.exe dimatikan.
