@@ -3632,3 +3632,22 @@ v6.1 image atau v5 image untuk recovery).
 1. NetInstall Mini PC dengan v6.1 atau v5 image (recovery dari reboot loop)
 2. Tes v6.1 di hardware (pastikan LAN jalan + tab SFP muncul setelah monitor)
 3. Tes 7.24.4 v1 via NPK upload
+
+### 53. v7: Per-port tab SFP via perbandingan pointer struct (2026-10-14)
+
+v6.1 menampilkan tab SFP di SEMUA port ethernet (shadow global). v7 memperbaiki
+dengan perbandingan POINTER STRUCT yang unik per interface:
+
+1. **shadow_fill** (0x81ba500): saat SFP monitor ioctl sukses, menyimpan
+   EEPROM + struct pointer. Struct pointer didapat dari:
+   `[saved_ebx(monitor_ctx) + 0x1c0] → interface_obj → [interface_obj] = struct_ptr`
+2. **cmp_func** (0x805247b, code cave .text): dibaca saat serializer getall
+   berjalan. Membandingkan `ebx` (struct interface saat ini) dengan
+   `shadow_struct`. Return 1 hanya jika MATCH (port SFP), 0 untuk port lain.
+3. **Hook**: 0x8072c8f `call cmp_func` (5 byte, same-segment .text call).
+
+E2E lolos: install 15 detik, license bersih, branding jalan, TIDAK ada tab
+SFP di QEMU (benar — tidak ada SFP). Di hardware pemilik: tab hanya di ether3
+(port SFP), tidak di ether1/ether2.
+
+Rilis: lab-v7-7231-ali-media-4. NPK 39a47ed3…, img c9ce8817….
