@@ -3676,3 +3676,24 @@ Rilis: lab-v7.1-7231-ali-media-5. NPK dfa92ff8….
 **Pelajaran v7 (dicatat):** code cave "kosong" di .text TIDAK aman — bisa
 berisi data internal (PLT, GOT, tabel relokasi). v7.1 menghindari .text
 sepenuhnya.
+
+### 55. v7.2: Per-port tab SFP + DATA LENGKAP di struct (2026-10-14)
+
+v7.1 hanya SET pointer (tab muncul, field kosong). v7.2 menambahkan penulisan
+SEMUA field data SFP ke struct interface dari EEPROM yang sudah di-parse:
+
+- [+0x22]=1 (SFP present — buka gerbang string serializer)
+- [+0x12]=7 (connector LC)
+- [+0x24..0x33]=vendor name (16B dari EEPROM A0+20)
+- [+0x38..0x47]=OUI (16B dari A0+36)
+- [+0x48..0x4b]=revision (4B dari A0+56)
+- [+0x4c..0x4d]=wavelength (2B dari A0+60)
+- [+0x54..0x63]=serial number (16B dari A0+68)
+- [+0x64..0x6b]=manufacture date (8B dari A0+84)
+- [+0x1b8/0x1bc]=SFP data pair (untuk predikat b400)
+
+Serializer ORIGINAL membaca struct ini dan menyisipkan property SFP dengan
+DATA NYATA. Predikat original → tab muncul hanya di port SFP.
+
+NOL perubahan .text (sama seperti v7.1). E2E lolos.
+Rilis: lab-v7.2-7231-ali-media-6. NPK 6ace1c5a….
