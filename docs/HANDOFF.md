@@ -3885,3 +3885,25 @@ push asli utuh: 0x45f/0x460/0x461); (2) uji runtime jalur match
 terhadap blob hasil assemble SELALU dilakukan sebelum rilis — menangkap
 (1) jmp salah encode (v7.3), (2) .org 0x200 (v7.3), (3) off-by-4 stack
 (v7.3→v7.4), (4) eax clobber (v7.5-diag→diag2).
+
+### 61. Data diag2 dari hardware: nama terekam = "??elli" → mismatch TERKONFIRMASI; diag3 dirilis (2026-10-16)
+
+Pemilik menjalankan diag2 + monitor ether3 dan mengirim screenshot. Decode
+slot: voltage 25.964V → 25964 = 'e'×256+'l'; bias 27753 = 'l'×256+'i' →
+nama yang direkam hook = REC[2..5] = **"elli"** (karakter 0-1 belum pasti —
+OCR nilai temp diragukan). Kesimpulan: **nama yang direkam jalur monitor
+BUKAN format "ethN" yang dibandingkan serializer** — inilah sebab tab
+tidak muncul (match selalu gagal). Router tetap stabil (tidak crash).
+
+**diag3** (NPK e7161c46…, rilis sama, aset baru): slot suhu/tegangan/arus
+kini BERGANTIAN tiap refresh monitor antara dua sumber:
+- fase 10000 (temp berawalan 1): SHADOW_NAME (nama rekaman monitor/REC)
+- fase 20000 (temp berawalan 2): DIAG_SERNAME (nama sisi serializer/SER,
+  direkam ser_hook setiap getall)
+Audit: diff diag2↔diag3 = 124 byte SEMUA di dalam area blob slot
+(0x17072d-0x1707aa); ser_hook identik dengan versi teruji runtime diag2.
+
+Dengan kedua nama aktual, v7.5 final: bandingkan struct-name terhadap
+KEDUA nama (REC dan/atau SER — SER-side dapat direkam langsung di
+shadow_fill via rantai arg2 yang sama dengan yang dipakai halaman kawan),
+atau match by-construction tanpa string sama sekali.
