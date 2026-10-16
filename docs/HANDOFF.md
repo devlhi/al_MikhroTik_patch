@@ -4038,3 +4038,24 @@ Alur berikutnya: pemilik upload v7.7 → reboot → LIHAT BANNER v7.7 →
 monitor ether3 → buka WinBox (BIARKAN TERBUKA) → tab muncul di semua
 interface? → agent ekstrak dump via API (butuh WinBox terbuka agar
 getall mengisi wrapper/struct dump) → rancang per-port final v7.8.
+
+
+### 67. v7.7 TIDAK terpasang di router pemilik → v7.7b dengan penanda build-time (2026-10-16)
+
+Laporan pemilik: tab tetap tidak ada DAN banner v7.7 tidak muncul. Cek
+API langsung: uptime 2m38s (sudah reboot) tetapi perilaku = v7.6-diag
+(marker 30000, siklus nol) dan banner absen → NPK v7.7 tidak aktif.
+Kemungkinan besar pemilik meng-upload file download lama (kecurigaan
+pemilik sendiri: "supaya diketahui yang kita upload ini benar-benar
+masuk").
+
+Solusi verifikasi permanen: /system package print menampilkan
+build-time per paket → v7.7b ditandai build-time=2007-07-07 07:07:07
+(dibaca langsung sebagai v7.7; versi string tetap 7.23.1 — bebas risiko
+tolak versi). Nama file dibuat tak tertukar: ali-media-V77-ALLPORTS.npk
+(f214c5a9…). Mekanisme: BUILD_TIME env saat npk.sign() (npk.py
+mendukung kedua format paket).
+
+Alur verifikasi pasca-upload via API: package print → build-time
+2007-07-07 = terpasang. Selanjutnya: banner v7.7 saat login → monitor
+ether3 → WinBox dibuka → tab semua interface → ekstraksi dump.
