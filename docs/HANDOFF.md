@@ -3980,3 +3980,37 @@ EAX=0x81bafe0, vendor SOURCEPHOTONICS, pair 0x81bac14/0x200
 pada binary rilis: pointer-X ✓, fallback-nama ✓, passthrough ✓.
 Audit statis ulang menyeluruh (semua cabang, target lompatan, layout
 halaman, offset EEPROM/wavelength/pair) — bersih.
+
+### 65. v7.5 gagal di hardware + AKSES API ROUTER ASLI (2026-10-16)
+
+**Laporan pemilik**: tab SFP tetap tidak muncul setelah v7.5. Pemilik lalu
+memberi akses API router asli (192.168.35.59, api aktif, kredensial di
+pemilik). Eksperimen API LANGSUNG:
+- login OK, identity Ali-Media-Patch, 7.23.1, LENOVO x86
+- `/interface/print` getall ASLI: ether1/2/3 lengkap dengan
+  **name=default-name="etherN"** (nama ROS tersedia di getall!)
+- `/interface/ethernet/monitor =numbers=ether3 =once=` VIA API: data SFP
+  penuh keluar (halaman kawan + hook v7.5 tereksekusi di hardware,
+  SHADOW terekam) — suhu 56C, semua field
+- getall ULANG setelah monitor: TIDAK ada properti sfp → keempat
+  pencocokan v7.5 memang gagal di hardware (instance objek monitor ≠
+  getall). Decode ulang diag3 ('et'=25972): REC kemungkinan "ether3"
+  (nama ROS), bukan "??elli".
+
+**v7.6-diag** (NPK 23a7e3a1…, rilis lab-v7.6diag-7231-ali-media-11):
+v7.5 utuh + ser_hook menyalin 64B wrapper(eax)+struct(esi) per getall ke
+DIAG (copy murni, eax utuh) + shadow_fill menampilkan jendela 6 byte per
+refresh dalam siklus 23 fase (0=nama REC, 1-11=wrapper, 12-22=struct)
+via rantai emisi page (temp/volt/bias; +30000 penanda). Ekstraksi
+dilakukan agent VIA API (monitor once= berulang, tiap call satu fase —
+skrip api-extract.py). Audit menangkap dua bug pra-rilis: (1) match#4
+wrapper+0x10+0xc setengah-jadi (dihapus — menunggu bukti dump, jangan
+deref buta), (2) salinan wrapper mengambil dari esi (struct) karena
+`mov esi,eax` hilang — diperbaiki, diverifikasi di disassembly.
+Uji runtime QEMU: jalur match+dump+substitusi lolos (dressX).
+
+**Rencana**: pemilik upload v7.6-diag → reboot → agent jalankan
+api-extract → rekonstruksi layout wrapper/struct getall dari hardware →
+rancang match final v7.6 (kemungkinan besar: nama ROS "ether3" berada di
+wrapper atau struct pada offset yang terlihat di dump) → build, uji,
+rilis. Kanal API membuat siklus ini tidak lagi butuh screenshot manual.
