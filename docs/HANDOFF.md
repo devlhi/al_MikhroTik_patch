@@ -3907,3 +3907,34 @@ Dengan kedua nama aktual, v7.5 final: bandingkan struct-name terhadap
 KEDUA nama (REC dan/atau SER — SER-side dapat direkam langsung di
 shadow_fill via rantai arg2 yang sama dengan yang dipakai halaman kawan),
 atau match by-construction tanpa string sama sekali.
+
+### 62. v7.5 FINAL: pencocokan IDENTITAS POINTER — bebas skema nama (2026-10-16)
+
+Screenshot diag3 dari pemilik tak dapat di-OCR dengan andal (angka temp
+fase 1xxxx/2xxxx tidak konsisten antar pembacaan), tetapi data diag2
+(??elli) sudah cukup menyimpulkan mismatch skema nama. Keputusan: buang
+ketergantungan string — **match by pointer identity**:
+
+**v7.5** (net cb193fc3…, NPK 177f9210…):
+- shadow_fill: selain nama+EEPROM, merekam `arg2 = [[saved_ebp]+0xc]`
+  (SHADOW_ARG2 0x81bae18) dan `X = [arg2+0x10]` (SHADOW_X 0x81bae14) —
+  rantai INI yang dipakai halaman kawan sendiri di 0x81ba009-0x81ba017
+  untuk nama ioctl → terbukti valid di hardware tiap detik. ebp
+  pemanggil tersedia di slot [esp+8] pushad. Gagal rantai → slot nol.
+- ser_hook: match jika SHADOW_ARG2 == struct(esi) ATAU == wrapper(eax)
+  ATAU SHADOW_X == [struct+0x10]; jika tidak → fallback pencocokan
+  nama v7.4. Semua perbandingan — eax tetap utuh (pelajaran diag1).
+- .text tetap 6 byte; semua tulis tetap hanya ke halaman sendiri.
+
+**Verifikasi**: (1) audit disassembly penuh lolos; (2) uji POINTER-MATCH
+MURNI (dress varian nama sengaja "zzzz" + SHADOW_X diisi GDB runtime
+dari [struct+0x10] asli): substitusi TETAP terjadi — EAX tertukar ke
+0x81bafe0, vendor SOURCEPHOTONICS, pair 0x81bac14/0x200 (v75x-synth.log);
+(3) uji non-match build real: passthrough, EAX tak berubah, nol tulis;
+(4) E2E: install → boot → lisensi nlevel 6 tanpa expires-in → identitas.
+
+Rilis: lab-v7.5-7231-ali-media-10 (NPK routeros-7.23.1-lab-v7.5.npk +
+install image). Menunggu uji hardware pemilik: monitor ether3 → WinBox
+klik ether3 → tab SFP. Jika masih gagal (semua bentuk pointer meleset +
+nama beda), kandidat berikutnya: match via perbandingan EEPROM serial
+terhadap field struct yang mungkin sudah terisi driver.
