@@ -3831,3 +3831,35 @@ semua offset stack; (b) parser gdbstub harus dikalibrasi dari eip yang
 diketahui; (c) pgrep/pkill -f self-match dan proses yatim QEMU (pemegang
 port 1234) berulang kali mengacaukan eksperimen — bersihkan berbasis port
 (ss -tlnp), bukan pgrep.
+
+### 59. v7.4 di hardware pemilik: AMAN, monitor SFP penuh, tapi tab belum muncul → v7.5-diag (2026-10-16)
+
+**Laporan pemilik** (bukti terminal asli): v7.4 ter-NetInstall, TIDAK crash,
+`/interface ethernet monitor ether3` menampilkan lengkap: vendor
+SOURCEPHOTONICS, part SPGBEXIDFCAL, serial G2J2003390, date 16-01-18,
+DOM (34C, 3.288V, 4mA, -2.166dBm, 0.757dBm). Modul = SFP tembaga 1G-baseT.
+WinBox dialog ether3: tab hanya General/Ethernet/Status — TIDAK ada SFP.
+
+**Analisis**: (1) output DOM membuktikan hook 0x81ba130 tereksekusi dan
+SHADOW terisi (emisi suhu 0x45f ada SETELAH titik hook); (2) serializer
+0x8072492 pasti dipakai getall WinBox (bukti v6.1 di mesin yang sama);
+(3) jadi tersisa pencocokan nama — dan tes dress QEMU dulu lulus hanya
+karena nama SHADOW disetel manual ("eth0"); jalur perekaman ifr_name asli
+tidak pernah bisa diuji di QEMU (ioctl butuh SFP fisik). Skema nama di dua
+sisi (page-arg vs struct+0x0c) mungkin berbeda di hardware.
+
+**v7.5-diag** (rilis lab-v7.5diag-7231-ali-media-9, NPK b4bd78d6…, hanya
+upgrade — bukan final): v7.4 verbatim + diagnostik:
+- ser_hook merekam nama sisi serializer → DIAG_SERNAME (8B) + DIAG_MATCH
+  (bit0=compare terakhir, bit1=pernah match)
+- shadow_fill menghitung slot: TEMP=bit0×100000+10000+REC[0]×256+REC[1];
+  VOLT=(REC[2]×256+REC[3])×1000; BIAS=REC[4]×256+REC[5]
+- tiga rantai emisi page dipatch `mov eax,[slot]`: suhu 0x81ba137 (18B),
+  tegangan 0x81ba15a (24B), arus 0x81ba183 (24B) — byte asli di-assert
+  saat build. Monitor pemilik akan MENAMPILKAN kode nama (statis, satu
+  screenshot). .text tetap 6 byte; E2E QEMU lolos (install+boot+lisensi).
+
+Decode yang diharapkan dari pemilik: temperature = M1cc...; voltage/1000 =
+cc...; bias = cc... → nama ifr_name yang terekam vs format nama struct
+(QEMU: {len,"ethN"}) → menentukan fix v7.5 final (mis. cocokkan dua skema
+nama).
