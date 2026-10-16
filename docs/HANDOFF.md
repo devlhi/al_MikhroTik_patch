@@ -4112,3 +4112,21 @@ logo asli) + versi 7.23.1.final + build-time ASLI tanpa override —
 persis resep penerimaan v7.6-diag (c5d8ad10…). Verifikasi pasca-reboot:
 marker temp/volt/bias monitor harus SIKLUS 12 fase (v7.7) bukan 23 (v7.6-diag)
 — dan tab all-ports setelah WinBox dibuka.
+
+
+### 72. Upload NPK PASTI ditolak → NetInstall image v7.7 ALL-PORTS (2026-10-17)
+
+Bukti final dari log pemilik: "omitting package system-7.23.1: it is
+already installed" — loader MENOLAK menimpa paket system nama+versi
+sama; lisensi menolak upgrade. KESIMPULAN: **upload NPK tidak akan
+pernah bisa dipakai lagi di router ini** (kecuali nama paket diubah —
+eksperimen lain). Satu-satunya jalur: NetInstall.
+
+Monitor terminal pemilik (terbaru): marker 30000 + bias BERGANTI (772mA)
+→ siklus diagnostik hidup di jalur terminal (API once= = respons beku;
+terminal = segar). rx-power berubah (-23.665 — fiber dilepas?).
+
+**install-image-7.23.1-ali-lab-v7.7-ALLPORTS.img** dibangun: V77F.npk
+sebagai 1.npk + autorun (identity + admin password=1 + enable api).
+NetInstall → v7.7 berjalan → monitor → WinBox → tab SFP di SEMUA
+interface + data (permintaan pemilik: bukti jalur data dulu).
