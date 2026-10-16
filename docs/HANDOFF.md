@@ -3863,3 +3863,25 @@ Decode yang diharapkan dari pemilik: temperature = M1cc...; voltage/1000 =
 cc...; bias = cc... → nama ifr_name yang terekam vs format nama struct
 (QEMU: {len,"ethN"}) → menentukan fix v7.5 final (mis. cocokkan dua skema
 nama).
+
+### 60. Audit v7.5-diag (permintaan pemilik): bug eax ditemukan → diag2 (2026-10-16)
+
+Permintaan pemilik "pastikan tidak membuat bug" → audit disassembly ulang
+menemukan SATU bug crash pada build diag pertama: blok rekam DIAG_SERNAME
+memakai `xor eax,eax` padahal eax = pointer wrapper yang dibutuhkan jalur
+match (`mov esi,[eax]` di label 3) → jika nama cocok → baca [0] → crash.
+Fix: blok diag hanya memakai edx/ecx (bebas). Build diag2 NPK
+c97e64ac…; aset pertama (b4bd78d6…) dipertahankan untuk jejak audit.
+
+Verifikasi diag2: (1) audit disassembly penuh — eax utuh sampai titik
+substitusi, shadow_fill basis stack benar ([esp+0x24]/[esp+0x74]/
+[esp+0x38c]), 3 patch rantai emisi page tepat (mov eax,[slot]+nop,
+push asli utuh: 0x45f/0x460/0x461); (2) uji runtime jalur match
+(dress+sintetis QEMU, v75synth.log): trampoline jalan, EAX tersubstitusi
+0x81bafe0, vendor SOURCEPHOTONICS + serial PD1234567890ABCD + pair
+0x81bac14/0x200 — SEMUA LOLOS dengan blok diag aktif.
+
+**Pola berulang yang terbukti menyelamatkan**: audit disassembly ulang
+terhadap blob hasil assemble SELALU dilakukan sebelum rilis — menangkap
+(1) jmp salah encode (v7.3), (2) .org 0x200 (v7.3), (3) off-by-4 stack
+(v7.3→v7.4), (4) eax clobber (v7.5-diag→diag2).
