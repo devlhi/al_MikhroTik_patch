@@ -4014,3 +4014,27 @@ api-extract → rekonstruksi layout wrapper/struct getall dari hardware →
 rancang match final v7.6 (kemungkinan besar: nama ROS "ether3" berada di
 wrapper atau struct pada offset yang terlihat di dump) → build, uji,
 rilis. Kanal API membuat siklus ini tidak lagi butuh screenshot manual.
+
+### 66. Ekstraksi v7.6-diag via API: dump kosong → v7.7 ALL-PORTS (2026-10-16)
+
+Ekstraksi API 27x monitor: marker 30000 muncul (v7.6-diag aktif, shadow_fill
+jalan) tetapi SEMUA window nol. Analisis: (a) dump wrapper/struct nol karena
+**tidak ada getall WinBox sejak reboot** — getall API (console path) TIDAK
+melewati serializer 0x8072492; hanya WinBox (nv) yang melewatinya; (b)
+SHADOW_NAME juga nol → lokasi nama di stack hardware berbeda dari asumsi
+(perlu jendela stack). Permintaan pemilik: (1) banner berversi di terminal
+agar ketahuan NPK masuk, (2) tampilkan tab untuk SEMUA interface dulu
+sebagai bukti jalur data.
+
+**v7.7 ALL-PORTS** (NPK a6d3e4f7…, rilis lab-v7.7-7231-ali-media-12):
+- nova/etc/logo = ASCII "ALI MEDIA PATCH v7.7 ALL-PORTS" (banner login)
+- ser_hook: substitusi TANPA SYARAT saat SHADOW_VALID=1 → tab+data di
+  semua interface setelah monitor (dump tetap jalan sebelum substitusi)
+- shadow_fill: siklus 12 fase — 0-2 nama REC, 3-10 stack [S-16..S+32]
+  (cari lokasi nama asli), 11 identitas ARG2/X
+- Audit penuh + uji runtime dress lolos; .text 6 byte; nol tulis router.
+
+Alur berikutnya: pemilik upload v7.7 → reboot → LIHAT BANNER v7.7 →
+monitor ether3 → buka WinBox (BIARKAN TERBUKA) → tab muncul di semua
+interface? → agent ekstrak dump via API (butuh WinBox terbuka agar
+getall mengisi wrapper/struct dump) → rancang per-port final v7.8.
