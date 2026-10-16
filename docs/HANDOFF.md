@@ -3938,3 +3938,33 @@ install image). Menunggu uji hardware pemilik: monitor ether3 → WinBox
 klik ether3 → tab SFP. Jika masih gagal (semua bentuk pointer meleset +
 nama beda), kandidat berikutnya: match via perbandingan EEPROM serial
 terhadap field struct yang mungkin sudah terisi driver.
+
+### 63. Verifikasi praflash v7.5 (permintaan pemilik): arg2 = STRUCT — bukti statis (2026-10-16)
+
+Pemilik meminta kepastian sebelum flash. Eksperimen QEMU untuk mengamati
+arg2 jalur monitor GAGAL secara metodologis: jalur CLI monitor di QEMU
+tidak pernah memasuki fungsi 0x807485a maupun halaman kawan (bp 0x8074866
+dan 0x81ba014 tak pernah kena walau monitor streaming) — pemanggilnya
+( dispatch via function-pointer, tanpa E8 langsung) mem gerbang
+kapabilitas SFP; di hardware jalur ini pasti jalan (output sfp-* pemilik
+hanya bisa dihasilkan halaman kawan).
+
+**Bukti statis pengganti — prolog fungsi monitor 0x807485a:**
+```
+8074863: mov ebx,[ebp+0xc]        ; arg2
+8074866: cmp byte [ebx+0x1a7],0   ; field dalem struct
+807486f: cmp dword [ebx+0x94],0x1f
+807487b: mov edi,[ebx+0x1c0]
+```
+arg2 diakses dengan offset sampai +0x1c0 = rentang struct interface →
+**arg2 = struct itu sendiri**. Halaman kawan membaca [ebp+0xc] yang sama
+(0x81ba009) → rantai rekaman v7.5 ([[esp+8]+0xc]) menyimpan STRUCT.
+Situs predikat di fungsi yang sama (0x807498f: lea eax,[ebx+0x1b8])
+membaca pasangan 0x1b8 dari struct yang sama → registry struct tunggal
+lintas konteks (monitor & getall) → pencocokan #1 v7.5
+(SHADOW_ARG2 == struct serializer) seharusnya pasti kena di hardware.
+
+Keyakinan v7.5 di hardware: (1) match #1 arg2==struct — bukti statis
+kuat; (2) #2/#3 pointer cadangan; (3) fallback nama; (4) semua gagal =
+tanpa tab, tanpa crash (v7.4 stabil berhari-hari di hardware pemilik
+membuktikan rangka harness-nya aman).
