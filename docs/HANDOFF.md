@@ -4083,3 +4083,17 @@ NAME_INFO dinaikkan ke 7.23.2.test + build-time 2026-07-07 — uji teori
 pemilik). File: ali-media-V77C.npk (9602249c…) dan ali-media-V77D.npk
 (a9d189e5…). Urutan coba pemilik: V77C dulu; jika ditolak, V77D.
 Verifikasi via API: package print (build-time/versi).
+
+
+### 70. V77C ditolak → teori logo gugur; V77D (versi 7.23.2) & V77E cadangan (2026-10-16)
+
+Cek API: V77C (logo asli) tetap ditolak → teori logo GUGUR. Teori
+pemilik (versi sama ditolak) kini terdepan. Pengamatan tambahan:
+satu-satunya NPK yang pernah lolos (v7.6-diag) tidak men-set BUILD_TIME
+→ build-time NAME_INFO persis 2026-06-02 17:25:16 (epoch 1780392316)
+= persis paket asli. V77D (versi 7.23.2.test + build-time 2026-07-07)
+dirilis untuk uji teori pemilik; V77E cadangan (versi 7.23.2.test +
+build-time epoch ASLI 1780392316) menutup kedua teori sekaligus jika
+D ditolak. File: ali-media-V77D.npk (a9d189e5…), ali-media-V77E.npk
+(65dff57f…). Penolakan paket terbukti aman (router tetap boot paket
+lama — 3x bukti).
