@@ -4097,3 +4097,18 @@ build-time epoch ASLI 1780392316) menutup kedua teori sekaligus jika
 D ditolak. File: ali-media-V77D.npk (a9d189e5…), ali-media-V77E.npk
 (65dff57f…). Penolakan paket terbukti aman (router tetap boot paket
 lama — 3x bukti).
+
+
+### 71. LOG MEMBECAK PENOLAKAN: "license does not permit to upgrade system-7.23.130" (2026-10-16)
+
+Log sistem router pemilik (via API) menunjukkan penyebab pasti seluruh
+penolakan: LISENSI tidak mengizinkan upgrade paket system. RouterOS
+mengenali NPK kita (NAME_INFO name="system") sebagai paket system;
+saat versi/build-time berbeda → dianggap UPGRADE → lisensi lab menolak.
+v7.6-diag lolos karena versi+build-time identik dengan asli → reinstall,
+tanpa cek lisensi. V77D ditolak (ver 7.23.2); V77E diprediksi ditolak
+juga (jangan dipakai). SOLUSI: V77F = v77c.sfs (net v7.7 all-ports,
+logo asli) + versi 7.23.1.final + build-time ASLI tanpa override —
+persis resep penerimaan v7.6-diag (c5d8ad10…). Verifikasi pasca-reboot:
+marker temp/volt/bias monitor harus SIKLUS 12 fase (v7.7) bukan 23 (v7.6-diag)
+— dan tab all-ports setelah WinBox dibuka.
