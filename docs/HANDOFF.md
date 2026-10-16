@@ -4059,3 +4059,17 @@ mendukung kedua format paket).
 Alur verifikasi pasca-upload via API: package print → build-time
 2007-07-07 = terpasang. Selanjutnya: banner v7.7 saat login → monitor
 ether3 → WinBox dibuka → tab semua interface → ekstraksi dump.
+
+
+### 68. v7.7b juga ditolak → tersangka: perubahan nova/etc/logo (2026-10-16)
+
+Cek API setelah percobaan v7.7b (file benar — nama unik): build-time
+paket tetap 2026-06-02 → NPK ditolam saat boot. Pola: v7.6-diag (logo
+asli) terpasang ✓; v7.7/v7.7b (logo diganti banner) ditolak ✗ →
+hipotesis: loader menolak paket yang file nova/etc/logo-nya berubah
+(mekanisme belum dipastikan). v7.7c dibangun: net v7.7 (all-ports) +
+LOGO ASLI dikembalikan + BUILD_TIME=2026-07-07 07:07:07 (masa depan,
+penanda sekaligus uji arah build-time). File: ali-media-V77C.npk
+(9602249c…). Verifikasi pasca-reboot via API: build-time 2026-07-07.
+Jika v7.7c terpasang → logo terbukti penyebab → penanda versi pakai
+build-time + identity via API (bukan file).
