@@ -3968,3 +3968,15 @@ Keyakinan v7.5 di hardware: (1) match #1 arg2==struct — bukti statis
 kuat; (2) #2/#3 pointer cadangan; (3) fallback nama; (4) semua gagal =
 tanpa tab, tanpa crash (v7.4 stabil berhari-hari di hardware pemilik
 membuktikan rangka harness-nya aman).
+
+### 64. Audit praflash lanjutan: cakupan uji jalur fallback ditutup (2026-10-16)
+
+Audit ulang menemukan celah cakupan: jalur FALLBACK NAMA pada binary
+v7.5 belum pernah dieksekusi runtime (dressX menguji jalur-X, build real
+menguji passthrough). Ditutup dengan dress varian fallback (valid=1,
+nama="eth0", X/ARG2=NOL): substitusi terjadi via pencocokan nama —
+EAX=0x81bafe0, vendor SOURCEPHOTONICS, pair 0x81bac14/0x200
+(v75fb-synth.log). Dengan ini KETIGA jalur ser_hook terbukti runtime
+pada binary rilis: pointer-X ✓, fallback-nama ✓, passthrough ✓.
+Audit statis ulang menyeluruh (semua cabang, target lompatan, layout
+halaman, offset EEPROM/wavelength/pair) — bersih.
