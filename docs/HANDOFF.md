@@ -4073,3 +4073,13 @@ penanda sekaligus uji arah build-time). File: ali-media-V77C.npk
 (9602249c…). Verifikasi pasca-reboot via API: build-time 2026-07-07.
 Jika v7.7c terpasang → logo terbukti penyebab → penanda versi pakai
 build-time + identity via API (bukan file).
+
+
+### 69. Teori pemilik: sistem menolak versi sama → v7.7d versi 7.23.2 (2026-10-16)
+
+Pemilik menduga sistem menolak penggantian paket berversi sama. Dua
+kandidat paralel: v7.7c (logo asli — uji teori logo) dan v7.7d (versi
+NAME_INFO dinaikkan ke 7.23.2.test + build-time 2026-07-07 — uji teori
+pemilik). File: ali-media-V77C.npk (9602249c…) dan ali-media-V77D.npk
+(a9d189e5…). Urutan coba pemilik: V77C dulu; jika ditolak, V77D.
+Verifikasi via API: package print (build-time/versi).
