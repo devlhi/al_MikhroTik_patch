@@ -14,6 +14,7 @@
 | A2 | Jika POINTER: apakah ada code path yang mendereference-nya sebagai objek C++? | Cari `mov reg,[field]` lalu `mov reg2,[reg+offset]` | ✅ |
 | A3 | Jika POINTER: JANGAN tulis kecuali objek yang ditunjuk valid untuk SEMUA pembaca | Buat objek dummy atau verifikasi layout | ✅ |
 | A4 | Field yang ditulis — apakah dibaca oleh kode di LUAR serializer? (monitor, driver, config) | Scan semua fungsi yang mengakses offset tsb | ✅ |
+| A6 | Jika pointer dari argumen fungsi: apakah itu WRAPPER yang perlu di-dereference [ptr]=struct? ATAU struct langsung? | Cek apakah ada mov reg,[ptr] di kode pemanggil (serializer: mov ebx,[eax]) | ✅ |
 | A5 | Jika hook via `call`: apakah return address (4 byte) diperhitungkan di semua offset stack? | `esp_setelah_call = esp_sebelum - 4` | ✅ |
 
 ## B. AUDIT ASSEMBLY (setelah menulis kode, sebelum build)

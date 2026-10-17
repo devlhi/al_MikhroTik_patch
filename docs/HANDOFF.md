@@ -4225,3 +4225,25 @@ sebelum build dan rilis. Dibuat docs/PRE-BUILD-CHECKLIST.md dengan
 6 kategori (A-F) dan 9 aturan khusus (E1-E9) dari 4 crash yang
 pernah terjadi. Direferensikan dari AGENTS.md supaya semua agent
 yang bekerja di repo ini WAJIB membacanya.
+
+
+### 77. AKAR CRASH v8.0/v8.1 DITEMUKAN: wrapper vs struct (2026-10-17)
+
+**Akar masalah**: [ebp+0xc] dari fungsi monitor adalah WRAPPER (objek
+luar yang [wrapper]=struct). v8.0/v8.1 menulis data LANGSUNG ke wrapper
+tanpa mendereference [wrapper] dulu → field +0x22/+0x12/dll menimpa
+field WRAPPER yang layout-nya BERBEDA dari struct → korupsi → crash.
+
+**Bukti**: serializer melakukan mov ebx,[eax] untuk mendapat struct
+dari wrapper. v6.1 TIDAK crash karena tidak pernah menyentuh wrapper
+(membaca dari alamat absolut shadow_valid). v7.x TIDAK crash karena
+hook serializer menerima eax=wrapper dan mendereference [eax]=struct
+dengan benar.
+
+**Fix v8.2**: tambah mov eax,[eax] SETELAH mov eax,[ebp+0xc] untuk
+mendereference wrapper → struct. Verifikasi disassembly: 0x81ba721
+mov eax,[eax] ada. NPK f9d6c3d8….
+
+**Checklist diperbarui**: aturan A6 ditambahkan — jika mendapat
+pointer dari argumen fungsi, verifikasi apakah itu wrapper (perlu
+dereference [ptr]) atau struct langsung.
