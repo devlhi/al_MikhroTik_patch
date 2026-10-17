@@ -4247,3 +4247,23 @@ mov eax,[eax] ada. NPK f9d6c3d8….
 **Checklist diperbarui**: aturan A6 ditambahkan — jika mendapat
 pointer dari argumen fungsi, verifikasi apakah itu wrapper (perlu
 dereference [ptr]) atau struct langsung.
+
+
+### 78. v8.3 = v6.1 EXACT (pemulihan) — verifikasi byte-identik (2026-10-17)
+
+Setelah 5 crash (v6, v7, v7.2, v8.0, v8.1), diputuskan untuk kembali
+ke basis yang TERBUKTI AMAN. v8.3 = v6.1 net yang sama persis
+(diverifikasi: byte-for-byte identik dengan net-v61.bin). NPK
+13420f2b….
+
+Keputusan strategis:
+1. v8.3 (v6.1 exact) = pemulihan + stabilisasi router
+2. Setelah stabil → tambah data SATU FIELD PER BUILD (v8.4 = vendor
+   saja via redirect call, bukan menulis struct)
+3. Jika satu field berhasil → tambah field berikutnya
+4. Jika satu field crash → penyebabnya PASTI field itu (terisolasi)
+
+Pendekatan baru untuk data (TIDAK menulis struct):
+- Redirect call string-ctor di serializer untuk membaca dari shadow
+  EEPROM (ubah rel32 call, tidak ubah panjang instruksi)
+- Tidak ada penulisan ke struct/wrapper → tidak ada risiko korupsi
