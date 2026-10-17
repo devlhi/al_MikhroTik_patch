@@ -4166,3 +4166,37 @@ Risk: penulisan ke struct asli dari jalur monitor — pointer dari
 rantai yang sama dengan yang dipakai fungsi monitor sendiri untuk
 membaca [ebx+0x1a7]/[ebx+0x94]/[ebx+0x1c0] (offset lebih besar dari
 yang saya tulis) → struct pasti cukup besar → aman.
+
+
+### 74. v8.0 CRASH di hardware pemilik — PELAJARAN KRITIS (2026-10-17)
+
+**Laporan pemilik**: v8.0 crash, reboot terus. Router harus di-recovery.
+
+**Akar masalah**: [struct+0x1b8] BUKAN sekadar pointer data — kode
+RouterOS di fungsi monitor (0x807499c: mov eax,[ebx+0x1b8]; mov eax,[eax+0x50])
+mendereference-nya sebagai OBJEK C++ TERSTRUKTUR dengan field layout
+spesifik. Menulis pointer ke EEPROM mentah (0x81bac04) di +0x1b8 membuat
+kode tersebut membaca byte EEPROM sebagai field C++ → garbage → crash.
+
+**Kontras dengan v6.1** (yang AMAN): v6.1 hanya memaksa al=1 di SATU
+call-site predikat (0x8072c8f) → hanya b400 yang di-emit. Field
++0x1b8 TIDAK disentuh → code path lain yang mendereference +0x1b8
+tetap digerbang predikat original (return 0 karena +0x1b8=0) → skip → aman.
+
+**ATURAN BARU WAJIB (ditambahkan atas permintaan pemilik)**:
+1. Sebelum build dirilis, WAJIB verifikasi bahwa SEMUA field yang
+   ditulis tidak didereference oleh code path manapun sebagai
+   pointer ke objek terstruktur (bukan hanya blob data).
+2. WAJIB tes crash di QEMU dengan SIMULASI penulisan field yang
+   sama via GDB sebelum hardware pemilik dipakai.
+3. Jika field adalah pointer yang dibaca kode lain, JANGAN menulis
+   nilai non-NULL ke field tersebut kecuali objek yang ditunjuk
+   memiliki layout yang valid untuk SEMIA pembaca.
+4. Pendekatan aman: hanya menulis field DATA (bukan pointer) +
+   gunakan patch call-site (v6.1 style) untuk properti yang butuh
+   gerbang predikat.
+
+**Fix v8.1**: tulis HANYA field data (+0x22=1, +0x12=0x20, vendor/
+serial/date/wavelength) TANPA menulis +0x1b8/+0x1bc. Tambah 5 byte
+di call-site predikat 0x8072c8f: mov eax,[SHADOW_VALID] (v6.1 style).
+Result: tab via forced b400 + data dari struct fields yang aman.
