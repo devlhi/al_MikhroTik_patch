@@ -4200,3 +4200,20 @@ tetap digerbang predikat original (return 0 karena +0x1b8=0) → skip → aman.
 serial/date/wavelength) TANPA menulis +0x1b8/+0x1bc. Tambah 5 byte
 di call-site predikat 0x8072c8f: mov eax,[SHADOW_VALID] (v6.1 style).
 Result: tab via forced b400 + data dari struct fields yang aman.
+
+
+### 75. v8.1: fix crash v8.0 — tulis HANYA data, tanpa +0x1b8 (2026-10-17)
+
+Fix atas crash v8.0: field +0x1b8 TIDAK ditulis (pointer objek C++).
+v8.1 menggabungkan:
+1. Tulis field DATA saja (+0x22=1, +0x12=0x20, vendor/OUI/rev/wl/
+   serial/date) dari jalur monitor (pointer [ebp+0xc] terbukti).
+2. Patch 5-byte di call-site predikat (0x8072c8f):
+   mov al,[ebx+0x22]; nop; nop (menggantikan call 8070fc8).
+   Per-port: ether3 +0x22=1 → b400=true → tab; ether1/2 +0x22=0 →
+   b400=false → tanpa tab.
+3. +0x1b8 tetap 0 → semua code path lain aman (predikat original
+   di situs lain return 0 → skip → tidak mendereference NULL).
+
+.text: 6 byte (phdr 1 + call-site 5). Page: hook + kode 156B.
+NPK 667d795c…, image diunggah.
