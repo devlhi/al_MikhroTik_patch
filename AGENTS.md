@@ -46,3 +46,9 @@ Perintah setup, suite, prasyarat SquashFS/Node/Caddy, dan kondisi skip ada pada
 bagian "Cara kerja cepat" di [docs/HANDOFF.md](docs/HANDOFF.md). Jalankan tes sesuai
 cakupan perubahan dan catat hasil aktual. Untuk perubahan dokumentasi saja,
 periksa diff, link, dan informasi sensitif; nyatakan jika suite tidak diulang.
+
+## Checklist wajib sebelum build dan rilis firmware
+
+Baca dan ikuti [docs/PRE-BUILD-CHECKLIST.md](docs/PRE-BUILD-CHECKLIST.md)
+SEBELUM setiap build firmware. Semua item wajib ✅ sebelum rilis.
+Pelanggaran checklist = crash di hardware pemilik (terjadi 4x).

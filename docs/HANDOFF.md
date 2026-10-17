@@ -4217,3 +4217,11 @@ v8.1 menggabungkan:
 
 .text: 6 byte (phdr 1 + call-site 5). Page: hook + kode 156B.
 NPK 667d795c…, image diunggah.
+
+### 76. CHECKLIST WAJIB permanen dibuat (2026-10-17, atas permintaan pemilik)
+
+Pemilik meminta sistem memori permanen untuk pemeriksaan bug/crash
+sebelum build dan rilis. Dibuat docs/PRE-BUILD-CHECKLIST.md dengan
+6 kategori (A-F) dan 9 aturan khusus (E1-E9) dari 4 crash yang
+pernah terjadi. Direferensikan dari AGENTS.md supaya semua agent
+yang bekerja di repo ini WAJIB membacanya.
