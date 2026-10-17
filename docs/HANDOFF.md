@@ -4130,3 +4130,39 @@ terminal = segar). rx-power berubah (-23.665 — fiber dilepas?).
 sebagai 1.npk + autorun (identity + admin password=1 + enable api).
 NetInstall → v7.7 berjalan → monitor → WinBox → tab SFP di SEMUA
 interface + data (permintaan pemilik: bukti jalur data dulu).
+
+
+### 73. v8.0 DESAIN BARU TOTAL: tulis struct asli, NOL hook serializer (2026-10-17)
+
+Pemilik: "tolong perbaiki total" — v7.x substitution/trampoline tidak
+pernah menghasilkan tab di hardware. Analisis ulang menyeluruh →
+
+**Mengapa v6.1 bekerja tapi v7.x tidak:** v6.1 hanya mengganti 5 byte
+di call-site predikat (0x8072c8f) — kode serializer 100% asli. v7.x
+menghook ENTRY serializer (0x8072492) + substitusi wrapper + struct
+copy → terlalu banyak titik gagal yang tak terverifikasi di hardware.
+
+**v8.0 — prinsip baru:**
+1. shadow_fill (hook 0x81ba130, jalur monitor): salin EEPROM +
+   TULIS DATA SFP LANGSUNG ke struct asli via [ebp+0xc] — rantai
+   pointer yang DIPAKAI FUNGSI MONITOR SENDIRI (0x8074863) dan
+   HALAMAN KAWAN (0x81ba009) — TERBUKTI jalan di hardware setiap detik.
+2. Tulis: +0x22=1, +0x12=0x20, vendor/OUI/rev/wavelength/serial/date,
+   +0x1b8=SHADOW_EEPROM, +0x1bc=512.
+3. Serializer ORIGINAL membaca struct terisi → emit semua properti
+   SFP termasuk b400 → TAB + DATA.
+4. Interface lain: struct tidak diisi → predikat original return 0 →
+   tanpa tab → PER-PORT OTOMATIS.
+5. .text: NOL byte perubahan (hanya phdr RWX 1 byte).
+6. Kode RouterOS 100% asli — tidak ada hook, substitusi, atau
+   trampoline sama sekali.
+
+Build: net 346ec289…, NPK ff4b402c…, blob 180B (jauh lebih kecil
+dari v7.x yang 600+B). Audit disassembly penuh: pushad → copy EEPROM
+([esp+0x74]) → get ebp ([esp+8]) → get struct ([ebp+0xc]) → tulis
+semua field → popad → displaced instruction → ret. Bersih.
+
+Risk: penulisan ke struct asli dari jalur monitor — pointer dari
+rantai yang sama dengan yang dipakai fungsi monitor sendiri untuk
+membaca [ebx+0x1a7]/[ebx+0x94]/[ebx+0x1c0] (offset lebih besar dari
+yang saya tulis) → struct pasti cukup besar → aman.
